@@ -60,6 +60,8 @@ describe('guard-note-access: Bash', () => {
       'cat fixtures/rss/feed.xml',
       'curl -s https://registry.npmjs.org/zod',
       'ls keynote.com',
+      // 別ドメインの URL とドメイン名の言及が同じコマンドにあるだけなら許可する（コミットメッセージなど）
+      'git commit -m "note.com の fixture を追加" -m "Session: https://claude.ai/code/x"',
     ]) {
       assert.equal(bash(command), null, command);
     }

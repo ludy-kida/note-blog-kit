@@ -1,0 +1,757 @@
+{
+  "data": {
+    "contents": [
+      {
+        "id": 187415607,
+        "type": "TextNote",
+        "status": "published",
+        "name": "流行りのAdidasコーデでも部屋着に見られないコツ",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n7918b7238515",
+        "slug": "slug-n7918b7238515",
+        "publishAt": "2026-10-25T14:04:53+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/328273038/rectangle_large_type_2_0016fdaf6e22ba134927a3f19ee7fd95.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "今日の4点は、全部スポーツウェア由来です。\nAmazonストアにまとめておきました。\n\nadidasのトラックジャケット。ノースフェイスのランニング用ロンT。ウエストゴムのイージーパンツ。テニスから来たOnのスニーカー。\n\n並べると完全にジム着です。でも実際に着ると、そうは見えません。素材と色で、用途をずらしているからです。\n\n足元が、ジャージをジム着から引き離すこの組み合わせで一番効いているのは靴です。\n\n普通のスニーカーにトラックジャケットを合わせると、ジムに行く人になり",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#買ってよかったもの"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#エンジニア"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#メンズファッション"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#冬コーデ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#スポーツミックス"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n7918b7238515&text=%E6%B5%81%E8%A1%8C%E3%82%8A%E3%81%AEAdidas%E3%82%B3%E3%83%BC%E3%83%87%E3%81%A7%E3%82%82%E9%83%A8%E5%B1%8B%E7%9D%80%E3%81%AB%E8%A6%8B%E3%82%89%E3%82%8C%E3%81%AA%E3%81%84%E3%82%B3%E3%83%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B+%23%E8%B2%B7%E3%81%A3%E3%81%A6%E3%82%88%E3%81%8B%E3%81%A3%E3%81%9F%E3%82%82%E3%81%AE&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n7918b7238515&t=%E6%B5%81%E8%A1%8C%E3%82%8A%E3%81%AEAdidas%E3%82%B3%E3%83%BC%E3%83%87%E3%81%A7%E3%82%82%E9%83%A8%E5%B1%8B%E7%9D%80%E3%81%AB%E8%A6%8B%E3%82%89%E3%82%8C%E3%81%AA%E3%81%84%E3%82%B3%E3%83%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E6%B5%81%E8%A1%8C%E3%82%8A%E3%81%AEAdidas%E3%82%B3%E3%83%BC%E3%83%87%E3%81%A7%E3%82%82%E9%83%A8%E5%B1%8B%E7%9D%80%E3%81%AB%E8%A6%8B%E3%82%89%E3%82%8C%E3%81%AA%E3%81%84%E3%82%B3%E3%83%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n7918b7238515",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/328273038/square_large_0016fdaf6e22ba134927a3f19ee7fd95.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n7918b7238515",
+        "imageCount": 3,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 187278733,
+        "type": "TextNote",
+        "status": "published",
+        "name": "Barbourのノンワックスを選んだ理由と、冬に厚着をやめるための4点",
+        "description": null,
+        "likeCount": 4,
+        "price": 0,
+        "key": "n61a13b0350ca",
+        "slug": "slug-n61a13b0350ca",
+        "publishAt": "2026-10-24T18:38:44+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/327948990/rectangle_large_type_2_1e562f226ed3fd3ade900dbcee154b14.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "冬の服は、厚着すると不便になります。\n\n電車で暑い。室内で脱ぐ場所がない。自転車に乗ると裾が引っかかる。2歳の息子を抱えると、嵩のあるアウターは腕が上がらない。\n\nだから今年は「薄いまま機能を足す」側に全部振りました。\n 保温も撥水も、厚みではなく素材で取る。\n\nAmazonでアイテムをまとめています。\n\n各アイテムの紹介アウター：Barbour トランスポートBarbourといえばワックスのオイルドジャケットですが、これはノンワックスのナイロンです。\n\nワックスを選ばなかっ",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#買ってよかったもの"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#エンジニア"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#在宅勤務"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#メンズファッション"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#冬コーデ"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n61a13b0350ca&text=Barbour%E3%81%AE%E3%83%8E%E3%83%B3%E3%83%AF%E3%83%83%E3%82%AF%E3%82%B9%E3%82%92%E9%81%B8%E3%82%93%E3%81%A0%E7%90%86%E7%94%B1%E3%81%A8%E3%80%81%E5%86%AC%E3%81%AB%E5%8E%9A%E7%9D%80%E3%82%92%E3%82%84%E3%82%81%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE4%E7%82%B9%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B+%23%E8%B2%B7%E3%81%A3%E3%81%A6%E3%82%88%E3%81%8B%E3%81%A3%E3%81%9F%E3%82%82%E3%81%AE&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n61a13b0350ca&t=Barbour%E3%81%AE%E3%83%8E%E3%83%B3%E3%83%AF%E3%83%83%E3%82%AF%E3%82%B9%E3%82%92%E9%81%B8%E3%82%93%E3%81%A0%E7%90%86%E7%94%B1%E3%81%A8%E3%80%81%E5%86%AC%E3%81%AB%E5%8E%9A%E7%9D%80%E3%82%92%E3%82%84%E3%82%81%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE4%E7%82%B9%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?Barbour%E3%81%AE%E3%83%8E%E3%83%B3%E3%83%AF%E3%83%83%E3%82%AF%E3%82%B9%E3%82%92%E9%81%B8%E3%82%93%E3%81%A0%E7%90%86%E7%94%B1%E3%81%A8%E3%80%81%E5%86%AC%E3%81%AB%E5%8E%9A%E7%9D%80%E3%82%92%E3%82%84%E3%82%81%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE4%E7%82%B9%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n61a13b0350ca",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/327948990/square_large_1e562f226ed3fd3ade900dbcee154b14.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n61a13b0350ca",
+        "imageCount": 5,
+        "format": "4.0",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 186935606,
+        "type": "TextNote",
+        "status": "published",
+        "name": "あなたの文体で書く「ライターペルソナ」と「AI執筆フロー」、インプレッション分析に対応しました",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n8eb02de152f7",
+        "slug": "slug-n8eb02de152f7",
+        "publishAt": "2026-10-23T16:40:41+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/327220676/rectangle_large_type_2_d8c01bbfd9adce62396321688adc9a7e.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "いつも NoteBubble をお使いいただき、ありがとうございます。\n本日、Chrome 拡張機能「NoteBubble」の v1.3.0 を公開しました。\n\n今回のアップデートの柱は3つです。\n\nライターペルソナ：あなたの過去記事から文体を分析し、AIが「あなたらしく」書くための指示を作ります\n\nAI執筆フロー：ネタ拾い → アウトライン → 本文まで、noteの記事づくりを段階ごとにAIが手伝います\n\n新しいダッシュボードへの対応と、インプレッション・流入元分析：9月に",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#note"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#AI"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#開発"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ツール"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#拡張機能"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n8eb02de152f7&text=%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E6%96%87%E4%BD%93%E3%81%A7%E6%9B%B8%E3%81%8F%E3%80%8C%E3%83%A9%E3%82%A4%E3%82%BF%E3%83%BC%E3%83%9A%E3%83%AB%E3%82%BD%E3%83%8A%E3%80%8D%E3%81%A8%E3%80%8CAI%E5%9F%B7%E7%AD%86%E3%83%95%E3%83%AD%E3%83%BC%E3%80%8D%E3%80%81%E3%82%A4%E3%83%B3%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%86%E6%9E%90%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n8eb02de152f7&t=%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E6%96%87%E4%BD%93%E3%81%A7%E6%9B%B8%E3%81%8F%E3%80%8C%E3%83%A9%E3%82%A4%E3%82%BF%E3%83%BC%E3%83%9A%E3%83%AB%E3%82%BD%E3%83%8A%E3%80%8D%E3%81%A8%E3%80%8CAI%E5%9F%B7%E7%AD%86%E3%83%95%E3%83%AD%E3%83%BC%E3%80%8D%E3%80%81%E3%82%A4%E3%83%B3%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%86%E6%9E%90%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E6%96%87%E4%BD%93%E3%81%A7%E6%9B%B8%E3%81%8F%E3%80%8C%E3%83%A9%E3%82%A4%E3%82%BF%E3%83%BC%E3%83%9A%E3%83%AB%E3%82%BD%E3%83%8A%E3%80%8D%E3%81%A8%E3%80%8CAI%E5%9F%B7%E7%AD%86%E3%83%95%E3%83%AD%E3%83%BC%E3%80%8D%E3%80%81%E3%82%A4%E3%83%B3%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%86%E6%9E%90%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n8eb02de152f7",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/327220676/square_large_d8c01bbfd9adce62396321688adc9a7e.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n8eb02de152f7",
+        "imageCount": 10,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 186907016,
+        "type": "TextNote",
+        "status": "published",
+        "name": "エンジニアの冬服、ジャケットなしで客先に行けるビジカジコーデ",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "nf89994704afc",
+        "slug": "slug-nf89994704afc",
+        "publishAt": "2026-10-22T15:45:00+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/327941751/rectangle_large_type_2_24d6caacd921ef28956be92796fe2203.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n結論から書きます。ジャケットを着ない冬の日に客先で浮かないためには、ニット・コート・革靴の3点に役割を分けて持たせるのが一番手堅いです。\nジャケット1枚がやっていた仕事を、3点で分担するイメージです。\n\n僕が使っているのは、\nラコステのワッフルニットセーター、\nザ・ノース・フェイスのロールパックジャーニーズコート、\nリーガルの2504です。\n3点の合計は約¥74,800。\n全部を一度に揃える必要はなく、最初に買うなら革靴です。理由は後半に書きます。\n\nこの記事が向くのは、次",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#メンズファッション"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#40代ファッション"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#冬コーデ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ビジネスカジュアル"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ビジカジ"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/nf89994704afc&text=%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E5%86%AC%E6%9C%8D%E3%80%81%E3%82%B8%E3%83%A3%E3%82%B1%E3%83%83%E3%83%88%E3%81%AA%E3%81%97%E3%81%A7%E5%AE%A2%E5%85%88%E3%81%AB%E8%A1%8C%E3%81%91%E3%82%8B%E3%83%93%E3%82%B8%E3%82%AB%E3%82%B8%E3%82%B3%E3%83%BC%E3%83%87%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/nf89994704afc&t=%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E5%86%AC%E6%9C%8D%E3%80%81%E3%82%B8%E3%83%A3%E3%82%B1%E3%83%83%E3%83%88%E3%81%AA%E3%81%97%E3%81%A7%E5%AE%A2%E5%85%88%E3%81%AB%E8%A1%8C%E3%81%91%E3%82%8B%E3%83%93%E3%82%B8%E3%82%AB%E3%82%B8%E3%82%B3%E3%83%BC%E3%83%87%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E5%86%AC%E6%9C%8D%E3%80%81%E3%82%B8%E3%83%A3%E3%82%B1%E3%83%83%E3%83%88%E3%81%AA%E3%81%97%E3%81%A7%E5%AE%A2%E5%85%88%E3%81%AB%E8%A1%8C%E3%81%91%E3%82%8B%E3%83%93%E3%82%B8%E3%82%AB%E3%82%B8%E3%82%B3%E3%83%BC%E3%83%87%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/nf89994704afc",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/327941751/square_large_24d6caacd921ef28956be92796fe2203.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/nf89994704afc",
+        "imageCount": 6,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 186902125,
+        "type": "TextNote",
+        "status": "published",
+        "name": "「php2shell」とは？ワードプレス運営者が今すぐやるべきこと",
+        "description": null,
+        "likeCount": 8,
+        "price": 0,
+        "key": "na8d8228c3d12",
+        "slug": "slug-na8d8228c3d12",
+        "publishAt": "2026-10-22T14:39:45+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/327153681/rectangle_large_type_2_12ae7982a030819ede7ad1f998057a3b.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "結論から書きます。WordPressを使っているなら、PHPを修正版（8.5.12／8.4.27／8.3.36／8.2.35）に今すぐ上げてください。 WordPress本体やプラグインの更新では直りません。\n\n2026年10月21日、IPA（情報処理推進機構）がPHPの重大な脆弱性について「事前準備のお願い」という異例の注意喚起を出しました。\n同じ日の夜、PHP開発チームが修正版を公開。\n国内でもコドモン、BASE、Cygamesのゲームなどがサービスを一時停止し、エックス",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#セキュリティ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サイバーセキュリティ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#wordpress"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#攻撃"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ハッキング"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/na8d8228c3d12&text=%E3%80%8Cphp2shell%E3%80%8D%E3%81%A8%E3%81%AF%EF%BC%9F%E3%83%AF%E3%83%BC%E3%83%89%E3%83%97%E3%83%AC%E3%82%B9%E9%81%8B%E5%96%B6%E8%80%85%E3%81%8C%E4%BB%8A%E3%81%99%E3%81%90%E3%82%84%E3%82%8B%E3%81%B9%E3%81%8D%E3%81%93%E3%81%A8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/na8d8228c3d12&t=%E3%80%8Cphp2shell%E3%80%8D%E3%81%A8%E3%81%AF%EF%BC%9F%E3%83%AF%E3%83%BC%E3%83%89%E3%83%97%E3%83%AC%E3%82%B9%E9%81%8B%E5%96%B6%E8%80%85%E3%81%8C%E4%BB%8A%E3%81%99%E3%81%90%E3%82%84%E3%82%8B%E3%81%B9%E3%81%8D%E3%81%93%E3%81%A8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%80%8Cphp2shell%E3%80%8D%E3%81%A8%E3%81%AF%EF%BC%9F%E3%83%AF%E3%83%BC%E3%83%89%E3%83%97%E3%83%AC%E3%82%B9%E9%81%8B%E5%96%B6%E8%80%85%E3%81%8C%E4%BB%8A%E3%81%99%E3%81%90%E3%82%84%E3%82%8B%E3%81%B9%E3%81%8D%E3%81%93%E3%81%A8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/na8d8228c3d12",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/327153681/square_large_12ae7982a030819ede7ad1f998057a3b.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/na8d8228c3d12",
+        "imageCount": 4,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 186691388,
+        "type": "TextNote",
+        "status": "published",
+        "name": "サイバー攻撃多発の「Xデー」は9月10日だった？ これから起きることを予想します",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n6a34414199be",
+        "slug": "slug-n6a34414199be",
+        "publishAt": "2026-10-21T10:34:13+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/326728575/rectangle_large_type_2_e930d5f3d4898e3f2cd7523efb6f8915.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\nなぜ、この秋に一斉に漏れたのか2026年9月末から、タイムズカー、焼肉きんぐ、ソースネクスト、バーガーキングと、身近なサービスの情報漏えいが立て続けに公表されました。\nトレンドマイクロの集計では、国内の企業や自治体が今年公表した不正アクセスなどの被害は9月末までに600件。\nすでに前年1年分を超えています。\n\nこの疑問を出発点に、国内外の報道やセキュリティ企業の調査を日付順に並べてみました。\nすると、ある1日の前後に出来事が不自然なほど集中していることに気づきます。\n\n20",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#生成AI"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#AIエージェント"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サイバーセキュリティ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#deepseek"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サイバー攻撃"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#情報漏洩"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n6a34414199be&text=%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83%E5%A4%9A%E7%99%BA%E3%81%AE%E3%80%8CX%E3%83%87%E3%83%BC%E3%80%8D%E3%81%AF9%E6%9C%8810%E6%97%A5%E3%81%A0%E3%81%A3%E3%81%9F%EF%BC%9F+%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E8%B5%B7%E3%81%8D%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E4%BA%88%E6%83%B3%E3%81%97%E3%81%BE%E3%81%99%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n6a34414199be&t=%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83%E5%A4%9A%E7%99%BA%E3%81%AE%E3%80%8CX%E3%83%87%E3%83%BC%E3%80%8D%E3%81%AF9%E6%9C%8810%E6%97%A5%E3%81%A0%E3%81%A3%E3%81%9F%EF%BC%9F+%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E8%B5%B7%E3%81%8D%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E4%BA%88%E6%83%B3%E3%81%97%E3%81%BE%E3%81%99%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83%E5%A4%9A%E7%99%BA%E3%81%AE%E3%80%8CX%E3%83%87%E3%83%BC%E3%80%8D%E3%81%AF9%E6%9C%8810%E6%97%A5%E3%81%A0%E3%81%A3%E3%81%9F%EF%BC%9F+%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E8%B5%B7%E3%81%8D%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E4%BA%88%E6%83%B3%E3%81%97%E3%81%BE%E3%81%99%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n6a34414199be",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/326728575/square_large_e930d5f3d4898e3f2cd7523efb6f8915.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n6a34414199be",
+        "imageCount": 3,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      }
+    ],
+    "isLastPage": false,
+    "totalCount": 237
+  }
+}

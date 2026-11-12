@@ -239,6 +239,10 @@ const SENSITIVE_TOKEN_SEQUENCES: string[][] = [
  * 実レスポンスのキー名は未確認のため、ここは推測を含む。除去結果は manifest で人が確認する。
  */
 const OTHER_USER_COLLECTIONS = new Set([
+  // 実レスポンス（2026-11-12 取得）で確認したキー。この時点では空配列だった
+  'likes',
+  'content_raters',
+  // 以下は未確認（推測）
   'likers',
   'like_users',
   'liked_users',

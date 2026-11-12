@@ -118,13 +118,13 @@ describe('isSensitiveKey', () => {
   });
 
   it('機微なキーを検出する', () => {
-    for (const key of ['email', 'userEmail', 'mail_address', 'phone', 'csrfToken', 'session_id', 'ipAddress', 'realName', 'likers', 'comments', 'accessKey']) {
+    for (const key of ['email', 'userEmail', 'mail_address', 'phone', 'csrfToken', 'session_id', 'ipAddress', 'realName', 'likers', 'comments', 'accessKey', 'likes', 'content_raters', 'contentRaters']) {
       assert.equal(isSensitiveKey(key), true, key);
     }
   });
 
   it('記事表示に必要そうなキーは残す', () => {
-    for (const key of ['author', 'name', 'nickname', 'urlname', 'body', 'key', 'price', 'commentCount', 'likeCount', 'eyecatch', 'publishAt', 'hashtags', 'description']) {
+    for (const key of ['author', 'name', 'nickname', 'urlname', 'body', 'key', 'price', 'commentCount', 'likeCount', 'like_count', 'anonymousLikeCount', 'rater_count', 'eyecatch', 'publishAt', 'hashtags', 'description']) {
       assert.equal(isSensitiveKey(key), false, key);
     }
   });

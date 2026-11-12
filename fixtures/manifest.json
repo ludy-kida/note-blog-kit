@@ -1,0 +1,123 @@
+{
+  "recordedAt": "2026-11-12T03:58:56.817Z",
+  "user": "kida_lw",
+  "config": {
+    "maxPages": 3,
+    "noteKeys": [
+      "n55256baa5425",
+      "n52a7f4fa0a2e"
+    ],
+    "minIntervalMs": 1000
+  },
+  "entries": [
+    {
+      "kind": "contents",
+      "url": "https://note.com/api/v2/creators/kida_lw/contents?kind=note&page=1",
+      "file": "contents/page-1.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 417,
+      "removedKeys": [
+        "$.data.contents[0].user.emailConfirmedFlag",
+        "$.data.contents[1].user.emailConfirmedFlag",
+        "$.data.contents[2].user.emailConfirmedFlag",
+        "$.data.contents[3].user.emailConfirmedFlag",
+        "$.data.contents[4].user.emailConfirmedFlag",
+        "$.data.contents[5].user.emailConfirmedFlag"
+      ],
+      "redactedPaths": []
+    },
+    {
+      "kind": "contents",
+      "url": "https://note.com/api/v2/creators/kida_lw/contents?kind=note&page=2",
+      "file": "contents/page-2.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 215,
+      "removedKeys": [
+        "$.data.contents[0].user.emailConfirmedFlag",
+        "$.data.contents[1].user.emailConfirmedFlag",
+        "$.data.contents[2].user.emailConfirmedFlag",
+        "$.data.contents[3].user.emailConfirmedFlag",
+        "$.data.contents[4].user.emailConfirmedFlag",
+        "$.data.contents[5].user.emailConfirmedFlag"
+      ],
+      "redactedPaths": []
+    },
+    {
+      "kind": "contents",
+      "url": "https://note.com/api/v2/creators/kida_lw/contents?kind=note&page=3",
+      "file": "contents/page-3.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 207,
+      "removedKeys": [
+        "$.data.contents[0].user.emailConfirmedFlag",
+        "$.data.contents[1].user.emailConfirmedFlag",
+        "$.data.contents[2].user.emailConfirmedFlag",
+        "$.data.contents[3].user.emailConfirmedFlag",
+        "$.data.contents[4].user.emailConfirmedFlag",
+        "$.data.contents[5].user.emailConfirmedFlag"
+      ],
+      "redactedPaths": []
+    },
+    {
+      "kind": "note",
+      "url": "https://note.com/api/v3/notes/n55256baa5425",
+      "file": "notes/n55256baa5425.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 331,
+      "removedKeys": [
+        "$.data.user.email_confirmed_flag"
+      ],
+      "redactedPaths": [
+        "$.data.user.profile"
+      ]
+    },
+    {
+      "kind": "note",
+      "url": "https://note.com/api/v3/notes/n52a7f4fa0a2e",
+      "file": "notes/n52a7f4fa0a2e.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 495,
+      "removedKeys": [
+        "$.data.user.email_confirmed_flag"
+      ],
+      "redactedPaths": [
+        "$.data.user.profile"
+      ]
+    },
+    {
+      "kind": "rss",
+      "url": "https://note.com/kida_lw/rss",
+      "file": "rss/feed.xml",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/xml; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 232,
+      "removedKeys": [],
+      "redactedPaths": [
+        "(rss: 1件)"
+      ]
+    }
+  ]
+}
