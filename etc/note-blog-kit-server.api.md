@@ -5,7 +5,10 @@
 ```ts
 
 // @public
-export function isNoteError(value: unknown): value is NoteError;
+export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError | NoteTimeoutError | NoteSchemaError;
+
+// @public
+export function isNoteError(value: unknown): value is AnyNoteError;
 
 // @public
 export function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage>;
@@ -94,9 +97,8 @@ export class NoteError extends Error {
 // @public
 export type NoteErrorCode = 'NOTE_NOT_FOUND' | 'NOTE_HTTP_ERROR' | 'NOTE_NETWORK_ERROR' | 'NOTE_TIMEOUT' | 'NOTE_SCHEMA_ERROR';
 
-// @public (undocumented)
+// @public
 export interface NoteErrorOptions {
-    // (undocumented)
     cause?: unknown;
 }
 
@@ -119,10 +121,11 @@ export class NoteHttpError extends NoteError {
         url: string;
     });
     // (undocumented)
+    readonly code: "NOTE_HTTP_ERROR";
+    // (undocumented)
     name: string;
     // (undocumented)
     readonly status: number;
-    // (undocumented)
     readonly url: string;
 }
 
@@ -130,14 +133,21 @@ export class NoteHttpError extends NoteError {
 export class NoteNetworkError extends NoteError {
     constructor(message: string, options?: NoteErrorOptions);
     // (undocumented)
+    readonly code: "NOTE_NETWORK_ERROR";
+    // (undocumented)
     name: string;
 }
 
 // @public
 export class NoteNotFoundError extends NoteError {
-    constructor(message: string, options?: NoteErrorOptions);
+    constructor(message: string, options: NoteErrorOptions & {
+        url: string;
+    });
+    // (undocumented)
+    readonly code: "NOTE_NOT_FOUND";
     // (undocumented)
     name: string;
+    readonly url: string;
 }
 
 // @public
@@ -145,6 +155,8 @@ export class NoteSchemaError extends NoteError {
     constructor(message: string, options: NoteErrorOptions & {
         issues: readonly NoteSchemaIssue[];
     });
+    // (undocumented)
+    readonly code: "NOTE_SCHEMA_ERROR";
     // (undocumented)
     readonly issues: readonly NoteSchemaIssue[];
     // (undocumented)
@@ -164,6 +176,8 @@ export type NoteSource = 'api' | 'rss';
 // @public
 export class NoteTimeoutError extends NoteError {
     constructor(message: string, options?: NoteErrorOptions);
+    // (undocumented)
+    readonly code: "NOTE_TIMEOUT";
     // (undocumented)
     name: string;
 }

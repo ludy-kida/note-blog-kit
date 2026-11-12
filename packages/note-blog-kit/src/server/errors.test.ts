@@ -12,7 +12,7 @@ import {
 describe('errors', () => {
   it('各エラーは NoteError を継承し、固定の name と code を持つ', () => {
     const cases = [
-      [new NoteNotFoundError('not found'), 'NoteNotFoundError', 'NOTE_NOT_FOUND'],
+      [new NoteNotFoundError('not found', { url: 'https://note.com/x' }), 'NoteNotFoundError', 'NOTE_NOT_FOUND'],
       [new NoteHttpError('bad', { status: 500, url: 'https://note.com/x' }), 'NoteHttpError', 'NOTE_HTTP_ERROR'],
       [new NoteNetworkError('net'), 'NoteNetworkError', 'NOTE_NETWORK_ERROR'],
       [new NoteTimeoutError('timeout'), 'NoteTimeoutError', 'NOTE_TIMEOUT'],
@@ -25,6 +25,10 @@ describe('errors', () => {
       expect(error.code).toBe(code);
       expect(isNoteError(error)).toBe(true);
     }
+  });
+
+  it('NoteNotFoundError は url を持つ', () => {
+    expect(new NoteNotFoundError('not found', { url: 'https://note.com/x' }).url).toBe('https://note.com/x');
   });
 
   it('NoteHttpError は status と url を持つ', () => {
@@ -51,6 +55,8 @@ describe('errors', () => {
     expect(isNoteError(Object.assign(new Error('x'), { code: 'ENOTFOUND' }))).toBe(false);
     expect(isNoteError(new Error('x'))).toBe(false);
     expect(isNoteError({ code: 'NOTE_TIMEOUT' })).toBe(false);
+    // 別の realm（vm など）由来で Error を継承していなくても、name・message・code があれば判定できる
+    expect(isNoteError({ name: 'NoteTimeoutError', message: 'x', code: 'NOTE_TIMEOUT' })).toBe(true);
     expect(isNoteError('NOTE_TIMEOUT')).toBe(false);
     expect(isNoteError(null)).toBe(false);
   });

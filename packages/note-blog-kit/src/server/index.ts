@@ -16,6 +16,7 @@ export type {
   NoteTocItem,
 } from '../core/types.js';
 export {
+  type AnyNoteError,
   isNoteError,
   NoteError,
   type NoteErrorCode,

@@ -133,12 +133,65 @@ describe('listArticles', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it('タイムアウトの既定値は 10 秒', async () => {
+    vi.useFakeTimers();
+    const fetch = vi.fn(
+      (...[, init]: FetchArgs) =>
+        new Promise<Response>((_, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason));
+        }),
+    );
+    const settled = vi.fn();
+    const promise = listArticles({ ...base, fetch }).catch((e: unknown) => {
+      settled(e);
+      return e;
+    });
+    await vi.advanceTimersByTimeAsync(9_999);
+    expect(settled).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(await promise).toBeInstanceOf(NoteTimeoutError);
+  });
+
+  it('リダイレクトされた応答は NoteNetworkError（差し替えた fetch が redirect を守らない場合）', async () => {
+    const fetch = mockFetch(() => {
+      const response = new Response(fixture(1));
+      Object.defineProperty(response, 'redirected', { value: true });
+      return response;
+    });
+    await expect(listArticles({ ...base, fetch })).rejects.toBeInstanceOf(NoteNetworkError);
+  });
+
+  it('timeoutMs・minIntervalMs が範囲外なら TypeError', async () => {
+    const fetch = mockFetch();
+    for (const options of [
+      { timeoutMs: 0 },
+      { timeoutMs: -1 },
+      { timeoutMs: Number.NaN },
+      { timeoutMs: Number.POSITIVE_INFINITY },
+      { minIntervalMs: -1 },
+      { minIntervalMs: Number.NaN },
+      { minIntervalMs: 2 ** 31 },
+    ]) {
+      await expect(listArticles({ minIntervalMs: 0, ...options, user: 'kida_lw', fetch })).rejects.toBeInstanceOf(
+        TypeError,
+      );
+    }
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('文字列でない user は TypeError（文字列への変換で値が変わるオブジェクトを拒否する）', async () => {
+    const fetch = mockFetch();
+    const tricky = { toString: () => 'kida_lw' } as unknown as string;
+    await expect(listArticles({ ...base, user: tricky, fetch })).rejects.toBeInstanceOf(TypeError);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it('同じプロセス内の連続リクエストは既定で 1 秒空ける', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(10_000);
-    vi.resetModules();
-    // モジュール単位の状態をリセットするため読み込み直す
-    const { listArticles: freshListArticles } = await import('./list-articles.js');
+    // 既定の制限は globalThis で共有されるため、前のテストの送信時刻を消してから始める
+    delete (globalThis as Record<symbol, unknown>)[Symbol.for('note-blog-kit.throttle')];
+    const freshListArticles = listArticles;
     const sentAt: number[] = [];
     const fetch = mockFetch(() => {
       sentAt.push(Date.now());
