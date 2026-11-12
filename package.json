@@ -1,0 +1,14 @@
+{
+  "name": "note-blog-kit-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "test": "node --test \"scripts/**/*.test.ts\" \".claude/hooks/*.test.mjs\"",
+    "fixtures:plan": "node scripts/record-fixtures.ts --dry-run",
+    "fixtures:record": "node scripts/record-fixtures.ts"
+  }
+}

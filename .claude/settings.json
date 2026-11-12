@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "WebFetch(domain:note.com)",
+      "WebFetch(domain:www.note.com)",
+      "WebFetch(domain:note.mu)",
+      "WebFetch(domain:assets.st-note.com)",
+      "Bash(curl *note.com*)",
+      "Bash(wget *note.com*)",
+      "Bash(curl *note.mu*)",
+      "Bash(wget *note.mu*)",
+      "Bash(node scripts/record-fixtures.ts)",
+      "Bash(node scripts/record-fixtures.ts --user *)",
+      "Bash(pnpm fixtures:record*)",
+      "Bash(pnpm run fixtures:record*)",
+      "Bash(npm publish*)",
+      "Bash(pnpm publish*)",
+      "Bash(yarn publish*)",
+      "Bash(pnpm changeset publish*)",
+      "Bash(npx changeset publish*)",
+      "Bash(pnpm exec changeset publish*)",
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git push -f *)",
+      "Bash(git push * -f)",
+      "Bash(git push * -f *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-note-access.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
