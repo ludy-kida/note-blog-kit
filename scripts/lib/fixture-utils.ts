@@ -186,15 +186,11 @@ export function shouldFetchNextPage(json: unknown): boolean {
  * 無料記事（price が正でない）と有料記事（price が正）を1件ずつ。見つからなければその分は省く。
  */
 export function pickNoteKeys(json: unknown): string[] {
-  const items = contentsItems(json).filter(
-    (item) => typeof item.key === 'string' && NOTE_KEY_RE.test(item.key),
-  );
+  const items = contentsItems(json).filter((item) => typeof item.key === 'string' && NOTE_KEY_RE.test(item.key));
   const isPaid = (item: Record<string, unknown>) => typeof item.price === 'number' && item.price > 0;
   const free = items.find((item) => !isPaid(item));
   const paid = items.find(isPaid);
-  return [free, paid]
-    .filter((item) => item !== undefined)
-    .map((item) => item.key as string);
+  return [free, paid].filter((item) => item !== undefined).map((item) => item.key as string);
 }
 
 // ---------------------------------------------------------------------------

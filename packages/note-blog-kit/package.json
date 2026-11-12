@@ -1,0 +1,88 @@
+{
+  "name": "note-blog-kit",
+  "version": "0.0.0",
+  "description": "Show your own note articles as a blog on React / Next.js sites (unofficial)",
+  "license": "MIT",
+  "author": "ludy-kida",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ludy-kida/note-blog-kit.git",
+    "directory": "packages/note-blog-kit"
+  },
+  "keywords": [
+    "note",
+    "blog",
+    "react",
+    "nextjs",
+    "rss"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "note-blog-kit": "./dist/cli/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./server": {
+      "import": {
+        "types": "./dist/server/index.d.ts",
+        "default": "./dist/server/index.js"
+      },
+      "require": {
+        "types": "./dist/server/index.d.cts",
+        "default": "./dist/server/index.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.js"
+      },
+      "require": {
+        "types": "./dist/react/index.d.cts",
+        "default": "./dist/react/index.cjs"
+      }
+    },
+    "./next": {
+      "import": {
+        "types": "./dist/next/index.d.ts",
+        "default": "./dist/next/index.js"
+      },
+      "require": {
+        "types": "./dist/next/index.d.cts",
+        "default": "./dist/next/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "api": "node ../../scripts/run-api-extractor.mjs",
+    "api:check": "node ../../scripts/run-api-extractor.mjs --check",
+    "check:dist": "publint --strict && attw --pack . --profile node16",
+    "size": "size-limit"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

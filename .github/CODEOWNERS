@@ -1,0 +1,27 @@
+# 人の承認が必須のファイル（ブランチ保護で「Require review from Code Owners」を有効にすること）
+
+# エージェントの設定・ルール
+/CLAUDE.md                     @ludy-kida
+/.claude/                      @ludy-kida
+
+# CI・リリース
+/.github/                      @ludy-kida
+/.changeset/config.json        @ludy-kida
+
+# 公開 API レポート
+/etc/                          @ludy-kida
+
+# サニタイズの実装とテスト（Phase 3 で追加）
+/packages/note-blog-kit/src/server/sanitize*  @ludy-kida
+
+# note.com へアクセスする唯一の入口と実レスポンス
+/scripts/record-fixtures.ts    @ludy-kida
+/scripts/lib/fixture-utils.ts  @ludy-kida
+/fixtures/                     @ludy-kida
+
+# 依存・カバレッジ下限・サイズ上限
+/package.json                  @ludy-kida
+/packages/note-blog-kit/package.json  @ludy-kida
+/pnpm-lock.yaml                @ludy-kida
+/vitest.config.ts              @ludy-kida
+/packages/note-blog-kit/.size-limit.json  @ludy-kida

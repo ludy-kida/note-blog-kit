@@ -16,21 +16,21 @@ import { dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 import {
+  assertNoteUrl,
   ConfigError,
+  contentsRequest,
   MAX_NOTES_LIMIT,
   MIN_INTERVAL_MS,
-  type PlannedRequest,
-  type RecordConfig,
-  USAGE,
-  assertNoteUrl,
-  contentsRequest,
   noteRequest,
+  type PlannedRequest,
   parseConfig,
   pickNoteKeys,
+  type RecordConfig,
   redactEmails,
   rssRequest,
   shouldFetchNextPage,
   stripSensitive,
+  USAGE,
   waitBeforeNext,
 } from './lib/fixture-utils.ts';
 
@@ -180,7 +180,9 @@ function describePlan(config: RecordConfig): string[] {
   if (config.noteKeys.length > 0) {
     for (const key of config.noteKeys) lines.push(`  GET ${noteRequest(key).url}`);
   } else {
-    lines.push(`  GET ${noteRequest('KEY').url.replace(/KEY$/, '<key>')}  （1ページ目から無料・有料を各1件まで自動選択）`);
+    lines.push(
+      `  GET ${noteRequest('KEY').url.replace(/KEY$/, '<key>')}  （1ページ目から無料・有料を各1件まで自動選択）`,
+    );
   }
   lines.push(`  GET ${rssRequest(config.user).url}`);
   const max = config.maxPages + (config.noteKeys.length > 0 ? config.noteKeys.length : 2) + 1;

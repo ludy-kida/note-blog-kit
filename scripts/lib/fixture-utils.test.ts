@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import {
-  ConfigError,
-  DEFAULT_MAX_PAGES,
-  MAX_PAGES_LIMIT,
-  REDACTED_EMAIL,
   assertNoteUrl,
+  ConfigError,
   contentsRequest,
+  DEFAULT_MAX_PAGES,
   isSensitiveKey,
   keyTokens,
+  MAX_PAGES_LIMIT,
   noteRequest,
   parseConfig,
   pickNoteKeys,
+  REDACTED_EMAIL,
   rssRequest,
   shouldFetchNextPage,
   stripSensitive,
@@ -96,7 +96,12 @@ describe('pickNoteKeys', () => {
   it('無料と有料を1件ずつ選ぶ', () => {
     const json = {
       data: {
-        contents: [{ key: 'nfree1', price: 0 }, { key: 'nfree2' }, { key: 'npaid1', price: 300 }, { key: 'npaid2', price: 500 }],
+        contents: [
+          { key: 'nfree1', price: 0 },
+          { key: 'nfree2' },
+          { key: 'npaid1', price: 300 },
+          { key: 'npaid2', price: 500 },
+        ],
       },
     };
     assert.deepEqual(pickNoteKeys(json), ['nfree1', 'npaid1']);
@@ -118,13 +123,45 @@ describe('isSensitiveKey', () => {
   });
 
   it('機微なキーを検出する', () => {
-    for (const key of ['email', 'userEmail', 'mail_address', 'phone', 'csrfToken', 'session_id', 'ipAddress', 'realName', 'likers', 'comments', 'accessKey', 'likes', 'content_raters', 'contentRaters']) {
+    for (const key of [
+      'email',
+      'userEmail',
+      'mail_address',
+      'phone',
+      'csrfToken',
+      'session_id',
+      'ipAddress',
+      'realName',
+      'likers',
+      'comments',
+      'accessKey',
+      'likes',
+      'content_raters',
+      'contentRaters',
+    ]) {
       assert.equal(isSensitiveKey(key), true, key);
     }
   });
 
   it('記事表示に必要そうなキーは残す', () => {
-    for (const key of ['author', 'name', 'nickname', 'urlname', 'body', 'key', 'price', 'commentCount', 'likeCount', 'like_count', 'anonymousLikeCount', 'rater_count', 'eyecatch', 'publishAt', 'hashtags', 'description']) {
+    for (const key of [
+      'author',
+      'name',
+      'nickname',
+      'urlname',
+      'body',
+      'key',
+      'price',
+      'commentCount',
+      'likeCount',
+      'like_count',
+      'anonymousLikeCount',
+      'rater_count',
+      'eyecatch',
+      'publishAt',
+      'hashtags',
+      'description',
+    ]) {
       assert.equal(isSensitiveKey(key), false, key);
     }
   });

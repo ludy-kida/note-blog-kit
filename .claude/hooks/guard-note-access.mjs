@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const NOTE_DOMAIN = String.raw`(?:[a-z0-9-]+\.)*(?:note\.com|note\.mu|st-note\.com)`;
 const NOTE_URL_RE = new RegExp(String.raw`\b(?:https?|wss?)://${NOTE_DOMAIN}(?![a-z0-9.-])`, 'i');
-const NOTE_DOMAIN_RE = new RegExp(String.raw`(?<![a-z0-9.-])${NOTE_DOMAIN}(?![a-z0-9.-])`, 'i');
+const NOTE_DOMAIN_RE = new RegExp(`(?<![a-z0-9.-])${NOTE_DOMAIN}(?![a-z0-9.-])`, 'i');
 const NETWORK_TOOL_RE =
   /(?<![\w./-])(?:curl|wget|http|https|httpie|xh|aria2c|nc|ncat|telnet|openssl|lynx|w3m|links)(?![\w:-])|\bfetch\s*\(|\bhttps?\.(?:get|request)\s*\(|\brequests\.(?:get|post|head|request)\b|\burllib\b|\bInvoke-WebRequest\b/i;
 const RECORD_SCRIPT_RE = /record-fixtures|fixtures:record/i;

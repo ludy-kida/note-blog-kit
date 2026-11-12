@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 初版ドラフト（Phase 0）。人が内容を確認・修正して確定させる。Phase 1 で開発基盤ができたらコマンド欄を更新する。
+> 初版ドラフト。人が内容を確認・修正して確定させる。
 
 ## 目的
 
@@ -44,12 +44,18 @@
 
 ## よく使うコマンド
 
-現時点（Phase 0）：
-
-- `pnpm test` — scripts と hooks のテスト（`node:test`）
+- `pnpm check` — lint・型・テスト（カバレッジ）・ビルド・サイズ・API レポート・配布物をまとめて確認（完了前に必ず通す）
+- `pnpm lint` / `pnpm format` — Biome（`format` は自動修正）
+- `pnpm typecheck` — tsc（scripts とライブラリ）
+- `pnpm test` / `pnpm test:coverage` — Vitest（型のテスト `*.test-d.ts` を含む。core のカバレッジ下限 80%）
+- `pnpm build` — tsup（ESM・CJS・型定義）
+- `pnpm size` — size-limit（`/react` は gzip 10KB 以下）
+- `pnpm api` — 公開 API レポート（`etc/*.api.md`）を更新。CI は `pnpm api:check` で差分を検出する
+- `pnpm check:dist` — publint・arethetypeswrong
 - `pnpm fixtures:plan --user <name>` — fixture 取得の送信予定を表示（通信しない）
 
-Phase 1 以降に追加予定：`pnpm lint`（Biome）、`pnpm typecheck`、`pnpm test`（Vitest）、`pnpm size`（size-limit）、`pnpm api`（api-extractor）、`pnpm build`（tsup）
+hooks：編集のたびに Biome と型チェック（PostToolUse）、終了前に関連テスト（Stop）、note.com へのアクセスをブロック（PreToolUse）。
+スキル：`implement-issue`、`fix-api-change`、`prepare-release`。サブエージェント：`security-reviewer`、`api-reviewer`。
 
 ## 完了の定義
 

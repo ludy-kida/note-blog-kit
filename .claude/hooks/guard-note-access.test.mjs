@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import { check } from './guard-note-access.mjs';
 
 const bash = (command) => check({ tool_name: 'Bash', tool_input: { command } });
