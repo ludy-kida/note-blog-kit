@@ -1,0 +1,671 @@
+{
+  "data": {
+    "id": 138593202,
+    "user_id": 7228382,
+    "status": "published",
+    "type": "TextNote",
+    "key": "n52a7f4fa0a2e",
+    "slug": "slug-n52a7f4fa0a2e",
+    "name": "note分析の決定版｜公式アナリティクスを超えた「自作ダッシュボード」でSEO順位とPVを自動計測する方法",
+    "body": "<table-of-contents name=\"9592a504-561f-49b1-8679-805590bc1e37\" id=\"9592a504-561f-49b1-8679-805590bc1e37\"><br></table-of-contents>",
+    "separator": "9592a504-561f-49b1-8679-805590bc1e37",
+    "description": "",
+    "index": [
+      {
+        "body": "SEOを制するものはnoteを制する",
+        "name": "84c8a2ce-be47-4981-b495-27256d2cd768",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "SEOを制するものはnoteを制する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "「池」で釣るか、「大海原」で釣るか",
+        "name": "86fe4294-5e9c-4a4b-895f-cec1fcf170f6",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "「池」で釣るか、「大海原」で釣るか"
+            }
+          ]
+        }
+      },
+      {
+        "body": "「noteを育てる」＝「SEO資産を築く」こと",
+        "name": "03455d39-c569-44fc-ae7e-a31e8b3d8463",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "「noteを育てる」＝「SEO資産を築く」こと"
+            }
+          ]
+        }
+      },
+      {
+        "body": "分析にかける時間は「ゼロ」にできる",
+        "name": "a5e2072d-b333-4080-bab8-ecfb113965ea",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "分析にかける時間は「ゼロ」にできる"
+            }
+          ]
+        }
+      },
+      {
+        "body": "完成見本",
+        "name": "0f0ad35f-f79e-41b1-8ec1-a448d22ae070",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "完成見本"
+            }
+          ]
+        }
+      },
+      {
+        "body": "システムの全体設計図",
+        "name": "20a71965-65f2-4b9f-838c-1bace19d5555",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "システムの全体設計図"
+            }
+          ]
+        }
+      },
+      {
+        "body": "作ってみよう",
+        "name": "39019b0c-1b7c-4bd4-99c4-f313fc33c43a",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "作ってみよう"
+            }
+          ]
+        }
+      },
+      {
+        "body": "noteIDの確認",
+        "name": "f2292f31-19ca-4d11-97ef-0d6c89e7bcf5",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "noteIDの確認"
+            }
+          ]
+        }
+      },
+      {
+        "body": "スプレッドシートの作成",
+        "name": "133f97ee-e79b-437b-b5f4-bb23af6acd70",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "スプレッドシートの作成"
+            }
+          ]
+        }
+      },
+      {
+        "body": "シートの準備",
+        "name": "13dc7a77-cfad-492b-92e6-c52fad6ee085",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "シートの準備"
+            }
+          ]
+        }
+      },
+      {
+        "body": "GASの準備",
+        "name": "419613ca-2bcd-4243-a3a4-06839bb7928f",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "GASの準備"
+            }
+          ]
+        }
+      },
+      {
+        "body": "note記事一覧を自動取得する",
+        "name": "c9ae8722-2eb8-46af-a863-d950cdd41ab4",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "note記事一覧を自動取得する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "データの取得先",
+        "name": "298581dd-07ac-48fb-9b70-661c1bf1e113",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "データの取得先"
+            }
+          ]
+        }
+      },
+      {
+        "body": "コードの作成",
+        "name": "9b6be127-9343-4bdf-8bde-c071ad3032ab",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "コードの作成"
+            }
+          ]
+        }
+      },
+      {
+        "body": "うまくいかなかった場合",
+        "name": "f072f143-ade4-4d13-8653-99707ebd4ec6",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "うまくいかなかった場合"
+            }
+          ]
+        }
+      },
+      {
+        "body": "スプレッドシートから実行できるようにする",
+        "name": "448dac5a-4ca5-422b-b225-958937dd4b60",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "スプレッドシートから実行できるようにする"
+            }
+          ]
+        }
+      },
+      {
+        "body": "毎日のPVデータを自動取得する",
+        "name": "da0e5cfd-d78b-4967-b763-346ec349d04f",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "毎日のPVデータを自動取得する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "シートの準備",
+        "name": "f49af5a8-b43d-42ed-b0c7-55621908903c",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "シートの準備"
+            }
+          ]
+        }
+      },
+      {
+        "body": "コードの作成",
+        "name": "40e755ec-cf5c-4f56-97a6-e8ac8b88621f",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "コードの作成"
+            }
+          ]
+        }
+      },
+      {
+        "body": "データの取得先",
+        "name": "07c358b0-1488-46cb-b243-890aa7fc79ac",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "データの取得先"
+            }
+          ]
+        }
+      },
+      {
+        "body": "ちょっと休憩",
+        "name": "31c9f332-3765-4022-9f85-3c50494f93b6",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "ちょっと休憩"
+            }
+          ]
+        }
+      },
+      {
+        "body": "日別のデータをグラフ化する",
+        "name": "8ae549a0-4e67-4cf4-8e29-ee1f81d70a05",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "日別のデータをグラフ化する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "SEO順位を自動チェックする",
+        "name": "aaa3f7c3-224f-4bd0-a55b-414b0406c623",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "SEO順位を自動チェックする"
+            }
+          ]
+        }
+      },
+      {
+        "body": "シートの準備",
+        "name": "045114e4-ef89-4df8-aaa4-61c45596ef51",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "シートの準備"
+            }
+          ]
+        }
+      },
+      {
+        "body": "Google Cloud Platform (GCP) プロジェクト作成",
+        "name": "038710a2-8f7d-4aba-9b1e-81b1ea81578c",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "Google Cloud Platform (GCP) プロジェクト作成"
+            }
+          ]
+        }
+      },
+      {
+        "body": "Custom Search APIの有効化",
+        "name": "f9c443b6-5152-4db8-8f07-b93c67620b28",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "Custom Search APIの有効化"
+            }
+          ]
+        }
+      },
+      {
+        "body": "検索エンジンID (cx) の取得",
+        "name": "872863fe-2093-458c-b162-c4d953cf5f44",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "検索エンジンID (cx) の取得"
+            }
+          ]
+        }
+      },
+      {
+        "body": "コードの作成",
+        "name": "e5111d7e-1ef4-4e67-84ef-fdba734b4857",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "コードの作成"
+            }
+          ]
+        }
+      },
+      {
+        "body": "完成済みシート・レポートの配布",
+        "name": "00958b1c-6cbe-4ab0-b151-6baf4f80c411",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "完成済みシート・レポートの配布"
+            }
+          ]
+        }
+      },
+      {
+        "body": "スプレッドシート",
+        "name": "9eb72154-5b19-4e81-83e1-2233f0ba46e7",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "スプレッドシート"
+            }
+          ]
+        }
+      },
+      {
+        "body": "レポート",
+        "name": "fa265ffb-3ff2-4207-932a-c5dc7a832a8f",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "レポート"
+            }
+          ]
+        }
+      }
+    ],
+    "external_url": null,
+    "disable_comment": false,
+    "editable_scopes": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "non_editable_reason": null,
+    "capabilities": {
+      "amazonpay_campaign": true,
+      "amazonpay": true,
+      "guest_amazonpay": true,
+      "ruby_text": true,
+      "formula_text": true,
+      "duplication": true,
+      "note_comment": true
+    },
+    "created_at": "2025-12-18T14:10:10.000+09:00",
+    "comment_count": 0,
+    "user": {
+      "id": 7228382,
+      "key": "22dbcb41f66c9a19ec50306f865d31b4",
+      "urlname": "kida_lw",
+      "nickname": "木田貴之",
+      "active_flag": true,
+      "note_count": 237,
+      "created_at": "2023-02-28T13:02:31.000+09:00",
+      "user_profile_image_path": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+      "no_urlname_user": false,
+      "store_url": "",
+      "following_count": 7,
+      "follower_count": 83,
+      "profile": "小・中規模DXをサポートするLudyWorksで代表をしています。\nコツコツ投稿で年間10万PVを達成しました。\nお仕事の依頼はメールにお願いします。\n[redacted-email]\nnoteクリエイター向けChrome拡張機能「NoteBubble」無料公開中！",
+      "withdrawal": false,
+      "is_me": false,
+      "is_following": false,
+      "is_followed": false,
+      "is_admin": false,
+      "custom_domain": null,
+      "enable_serif": false,
+      "others_related_notes_enabled": true,
+      "is_creator_popular_sort_enabled": true,
+      "disable_support": null,
+      "twitter_nickname": null,
+      "socials": {},
+      "external_links": {
+        "InstagramLink": {
+          "url": "https://www.instagram.com/ludy_kida?xtok=bmM0cHk5cnI2ZXc="
+        }
+      },
+      "pro_user_id": null,
+      "purchase_appeal_text_note": null,
+      "purchase_appeal_text_magazine": null,
+      "purchase_appeal_text_support": null,
+      "follow_appeal_text": "フォローありがとうございます！",
+      "follow_appeal_image": "https://assets.st-note.com/production/uploads/images/237125547/51611c605359d4b21e3f3bb3e26dd704.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+      "like_appeal_text": "スキありがとうございます。",
+      "like_appeal_image": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+      "share_appeal": {
+        "text": null,
+        "image": null
+      },
+      "magazine_add_appeal": {
+        "text": "やったー！",
+        "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+      },
+      "blocks_you": false,
+      "is_blocked": false,
+      "disable_guest_purchase": false,
+      "support_box_appeal_text": null,
+      "custom_support_box": null
+    },
+    "audio": null,
+    "belonging_magazine_keys": [],
+    "can_comment": false,
+    "can_delete": false,
+    "can_member_edit": false,
+    "can_member_publish": false,
+    "can_member_read": false,
+    "can_member_write": false,
+    "can_multiple_limited_note": false,
+    "can_publish": false,
+    "can_read": false,
+    "can_sell_on_first_come_note": false,
+    "can_update": false,
+    "can_vote": true,
+    "categories": [],
+    "category": null,
+    "classify_categories": [
+      {
+        "id": 61
+      }
+    ],
+    "comment_viewable": true,
+    "custom_domain": null,
+    "embedded_contents": [],
+    "eyecatch": "https://assets.st-note.com/production/uploads/images/237441809/rectangle_large_type_2_54c0f8d4339a62d0178bad9a5f9deb71.png?fit=bounds&quality=85&width=1280",
+    "eyecatch_alt": "見出し画像",
+    "eyecatch_height": 670,
+    "eyecatch_width": 1280,
+    "format": "4.1",
+    "has_coupon": false,
+    "has_draft": false,
+    "hashtag_notes": [
+      {
+        "id": 1169292329,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#note"
+        }
+      },
+      {
+        "id": 1169292330,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#マーケティング"
+        }
+      },
+      {
+        "id": 1169292331,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#エンジニア"
+        }
+      },
+      {
+        "id": 1169292332,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#GAS"
+        }
+      },
+      {
+        "id": 1169292333,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#note運用"
+        }
+      },
+      {
+        "id": 1169292334,
+        "created_at": "2026-07-02T21:00:17.000+09:00",
+        "hashtag": {
+          "name": "#LookerStudio"
+        }
+      }
+    ],
+    "is_available": false,
+    "is_circle_description": false,
+    "is_draft": false,
+    "is_for_work": false,
+    "is_purchased_within_last_24_hours": false,
+    "is_liked": false,
+    "is_limited": false,
+    "is_magazine_purchased": false,
+    "is_member_edit": false,
+    "is_member_editing": false,
+    "is_my_note": false,
+    "is_pinned": true,
+    "is_profiled": false,
+    "is_published": true,
+    "is_purchased": false,
+    "is_r18": false,
+    "is_r18_confirmation_needed": false,
+    "is_refund": true,
+    "is_reserved": false,
+    "is_supported": false,
+    "is_temporary_frozen": false,
+    "is_trial": false,
+    "labels": [
+      {
+        "type": "note",
+        "name": "¥980",
+        "action": "open_note_purchase_modal",
+        "order": 1
+      }
+    ],
+    "like_count": 19,
+    "anonymous_like_count": 5,
+    "magazines_for_buy": [],
+    "magazines_for_subscribe": [],
+    "member_edit_locked_at": null,
+    "note_share_url": "https://note.com/intent/post?url=https://note.com/kida_lw/n/n52a7f4fa0a2e",
+    "related_contests": [],
+    "paywall": {
+      "is_simple_paid_note": true,
+      "is_simple_paid_note_test_a": false,
+      "same_month_cnt": 0,
+      "context": {
+        "is_show_limited_pay_note_paywall": false,
+        "is_membership_connected": false
+      }
+    },
+    "pictures": [],
+    "pinned_user_note_id": 755247,
+    "price": 980,
+    "prior_sale": null,
+    "publish_at": "2025-12-19T19:07:21.000+09:00",
+    "reading_uuid": "811f81a4-4f5a-4383-90a7-10524c1fb87f",
+    "remained_char_num": 22756,
+    "remained_figure_num": 87,
+    "remained_image_num": 80,
+    "remained_file_num": 0,
+    "remained_sound_num": 0,
+    "reserved_publish_at": null,
+    "facebook_share_url": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n52a7f4fa0a2e&t=note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+    "line_share_url": "https://line.naver.jp/R/msg/text/?note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n52a7f4fa0a2e",
+    "twitter_share_url": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n52a7f4fa0a2e&text=note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+    "note_url": "https://note.com/kida_lw/n/n52a7f4fa0a2e",
+    "twitter_related_accounts": "note_PR",
+    "tweet_text": "note分析の決定版｜公式アナリティクスを超えた「自作ダッシュボード」でSEO順位とPVを自動計測する方法｜木田貴之",
+    "circle_plans": [],
+    "is_public_membership_connected": false,
+    "is_board_disabled": false,
+    "discount_campaigns": [
+      {
+        "key": "4f48fb593aa5",
+        "kind": "time_sale",
+        "status": "available",
+        "discounted_price": 500,
+        "twitter_status": null,
+        "reserved_twitter_status": null,
+        "time_sale": null
+      }
+    ],
+    "lead_form": null,
+    "line_add_friend": null,
+    "line_add_friend_note_enable_feature": false,
+    "note_share_total_count": 1,
+    "note_share_provider_details": {
+      "others": {
+        "count": 1,
+        "is_shared": false
+      }
+    },
+    "is_published_preview_note": false,
+    "is_ratable": false,
+    "content_rating_via": "",
+    "content_raters": [],
+    "my_rating_exists": false,
+    "rater_count": 0,
+    "is_recently_purchased": false,
+    "requires_login_for_purchase": false,
+    "is_recently_tip": false,
+    "exclude_from_creator_top": false,
+    "exclude_ai_learning_reward": false,
+    "translation_setting": null,
+    "is_related_with_investment": false,
+    "related_stocks": [],
+    "translation": {
+      "available_languages": []
+    }
+  }
+}

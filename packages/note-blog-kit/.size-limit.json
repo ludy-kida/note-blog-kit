@@ -1,0 +1,14 @@
+[
+  {
+    "name": "note-blog-kit/react (ESM, gzip)",
+    "path": "dist/react/index.js",
+    "limit": "10 KB",
+    "gzip": true
+  },
+  {
+    "name": "note-blog-kit (core, ESM, gzip)",
+    "path": "dist/index.js",
+    "limit": "3 KB",
+    "gzip": true
+  }
+]

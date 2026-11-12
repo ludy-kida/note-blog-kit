@@ -1,0 +1,767 @@
+{
+  "data": {
+    "contents": [
+      {
+        "id": 189264534,
+        "type": "TextNote",
+        "status": "published",
+        "name": "ビジネススニーカーは「疲れない」と「浮かない」が両立できる。おすすめの3足",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n6e77a2044196",
+        "slug": "slug-n6e77a2044196",
+        "publishAt": "2026-11-06T20:46:44+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/332974473/rectangle_large_type_2_b7e98dc6cf18f21e1d65601e4d122917.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\nビジネススニーカーを選ぶとき、「疲れない」と「客先で浮かない」は同時に満たせません。\n\nレザーでシルエットが細い靴はソールが薄い。ソールが厚い靴はスニーカーに見える。構造の問題なので、どのブランドを選んでも変わりません。\n\nだから1足で解決しようとせず、自分の職場が許す範囲の中で、一番疲れないものを選ぶのが正解でした。\n\n選ぶ基準ソールの厚み。 \n厚いほど疲れないが、スーツのパンツとは重心が合わなくなる\n\nアッパーの素材。 \nレザーは革靴に近く見える。メッシュはスポーツに見",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#在宅勤務"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#メンズファッション"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#スニーカー"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ビジネスカジュアル"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n6e77a2044196&text=%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC%E3%81%AF%E3%80%8C%E7%96%B2%E3%82%8C%E3%81%AA%E3%81%84%E3%80%8D%E3%81%A8%E3%80%8C%E6%B5%AE%E3%81%8B%E3%81%AA%E3%81%84%E3%80%8D%E3%81%8C%E4%B8%A1%E7%AB%8B%E3%81%A7%E3%81%8D%E3%82%8B%E3%80%82%E3%81%8A%E3%81%99%E3%81%99%E3%82%81%E3%81%AE3%E8%B6%B3%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n6e77a2044196&t=%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC%E3%81%AF%E3%80%8C%E7%96%B2%E3%82%8C%E3%81%AA%E3%81%84%E3%80%8D%E3%81%A8%E3%80%8C%E6%B5%AE%E3%81%8B%E3%81%AA%E3%81%84%E3%80%8D%E3%81%8C%E4%B8%A1%E7%AB%8B%E3%81%A7%E3%81%8D%E3%82%8B%E3%80%82%E3%81%8A%E3%81%99%E3%81%99%E3%82%81%E3%81%AE3%E8%B6%B3%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC%E3%81%AF%E3%80%8C%E7%96%B2%E3%82%8C%E3%81%AA%E3%81%84%E3%80%8D%E3%81%A8%E3%80%8C%E6%B5%AE%E3%81%8B%E3%81%AA%E3%81%84%E3%80%8D%E3%81%8C%E4%B8%A1%E7%AB%8B%E3%81%A7%E3%81%8D%E3%82%8B%E3%80%82%E3%81%8A%E3%81%99%E3%81%99%E3%82%81%E3%81%AE3%E8%B6%B3%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n6e77a2044196",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/332974473/square_large_b7e98dc6cf18f21e1d65601e4d122917.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n6e77a2044196",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 189407945,
+        "type": "TextNote",
+        "status": "published",
+        "name": "3歳の孫へのクリスマスプレゼントは服がいい。親の立場から6選",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n459c350553c9",
+        "slug": "slug-n459c350553c9",
+        "publishAt": "2026-11-05T12:28:14+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/332425866/rectangle_large_type_2_025b8ff3eb7647ff6fb12fb714c3767f.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n3歳のお孫さんへのクリスマスプレゼントは、春から毎日着られる服がありがたい。候補はこの6つです。\n\n選ぶ基準は3つ入園してから、通園や公園で毎日着られる\n\n柄が控えめで、親が普段選ぶ服とぶつかりにくい\n\n親が自分では選びにくい値段のもの\n\n入園式の服は、親の好みがはっきり出ます。\n贈るなら、入園後に毎日着る服のほうが外しにくいと僕は考えています。\n\nおもちゃは喜ばれる。親が困るのは、そのあと先に書いておくと、おもちゃは子どもが喜びます。\n贈ってくださる気持ちも、ちゃんと伝わ",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#ギフト"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#クリスマスプレゼント"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#入園準備"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#子ども服"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#孫へのプレゼント"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n459c350553c9&text=3%E6%AD%B3%E3%81%AE%E5%AD%AB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E6%9C%8D%E3%81%8C%E3%81%84%E3%81%84%E3%80%82%E8%A6%AA%E3%81%AE%E7%AB%8B%E5%A0%B4%E3%81%8B%E3%82%896%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n459c350553c9&t=3%E6%AD%B3%E3%81%AE%E5%AD%AB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E6%9C%8D%E3%81%8C%E3%81%84%E3%81%84%E3%80%82%E8%A6%AA%E3%81%AE%E7%AB%8B%E5%A0%B4%E3%81%8B%E3%82%896%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?3%E6%AD%B3%E3%81%AE%E5%AD%AB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E6%9C%8D%E3%81%8C%E3%81%84%E3%81%84%E3%80%82%E8%A6%AA%E3%81%AE%E7%AB%8B%E5%A0%B4%E3%81%8B%E3%82%896%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n459c350553c9",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/332425866/square_large_025b8ff3eb7647ff6fb12fb714c3767f.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n459c350553c9",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 186932638,
+        "type": "TextNote",
+        "status": "published",
+        "name": "妻へのクリスマスプレゼントは「自分では買わないもの」3選",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n139dd4425bd8",
+        "slug": "slug-n139dd4425bd8",
+        "publishAt": "2026-11-04T15:00:17+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/332094985/rectangle_large_type_2_39ed93c5800de5d9660354066e74105b.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n妻へのクリスマスプレゼントは、「役に立つか」より「自分では買わないか」で選ぶ。今年の候補はこの3つです。\n\n選ぶ基準は3つ毎日使うもの、または身につけるもの\n\n本人が「安いのでいい」で済ませているもの\n\n上位版が、本人なら出さない値段のもの\n\n僕の妻を思い浮かべて決めた基準です。欲しいものをはっきり言われているなら、それを買うのが一番です。\n\n実用的なものが外れやすい理由必要なものは、本人がもう持っているか、自分で買う\n\n道具は、使う本人が選びたい\n\n家事の道具は、その家事",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#夫婦"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ギフト"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#クリスマスプレゼント"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#プレゼント選び"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#妻へのプレゼント"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n139dd4425bd8&text=%E5%A6%BB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E3%80%8C%E8%87%AA%E5%88%86%E3%81%A7%E3%81%AF%E8%B2%B7%E3%82%8F%E3%81%AA%E3%81%84%E3%82%82%E3%81%AE%E3%80%8D3%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n139dd4425bd8&t=%E5%A6%BB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E3%80%8C%E8%87%AA%E5%88%86%E3%81%A7%E3%81%AF%E8%B2%B7%E3%82%8F%E3%81%AA%E3%81%84%E3%82%82%E3%81%AE%E3%80%8D3%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E5%A6%BB%E3%81%B8%E3%81%AE%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%88%E3%81%AF%E3%80%8C%E8%87%AA%E5%88%86%E3%81%A7%E3%81%AF%E8%B2%B7%E3%82%8F%E3%81%AA%E3%81%84%E3%82%82%E3%81%AE%E3%80%8D3%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n139dd4425bd8",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/332094985/square_large_39ed93c5800de5d9660354066e74105b.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n139dd4425bd8",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 188837904,
+        "type": "TextNote",
+        "status": "published",
+        "name": "なぜオフショア開発が危険なのか",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n1198c11b93e8",
+        "slug": "slug-n1198c11b93e8",
+        "publishAt": "2026-11-02T12:01:22+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/331224347/rectangle_large_type_2_7377efc941e94b232dd9b0a291fe1ab4.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n\n「安いから海外へ」は本当にお得なのかシステム開発の費用を抑える手段として、ベトナムやフィリピン、インドなど海外の開発会社に発注する「オフショア開発」は、いまも多くの企業に選ばれています。国内のIT人材不足もあり、検討したことがある方は多いのではないでしょうか。\n\nですが筆者は、安さを理由にしたオフショア開発は危険だと考えています。\n\n理由は大きく4つの危険と、ひとつの結論です。\n\n日本の法律で守りきれない\n\n誰が作っているのか確かめられない\n\n品質の「当たり前」が通じない",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#ベトナム"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#情報セキュリティ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#システム開発"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#外注"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#オフショア開発"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#北朝鮮IT労働者"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n1198c11b93e8&text=%E3%81%AA%E3%81%9C%E3%82%AA%E3%83%95%E3%82%B7%E3%83%A7%E3%82%A2%E9%96%8B%E7%99%BA%E3%81%8C%E5%8D%B1%E9%99%BA%E3%81%AA%E3%81%AE%E3%81%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n1198c11b93e8&t=%E3%81%AA%E3%81%9C%E3%82%AA%E3%83%95%E3%82%B7%E3%83%A7%E3%82%A2%E9%96%8B%E7%99%BA%E3%81%8C%E5%8D%B1%E9%99%BA%E3%81%AA%E3%81%AE%E3%81%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%81%AA%E3%81%9C%E3%82%AA%E3%83%95%E3%82%B7%E3%83%A7%E3%82%A2%E9%96%8B%E7%99%BA%E3%81%8C%E5%8D%B1%E9%99%BA%E3%81%AA%E3%81%AE%E3%81%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n1198c11b93e8",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/331224347/square_large_7377efc941e94b232dd9b0a291fe1ab4.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n1198c11b93e8",
+        "imageCount": 1,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 188010214,
+        "type": "TextNote",
+        "status": "published",
+        "name": "コーポレートサイトにWordPressを使うのはやめよう",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n5a654a6bf5d3",
+        "slug": "slug-n5a654a6bf5d3",
+        "publishAt": "2026-10-28T16:40:18+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/329468104/rectangle_large_type_2_8a39c782eec33b74381717aa5b4f704c.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "日本は世界有数の「WordPress大国」会社のホームページを作るとき、「とりあえずWordPressで」という選択はいまも根強くあります。\n\n実際、WordPressは世界のWebサイトの約4割で使われています。日本はとくに利用が多く、日本のサイトの58.5%、CMSに限ると83%のシェアを占めるというデータもあります（2024年時点）。\n\nですが筆者は、これからコーポレートサイトを作る、あるいは作り直すなら、WordPressはもう選ばないほうがいいと考えています。\n\n理",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 1,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#web制作"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サイバーセキュリティ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#wordpress"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#脆弱性"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#AIコーディング"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#Cloudflare"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#コーポレートサイト"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n5a654a6bf5d3&text=%E3%82%B3%E3%83%BC%E3%83%9D%E3%83%AC%E3%83%BC%E3%83%88%E3%82%B5%E3%82%A4%E3%83%88%E3%81%ABWordPress%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AE%E3%81%AF%E3%82%84%E3%82%81%E3%82%88%E3%81%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n5a654a6bf5d3&t=%E3%82%B3%E3%83%BC%E3%83%9D%E3%83%AC%E3%83%BC%E3%83%88%E3%82%B5%E3%82%A4%E3%83%88%E3%81%ABWordPress%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AE%E3%81%AF%E3%82%84%E3%82%81%E3%82%88%E3%81%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%82%B3%E3%83%BC%E3%83%9D%E3%83%AC%E3%83%BC%E3%83%88%E3%82%B5%E3%82%A4%E3%83%88%E3%81%ABWordPress%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AE%E3%81%AF%E3%82%84%E3%82%81%E3%82%88%E3%81%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n5a654a6bf5d3",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/329468104/square_large_8a39c782eec33b74381717aa5b4f704c.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n5a654a6bf5d3",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 187779444,
+        "type": "TextNote",
+        "status": "published",
+        "name": "二段階認証は「パスキー」一択の時代へ。氏名も生年月日も電話番号も、もう秘密ではない",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n7bf93c026f66",
+        "slug": "slug-n7bf93c026f66",
+        "publishAt": "2026-10-27T11:07:23+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/329005721/rectangle_large_type_2_db442f396fee2bafcc4640a65934d332.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n二段階認証、結局どれを選べばいい？2026年10月26日、noteがパスキーによる2段階認証をすべてのユーザーに開放しました。これまでは法人向けのnote proだけの機能でした。\n\n「二段階認証って設定したほうがいいの？」「SMSと認証アプリとパスキー、どれがいいの？」と調べている方に、先に結論をお伝えします。\n\n選べるなら、パスキー一択です。\n\n理由はシンプルで、これまで「本人しか知らないはず」とされてきた情報が、相次ぐ情報漏えいによってもう秘密ではなくなったからです。",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "likes": [],
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#note"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#情報漏洩"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#セキュリティ対策"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#パスキー"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#パスワード管理"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#二段階認証"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n7bf93c026f66&text=%E4%BA%8C%E6%AE%B5%E9%9A%8E%E8%AA%8D%E8%A8%BC%E3%81%AF%E3%80%8C%E3%83%91%E3%82%B9%E3%82%AD%E3%83%BC%E3%80%8D%E4%B8%80%E6%8A%9E%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%B8%E3%80%82%E6%B0%8F%E5%90%8D%E3%82%82%E7%94%9F%E5%B9%B4%E6%9C%88%E6%97%A5%E3%82%82%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%E3%82%82%E3%80%81%E3%82%82%E3%81%86%E7%A7%98%E5%AF%86%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n7bf93c026f66&t=%E4%BA%8C%E6%AE%B5%E9%9A%8E%E8%AA%8D%E8%A8%BC%E3%81%AF%E3%80%8C%E3%83%91%E3%82%B9%E3%82%AD%E3%83%BC%E3%80%8D%E4%B8%80%E6%8A%9E%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%B8%E3%80%82%E6%B0%8F%E5%90%8D%E3%82%82%E7%94%9F%E5%B9%B4%E6%9C%88%E6%97%A5%E3%82%82%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%E3%82%82%E3%80%81%E3%82%82%E3%81%86%E7%A7%98%E5%AF%86%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E4%BA%8C%E6%AE%B5%E9%9A%8E%E8%AA%8D%E8%A8%BC%E3%81%AF%E3%80%8C%E3%83%91%E3%82%B9%E3%82%AD%E3%83%BC%E3%80%8D%E4%B8%80%E6%8A%9E%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%B8%E3%80%82%E6%B0%8F%E5%90%8D%E3%82%82%E7%94%9F%E5%B9%B4%E6%9C%88%E6%97%A5%E3%82%82%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%E3%82%82%E3%80%81%E3%82%82%E3%81%86%E7%A7%98%E5%AF%86%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n7bf93c026f66",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/329005721/square_large_db442f396fee2bafcc4640a65934d332.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n7bf93c026f66",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      }
+    ],
+    "isLastPage": false,
+    "totalCount": 237
+  }
+}
