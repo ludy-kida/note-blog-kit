@@ -99,6 +99,51 @@ export default async function BlogPage() {
 - **Next.js の typedRoutes**：有効にしている場合は `Link` の `href` が文字列を受け付けないため、`Link` を包んだコンポーネントを `linkComponent` に渡してください
 - **見出し画像**：note の CDN（assets.st-note.com）から直接読み込みます
 
+### デフォルト CSS（任意）
+
+note の見た目に合わせた CSS を用意しています。読み込まなければ、コンポーネントは見た目を持ちません。
+
+```ts
+import 'note-blog-kit/styles.css'; // Next.js なら app/layout.tsx などで読み込む
+```
+
+すべてのルールは `@layer note-blog-kit` の中にあるため、レイヤーに入っていないあなたの CSS が常に優先されます。色や余白は CSS 変数で変えられます。
+
+| 変数 | 既定値 | 用途 |
+| --- | --- | --- |
+| `--nbk-font-family` | Hiragino Sans など | 文字 |
+| `--nbk-color-text` | `#08131a` | タイトルなど |
+| `--nbk-color-muted` | `#6e7b85` | 日付・抜粋・タグ・件数 |
+| `--nbk-color-accent` | `#41c9b4` | ホバー・フォーカス |
+| `--nbk-color-border` | `#e6e6e6` | 枠線 |
+| `--nbk-color-surface` | `#fff` | カードの背景 |
+| `--nbk-color-badge-bg` / `--nbk-color-badge-text` | `#08131a` / `#fff` | 「有料」バッジ |
+| `--nbk-radius` | `8px` | 角丸 |
+| `--nbk-gap` | `24px` | カードの間隔 |
+| `--nbk-card-min-width` | `280px` | 一覧で1枚のカードが取る最小幅 |
+
+```css
+/* ブランド色に合わせる */
+:root {
+  --nbk-color-accent: #e5004f;
+}
+
+/* ダークモード（既定では配色を変えません） */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nbk-color-text: #f1f1f1;
+    --nbk-color-muted: #a3adb4;
+    --nbk-color-border: #333;
+    --nbk-color-surface: #111;
+  }
+}
+
+/* 個別の調整はクラス名で（レイヤー外なので詳細度を気にせず上書きできる） */
+.nbk-card__title {
+  font-size: 1.125rem;
+}
+```
+
 ## 開発状況
 
 Phase 0（調査と検証）。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照。
