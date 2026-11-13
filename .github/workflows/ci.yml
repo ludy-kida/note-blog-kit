@@ -32,6 +32,8 @@ jobs:
       - name: 公開 API レポート（差分があれば失敗。pnpm api で etc/ を更新する）
         run: pnpm api:check
       - run: pnpm check:dist
+      - name: examples のビルド（fixture モード。note にはアクセスしない）
+        run: pnpm build:examples
 
   test-node20:
     name: ライブラリのテスト（Node.js 20）

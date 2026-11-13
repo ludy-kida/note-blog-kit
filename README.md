@@ -11,6 +11,68 @@
 - canonical は note の元 URL を推奨します
 - 有料部分は表示しません
 
+## 導入手順（Next.js App Router）
+
+### 1. インストール
+
+```bash
+npm install note-blog-kit
+```
+
+React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 20 以上で動きます。
+
+### 2. デフォルト CSS を読み込む（任意）
+
+```tsx
+// app/layout.tsx
+import 'note-blog-kit/styles.css';
+```
+
+### 3. 一覧ページを作る
+
+```tsx
+// app/blog/page.tsx
+import { unstable_cache } from 'next/cache';
+import { notFound } from 'next/navigation';
+import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
+import { listArticles } from 'note-blog-kit/server';
+
+// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）。
+// ユーザー名は引数にしてキャッシュのキーに含める（変えたときに前のユーザーの記事が出ないように）
+const getPage = unstable_cache(
+  (user: string, page: number) => listArticles({ user, page }),
+  ['note-articles'],
+  { revalidate: 3600 },
+);
+
+type Props = { searchParams: Promise<{ page?: string }> };
+
+export default async function BlogPage({ searchParams }: Props) {
+  const page = Number((await searchParams).page ?? '1');
+  if (!Number.isInteger(page) || page < 1 || page > 100) notFound();
+  const { articles, isLastPage, totalCount } = await getPage('your_urlname', page);
+  if (articles.length === 0 && page > 1) notFound();
+  return (
+    <main>
+      <h1>ブログ</h1>
+      <NoteArticleList articles={articles} />
+      <NotePagination page={page} isLastPage={isLastPage} totalCount={totalCount} getHref={(p) => `/blog?page=${p}`} />
+    </main>
+  );
+}
+```
+
+記事のリンク先は、既定では note の記事ページです。自分のサイトの詳細ページにしたい場合は `getHref` と `linkComponent={Link}` を渡します（詳細ページの作り方は今後のリリースで追加します）。
+
+### キャッシュの推奨
+
+- `listArticles` は呼ぶたびに note へリクエストします。**呼び出しの結果ごとキャッシュしてください**（Next.js なら上の例の `unstable_cache`、ほかの環境ではビルド時に JSON へ書き出すなど）
+- 同じプロセス内の連続リクエストは、ライブラリが自動で1秒以上空けます。この待ちは `listArticles` を呼ぶたびに入るため、`fetch` 単位のキャッシュ（`next: { revalidate }`）だけでは、同時アクセスが多いとページの表示が遅れます
+- **ページ番号に上限を設けてください**（上の例では100）。上限がないと、`?page=` を変えたアクセスでキャッシュに無いページを取りに行かせ続けられます
+- 全件の取得（`listAllArticles`）は1ページ6件ずつ取りに行くため時間がかかります。ビルド時やキャッシュの更新時に行ってください
+
+動く例は [`examples/next`](examples/next) にあります（下の「開発」を参照）。
+
 ## 使い方（開発中・API は 0.x の間に変わることがあります）
 
 ### 記事一覧を取得する（サーバー側）
@@ -41,7 +103,7 @@ try {
 
 エラーは `code` で判別します：`NOTE_NOT_FOUND`（404）、`NOTE_HTTP_ERROR`（その他の HTTP エラー、`status` あり）、`NOTE_NETWORK_ERROR`、`NOTE_TIMEOUT`、`NOTE_SCHEMA_ERROR`（note のレスポンスの形が変わった）。
 
-結果はキャッシュし、高頻度に呼び出さないでください（Next.js なら `revalidate` を設定するなど）。
+結果は必ずキャッシュし、高頻度に呼び出さないでください（方法は上の「キャッシュの推奨」を参照）。
 
 ### 全件を取得する（ビルド時向け）
 
@@ -159,9 +221,32 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 }
 ```
 
-## 開発状況
+## 開発
 
-Phase 0（調査と検証）。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照。
+v0.1.0（一覧表示）に向けて開発中です。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
+
+### examples/next を動かす
+
+```bash
+pnpm install
+pnpm build
+```
+
+```bash
+# 既定は fixtures/ の保存済みレスポンスで動く（note にアクセスしない）
+pnpm -C examples/next dev
+```
+
+```bash
+# 実際の note から取得する（NOTE_BLOG_KIT_LIVE=1 と、自分の urlname の NOTE_USER を両方指定したときだけ）
+NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
+```
+
+CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる）を確認しています。
+
+### README を変えたとき
+
+npm に載る `packages/note-blog-kit/README.md` は、このファイルから `pnpm readme:sync` で作ります（「開発」の節を除き、リンクを GitHub の URL にします）。食い違うとテストが失敗します。
 
 ## ライセンス
 
