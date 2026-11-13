@@ -11,6 +11,58 @@
 - canonical は note の元 URL を推奨します
 - 有料部分は表示しません
 
+## 導入手順（Next.js App Router）
+
+### 1. インストール
+
+```bash
+npm install note-blog-kit
+```
+
+React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 20 以上で動きます。
+
+### 2. デフォルト CSS を読み込む（任意）
+
+```tsx
+// app/layout.tsx
+import 'note-blog-kit/styles.css';
+```
+
+### 3. 一覧ページを作る
+
+```tsx
+// app/blog/page.tsx
+import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
+import { listArticles } from 'note-blog-kit/server';
+
+// Next.js のデータキャッシュで1時間ごとに取り直す（高頻度に note へアクセスしないため）
+const cachedFetch: typeof fetch = (input, init) => fetch(input, { ...init, next: { revalidate: 3600 } });
+
+type Props = { searchParams: Promise<{ page?: string }> };
+
+export default async function BlogPage({ searchParams }: Props) {
+  const page = Number((await searchParams).page ?? '1') || 1;
+  const { articles, isLastPage, totalCount } = await listArticles({ user: 'your_urlname', page, fetch: cachedFetch });
+  return (
+    <main>
+      <h1>ブログ</h1>
+      <NoteArticleList articles={articles} />
+      <NotePagination page={page} isLastPage={isLastPage} totalCount={totalCount} getHref={(p) => `/blog?page=${p}`} />
+    </main>
+  );
+}
+```
+
+記事のリンク先は、既定では note の記事ページです。自分のサイトの詳細ページにしたい場合は `getHref` と `linkComponent={Link}` を渡します（詳細ページの作り方は今後のリリースで追加します）。
+
+### キャッシュの推奨
+
+- `listArticles` は呼ぶたびに note へリクエストします。**必ずキャッシュしてください**。Next.js なら上の例のように `fetch` に `next: { revalidate }` を付けるのが簡単です
+- 全件の取得（`listAllArticles`）は1ページ6件ずつ取りに行くため時間がかかります。ビルド時やキャッシュの更新時に行ってください
+- 同じプロセス内の連続リクエストは、ライブラリが自動で1秒以上空けます
+
+動く例は [`examples/next`](examples/next) にあります（下の「開発」を参照）。
+
 ## 使い方（開発中・API は 0.x の間に変わることがあります）
 
 ### 記事一覧を取得する（サーバー側）
@@ -159,9 +211,28 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 }
 ```
 
-## 開発状況
+## 開発
 
-Phase 0（調査と検証）。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照。
+v0.1.0（一覧表示）に向けて開発中です。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
+
+### examples/next を動かす
+
+```bash
+pnpm install
+pnpm build
+```
+
+```bash
+# fixtures/ の保存済みレスポンスで動かす（note にアクセスしない）
+NOTE_BLOG_KIT_FIXTURES=1 pnpm -C examples/next dev
+```
+
+```bash
+# 実際の note から取得する（NOTE_USER に自分の urlname を指定）
+NOTE_USER=your_urlname pnpm -C examples/next dev
+```
+
+CI は `pnpm build:examples` で、fixture モードのビルドと一覧ページが30行以内であることを確認しています。
 
 ## ライセンス
 
