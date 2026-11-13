@@ -37,17 +37,20 @@ import { notFound } from 'next/navigation';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
 import { listArticles } from 'note-blog-kit/server';
 
-// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）
-const getPage = unstable_cache((page: number) => listArticles({ user: 'your_urlname', page }), ['note'], {
-  revalidate: 3600,
-});
+// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）。
+// ユーザー名は引数にしてキャッシュのキーに含める（変えたときに前のユーザーの記事が出ないように）
+const getPage = unstable_cache(
+  (user: string, page: number) => listArticles({ user, page }),
+  ['note-articles'],
+  { revalidate: 3600 },
+);
 
 type Props = { searchParams: Promise<{ page?: string }> };
 
 export default async function BlogPage({ searchParams }: Props) {
   const page = Number((await searchParams).page ?? '1');
   if (!Number.isInteger(page) || page < 1 || page > 100) notFound();
-  const { articles, isLastPage, totalCount } = await getPage(page);
+  const { articles, isLastPage, totalCount } = await getPage('your_urlname', page);
   if (articles.length === 0 && page > 1) notFound();
   return (
     <main>
@@ -68,7 +71,7 @@ export default async function BlogPage({ searchParams }: Props) {
 - **ページ番号に上限を設けてください**（上の例では100）。上限がないと、`?page=` を変えたアクセスでキャッシュに無いページを取りに行かせ続けられます
 - 全件の取得（`listAllArticles`）は1ページ6件ずつ取りに行くため時間がかかります。ビルド時やキャッシュの更新時に行ってください
 
-動く例は [`examples/next`](examples/next) にあります（下の「開発」を参照）。
+動く例は [`examples/next`](https://github.com/ludy-kida/note-blog-kit/tree/main/examples/next) にあります。
 
 ## 使い方（開発中・API は 0.x の間に変わることがあります）
 
@@ -100,7 +103,7 @@ try {
 
 エラーは `code` で判別します：`NOTE_NOT_FOUND`（404）、`NOTE_HTTP_ERROR`（その他の HTTP エラー、`status` あり）、`NOTE_NETWORK_ERROR`、`NOTE_TIMEOUT`、`NOTE_SCHEMA_ERROR`（note のレスポンスの形が変わった）。
 
-結果はキャッシュし、高頻度に呼び出さないでください（Next.js なら `revalidate` を設定するなど）。
+結果は必ずキャッシュし、高頻度に呼び出さないでください（方法は上の「キャッシュの推奨」を参照）。
 
 ### 全件を取得する（ビルド時向け）
 
@@ -217,29 +220,6 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
   font-size: 1.125rem;
 }
 ```
-
-## 開発
-
-v0.1.0（一覧表示）に向けて開発中です。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
-
-### examples/next を動かす
-
-```bash
-pnpm install
-pnpm build
-```
-
-```bash
-# 既定は fixtures/ の保存済みレスポンスで動く（note にアクセスしない）
-pnpm -C examples/next dev
-```
-
-```bash
-# 実際の note から取得する（NOTE_BLOG_KIT_LIVE=1 と、自分の urlname の NOTE_USER を両方指定したときだけ）
-NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
-```
-
-CI は `pnpm build:examples` で、fixture モードのビルドと一覧ページが30行以内であることを確認しています。
 
 ## ライセンス
 

@@ -37,17 +37,20 @@ import { notFound } from 'next/navigation';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
 import { listArticles } from 'note-blog-kit/server';
 
-// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）
-const getPage = unstable_cache((page: number) => listArticles({ user: 'your_urlname', page }), ['note'], {
-  revalidate: 3600,
-});
+// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）。
+// ユーザー名は引数にしてキャッシュのキーに含める（変えたときに前のユーザーの記事が出ないように）
+const getPage = unstable_cache(
+  (user: string, page: number) => listArticles({ user, page }),
+  ['note-articles'],
+  { revalidate: 3600 },
+);
 
 type Props = { searchParams: Promise<{ page?: string }> };
 
 export default async function BlogPage({ searchParams }: Props) {
   const page = Number((await searchParams).page ?? '1');
   if (!Number.isInteger(page) || page < 1 || page > 100) notFound();
-  const { articles, isLastPage, totalCount } = await getPage(page);
+  const { articles, isLastPage, totalCount } = await getPage('your_urlname', page);
   if (articles.length === 0 && page > 1) notFound();
   return (
     <main>
@@ -100,7 +103,7 @@ try {
 
 エラーは `code` で判別します：`NOTE_NOT_FOUND`（404）、`NOTE_HTTP_ERROR`（その他の HTTP エラー、`status` あり）、`NOTE_NETWORK_ERROR`、`NOTE_TIMEOUT`、`NOTE_SCHEMA_ERROR`（note のレスポンスの形が変わった）。
 
-結果はキャッシュし、高頻度に呼び出さないでください（Next.js なら `revalidate` を設定するなど）。
+結果は必ずキャッシュし、高頻度に呼び出さないでください（方法は上の「キャッシュの推奨」を参照）。
 
 ### 全件を取得する（ビルド時向け）
 
@@ -239,7 +242,11 @@ pnpm -C examples/next dev
 NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
 ```
 
-CI は `pnpm build:examples` で、fixture モードのビルドと一覧ページが30行以内であることを確認しています。
+CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる）を確認しています。
+
+### README を変えたとき
+
+npm に載る `packages/note-blog-kit/README.md` は、このファイルから `pnpm readme:sync` で作ります（「開発」の節を除き、リンクを GitHub の URL にします）。食い違うとテストが失敗します。
 
 ## ライセンス
 
