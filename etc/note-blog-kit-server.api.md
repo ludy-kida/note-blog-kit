@@ -11,6 +11,29 @@ export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError 
 export function isNoteError(value: unknown): value is AnyNoteError;
 
 // @public
+export function iterateArticles(options: IterateArticlesOptions): AsyncGenerator<NoteArticleSummary, IterateArticlesResult, undefined>;
+
+// @public
+export interface IterateArticlesOptions extends Omit<ListArticlesOptions, 'page'> {
+    maxPages?: number;
+}
+
+// @public
+export interface IterateArticlesResult {
+    pages: number;
+    totalCount: number | null;
+    truncated: boolean;
+}
+
+// @public
+export function listAllArticles(options: IterateArticlesOptions): Promise<ListAllArticlesResult>;
+
+// @public
+export interface ListAllArticlesResult extends IterateArticlesResult {
+    articles: NoteArticleSummary[];
+}
+
+// @public
 export function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage>;
 
 // @public

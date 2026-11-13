@@ -43,6 +43,31 @@ try {
 
 結果はキャッシュし、高頻度に呼び出さないでください（Next.js なら `revalidate` を設定するなど）。
 
+### 全件を取得する（ビルド時向け）
+
+1ページは6件固定のため、全件の取得には多くのリクエストが必要です（237件なら約40回、1秒間隔で約40秒）。全件取得はビルド時やキャッシュの更新時に行ってください。既定では **20ページ（120件）で打ち切ります**。
+
+```ts
+import { iterateArticles, listAllArticles } from 'note-blog-kit/server';
+
+// 配列でまとめて取得する
+const { articles, truncated } = await listAllArticles({ user: 'your_urlname', maxPages: 50 });
+if (truncated) {
+  // maxPages に達して打ち切った（続きがある）
+}
+
+// 1件ずつ処理する
+for await (const article of iterateArticles({ user: 'your_urlname' })) {
+  console.log(article.title);
+}
+```
+
+`maxPages`（既定 `20`）以外のオプションは `listArticles` と同じです（`page` は指定できません）。取得中に新しい記事が公開されてページがずれた場合も、同じ記事は1回だけ返します。
+
+- `truncated: true` は `maxPages` に達して打ち切ったことを表します（続きがある可能性があります）
+- `listAllArticles` は途中のページで失敗すると、それまでに集めた記事を返さずにエラーを投げます。途中までの記事も使いたい場合は `iterateArticles` を使ってください
+- `for await` では打ち切りの有無を受け取れません。必要なら `listAllArticles` を使うか、`next()` を手で回して戻り値（`done: true` のときの `value`）を読んでください
+
 ## 開発状況
 
 Phase 0（調査と検証）。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照。
