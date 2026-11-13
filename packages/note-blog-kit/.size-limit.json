@@ -3,7 +3,8 @@
     "name": "note-blog-kit/react (ESM, gzip)",
     "path": "dist/react/index.js",
     "limit": "10 KB",
-    "gzip": true
+    "gzip": true,
+    "ignore": ["react", "react/jsx-runtime"]
   },
   {
     "name": "note-blog-kit (core, ESM, gzip)",

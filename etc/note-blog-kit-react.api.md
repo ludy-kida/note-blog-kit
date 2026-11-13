@@ -4,6 +4,154 @@
 
 ```ts
 
+import { ElementType } from 'react';
+import { ReactElement } from 'react';
+import { ReactNode } from 'react';
+
+// @public
+export interface NoteArticle extends NoteArticleSummary {
+    bodyHtml: string;
+    // (undocumented)
+    embeds: NoteEmbed[];
+    // (undocumented)
+    eyecatch: NoteEyecatch | null;
+    isPartial: boolean;
+    // (undocumented)
+    toc: NoteTocItem[];
+}
+
+// @public
+export function NoteArticleCard(input: NoteArticleCardProps): ReactElement;
+
+// @public
+export interface NoteArticleCardProps {
+    article: NoteArticleSummary;
+    className?: string;
+    formatDate?: (iso: string) => string;
+    headingLevel?: NoteHeadingLevel;
+    href?: string;
+    labels?: {
+        paid?: ReactNode;
+    };
+    linkComponent?: NoteLinkComponent;
+}
+
+// @public
+export function NoteArticleList(input: NoteArticleListProps): ReactElement;
+
+// @public
+export interface NoteArticleListProps {
+    articles: readonly NoteArticleSummary[];
+    className?: string;
+    empty?: ReactNode;
+    formatDate?: (iso: string) => string;
+    getHref?: (article: NoteArticleSummary) => string;
+    headingLevel?: NoteHeadingLevel;
+    linkComponent?: NoteLinkComponent;
+    renderItem?: (article: NoteArticleSummary) => ReactNode;
+}
+
+// @public
+export interface NoteArticlePage {
+    // (undocumented)
+    articles: NoteArticleSummary[];
+    // (undocumented)
+    isLastPage: boolean;
+    // (undocumented)
+    page: number;
+    totalCount: number | null;
+}
+
+// @public
+export interface NoteArticleSummary {
+    // (undocumented)
+    author: NoteAuthor;
+    excerpt: string;
+    // (undocumented)
+    eyecatchUrl: string | null;
+    hashtags: string[];
+    key: string;
+    likeCount: number | null;
+    price: number | null;
+    publishedAt: string;
+    // (undocumented)
+    source: NoteSource;
+    // (undocumented)
+    title: string;
+    url: string;
+}
+
+// @public
+export interface NoteAuthor {
+    // (undocumented)
+    imageUrl: string | null;
+    name: string;
+    urlname: string;
+}
+
+// @public
+export interface NoteEmbed {
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    service: 'note' | 'external-article' | (string & {});
+    // (undocumented)
+    url: string;
+}
+
+// @public
+export interface NoteEyecatch {
+    // (undocumented)
+    alt: string;
+    // (undocumented)
+    height: number | null;
+    // (undocumented)
+    url: string;
+    // (undocumented)
+    width: number | null;
+}
+
+// @public
+export type NoteHeadingLevel = 2 | 3 | 4 | 5 | 6;
+
+// @public
+export type NoteLinkComponent = ElementType<{
+    href: string;
+    className?: string;
+    children?: ReactNode;
+}>;
+
+// @public
+export function NotePagination(input: NotePaginationProps): ReactElement;
+
+// @public
+export interface NotePaginationProps {
+    className?: string;
+    getHref: (page: number) => string;
+    isLastPage: boolean;
+    labels?: {
+        previous?: ReactNode;
+        next?: ReactNode;
+        navigation?: string;
+    };
+    linkComponent?: NoteLinkComponent;
+    page: number;
+    perPage?: number;
+    totalCount?: number | null;
+}
+
+// @public
+export type NoteSource = 'api' | 'rss';
+
+// @public
+export interface NoteTocItem {
+    id: string;
+    // (undocumented)
+    level: 2 | 3;
+    // (undocumented)
+    text: string;
+}
+
 // (No @packageDocumentation comment for this package)
 
 ```

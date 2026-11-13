@@ -6,20 +6,47 @@ import { z } from 'zod';
 import type { NoteArticlePage, NoteArticleSummary } from '../../core/types.js';
 import { NoteSchemaError } from '../errors.js';
 
+/**
+ * https の絶対 URL か。描画側（href・src）に `javascript:` などを渡さないため、ここで検証する。
+ * 前後の空白や制御文字を含む値は、ブラウザが除去して別のスキームとして解釈しうるため受け付けない。
+ */
+function hasControlOrSpace(value: string): boolean {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 0x20 || code === 0x7f) return true;
+  }
+  return /\s/.test(value);
+}
+
+function isHttpsUrl(value: string): boolean {
+  if (!value.startsWith('https://') || hasControlOrSpace(value)) return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+const httpsUrl = z.string().refine(isHttpsUrl, 'https の URL ではありません');
+/** 画像 URL。空文字は「画像なし」として許す */
+const optionalHttpsUrl = z
+  .string()
+  .refine((value) => value.trim() === '' || isHttpsUrl(value), 'https の URL ではありません');
+
 const contentSchema = z.object({
   key: z.string().min(1),
   name: z.string(),
-  noteUrl: z.string().min(1),
+  noteUrl: httpsUrl,
   publishAt: z.string().refine((value) => !Number.isNaN(Date.parse(value)), '日時として解釈できません'),
   body: z.string(),
-  eyecatch: z.string(),
+  eyecatch: optionalHttpsUrl,
   hashtags: z.array(z.object({ hashtag: z.object({ name: z.string() }) })),
   likeCount: z.number(),
   price: z.number(),
   user: z.object({
     nickname: z.string(),
     urlname: z.string(),
-    userProfileImagePath: z.string(),
+    userProfileImagePath: optionalHttpsUrl,
   }),
 });
 
