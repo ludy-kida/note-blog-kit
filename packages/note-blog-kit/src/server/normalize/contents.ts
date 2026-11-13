@@ -65,10 +65,9 @@ function toSummary(content: RawContent): NoteArticleSummary {
 export function normalizeContentsPage(json: unknown, page: number): NoteArticlePage {
   const result = contentsResponseSchema.safeParse(json);
   if (!result.success) {
-    throw new NoteSchemaError(
-      '記事一覧のレスポンスの形が想定と違います',
-      result.error.issues.map((issue) => ({ path: issue.path.map(String).join('.'), message: issue.message })),
-    );
+    throw new NoteSchemaError('Unexpected shape of the note article list response', {
+      issues: result.error.issues.map((issue) => ({ path: issue.path.map(String).join('.'), message: issue.message })),
+    });
   }
   const { data } = result.data;
   return {

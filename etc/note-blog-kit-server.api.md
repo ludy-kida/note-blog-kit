@@ -4,6 +4,193 @@
 
 ```ts
 
+// @public
+export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError | NoteTimeoutError | NoteSchemaError;
+
+// @public
+export function isNoteError(value: unknown): value is AnyNoteError;
+
+// @public
+export function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage>;
+
+// @public
+export interface ListArticlesOptions {
+    fetch?: typeof globalThis.fetch;
+    minIntervalMs?: number;
+    page?: number;
+    signal?: AbortSignal;
+    timeoutMs?: number;
+    user: string;
+}
+
+// @public
+export interface NoteArticle extends NoteArticleSummary {
+    bodyHtml: string;
+    // (undocumented)
+    embeds: NoteEmbed[];
+    // (undocumented)
+    eyecatch: NoteEyecatch | null;
+    isPartial: boolean;
+    // (undocumented)
+    toc: NoteTocItem[];
+}
+
+// @public
+export interface NoteArticlePage {
+    // (undocumented)
+    articles: NoteArticleSummary[];
+    // (undocumented)
+    isLastPage: boolean;
+    // (undocumented)
+    page: number;
+    totalCount: number | null;
+}
+
+// @public
+export interface NoteArticleSummary {
+    // (undocumented)
+    author: NoteAuthor;
+    excerpt: string;
+    // (undocumented)
+    eyecatchUrl: string | null;
+    hashtags: string[];
+    key: string;
+    likeCount: number | null;
+    price: number | null;
+    publishedAt: string;
+    // (undocumented)
+    source: NoteSource;
+    // (undocumented)
+    title: string;
+    url: string;
+}
+
+// @public
+export interface NoteAuthor {
+    // (undocumented)
+    imageUrl: string | null;
+    name: string;
+    urlname: string;
+}
+
+// @public
+export interface NoteEmbed {
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    service: 'note' | 'external-article' | (string & {});
+    // (undocumented)
+    url: string;
+}
+
+// @public
+export class NoteError extends Error {
+    constructor(message: string, options: NoteErrorOptions & {
+        code: NoteErrorCode;
+    });
+    // (undocumented)
+    readonly code: NoteErrorCode;
+    // (undocumented)
+    name: string;
+}
+
+// @public
+export type NoteErrorCode = 'NOTE_NOT_FOUND' | 'NOTE_HTTP_ERROR' | 'NOTE_NETWORK_ERROR' | 'NOTE_TIMEOUT' | 'NOTE_SCHEMA_ERROR';
+
+// @public
+export interface NoteErrorOptions {
+    cause?: unknown;
+}
+
+// @public
+export interface NoteEyecatch {
+    // (undocumented)
+    alt: string;
+    // (undocumented)
+    height: number | null;
+    // (undocumented)
+    url: string;
+    // (undocumented)
+    width: number | null;
+}
+
+// @public
+export class NoteHttpError extends NoteError {
+    constructor(message: string, options: NoteErrorOptions & {
+        status: number;
+        url: string;
+    });
+    // (undocumented)
+    readonly code: "NOTE_HTTP_ERROR";
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    readonly status: number;
+    readonly url: string;
+}
+
+// @public
+export class NoteNetworkError extends NoteError {
+    constructor(message: string, options?: NoteErrorOptions);
+    // (undocumented)
+    readonly code: "NOTE_NETWORK_ERROR";
+    // (undocumented)
+    name: string;
+}
+
+// @public
+export class NoteNotFoundError extends NoteError {
+    constructor(message: string, options: NoteErrorOptions & {
+        url: string;
+    });
+    // (undocumented)
+    readonly code: "NOTE_NOT_FOUND";
+    // (undocumented)
+    name: string;
+    readonly url: string;
+}
+
+// @public
+export class NoteSchemaError extends NoteError {
+    constructor(message: string, options: NoteErrorOptions & {
+        issues: readonly NoteSchemaIssue[];
+    });
+    // (undocumented)
+    readonly code: "NOTE_SCHEMA_ERROR";
+    // (undocumented)
+    readonly issues: readonly NoteSchemaIssue[];
+    // (undocumented)
+    name: string;
+}
+
+// @public
+export interface NoteSchemaIssue {
+    // (undocumented)
+    readonly message: string;
+    readonly path: string;
+}
+
+// @public
+export type NoteSource = 'api' | 'rss';
+
+// @public
+export class NoteTimeoutError extends NoteError {
+    constructor(message: string, options?: NoteErrorOptions);
+    // (undocumented)
+    readonly code: "NOTE_TIMEOUT";
+    // (undocumented)
+    name: string;
+}
+
+// @public
+export interface NoteTocItem {
+    id: string;
+    // (undocumented)
+    level: 2 | 3;
+    // (undocumented)
+    text: string;
+}
+
 // (No @packageDocumentation comment for this package)
 
 ```
