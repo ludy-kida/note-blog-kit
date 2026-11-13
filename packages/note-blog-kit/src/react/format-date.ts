@@ -10,5 +10,7 @@ const formatter = new Intl.DateTimeFormat('ja-JP', {
 });
 
 export function formatNoteDate(iso: string): string {
-  return formatter.format(new Date(iso));
+  const date = new Date(iso);
+  // 日時として解釈できない値でも、一覧全体の描画を失敗させずにそのまま表示する
+  return Number.isNaN(date.getTime()) ? iso : formatter.format(date);
 }

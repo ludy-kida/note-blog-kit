@@ -19,4 +19,4 @@ export type {
 export { NoteArticleCard, type NoteArticleCardProps } from './NoteArticleCard.js';
 export { NoteArticleList, type NoteArticleListProps } from './NoteArticleList.js';
 export { NotePagination, type NotePaginationProps } from './NotePagination.js';
-export type { NoteLinkComponent } from './types.js';
+export type { NoteHeadingLevel, NoteLinkComponent } from './types.js';

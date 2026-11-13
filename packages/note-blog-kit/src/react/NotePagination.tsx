@@ -19,8 +19,8 @@ export interface NotePaginationProps {
   getHref: (page: number) => string;
   /** リンクに使う要素。既定は `'a'` */
   linkComponent?: NoteLinkComponent;
-  /** 文言の差し替え。既定は「前へ」「次へ」 */
-  labels?: { previous?: ReactNode; next?: ReactNode };
+  /** 文言の差し替え。既定は「前へ」「次へ」、nav の aria-label は「ページ送り」 */
+  labels?: { previous?: ReactNode; next?: ReactNode; navigation?: string };
   /** 既定のクラス名（`nbk-pagination`）に追加するクラス名 */
   className?: string;
 }
@@ -43,7 +43,7 @@ export function NotePagination({
 }: NotePaginationProps): ReactElement {
   const totalPages = totalCount !== null && perPage > 0 ? Math.max(1, Math.ceil(totalCount / perPage)) : null;
   return (
-    <nav className={classNames('nbk-pagination', className)} aria-label="ページ送り">
+    <nav className={classNames('nbk-pagination', className)} aria-label={labels?.navigation ?? 'ページ送り'}>
       {page > 1 && (
         <Link href={getHref(page - 1)} className="nbk-pagination__prev">
           {labels?.previous ?? '前へ'}

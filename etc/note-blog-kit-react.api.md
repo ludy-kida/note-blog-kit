@@ -25,11 +25,14 @@ export function NoteArticleCard(input: NoteArticleCardProps): ReactElement;
 
 // @public
 export interface NoteArticleCardProps {
-    // (undocumented)
     article: NoteArticleSummary;
     className?: string;
     formatDate?: (iso: string) => string;
+    headingLevel?: NoteHeadingLevel;
     href?: string;
+    labels?: {
+        paid?: ReactNode;
+    };
     linkComponent?: NoteLinkComponent;
 }
 
@@ -38,12 +41,12 @@ export function NoteArticleList(input: NoteArticleListProps): ReactElement;
 
 // @public
 export interface NoteArticleListProps {
-    // (undocumented)
     articles: readonly NoteArticleSummary[];
     className?: string;
     empty?: ReactNode;
     formatDate?: (iso: string) => string;
     getHref?: (article: NoteArticleSummary) => string;
+    headingLevel?: NoteHeadingLevel;
     linkComponent?: NoteLinkComponent;
     renderItem?: (article: NoteArticleSummary) => ReactNode;
 }
@@ -109,6 +112,9 @@ export interface NoteEyecatch {
 }
 
 // @public
+export type NoteHeadingLevel = 2 | 3 | 4 | 5 | 6;
+
+// @public
 export type NoteLinkComponent = ElementType<{
     href: string;
     className?: string;
@@ -126,6 +132,7 @@ export interface NotePaginationProps {
     labels?: {
         previous?: ReactNode;
         next?: ReactNode;
+        navigation?: string;
     };
     linkComponent?: NoteLinkComponent;
     page: number;

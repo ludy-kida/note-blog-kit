@@ -49,9 +49,34 @@ describe('NoteArticleCard', () => {
     expect(container.querySelector('.nbk-card__badge')).toBeNull();
   });
 
-  it('有料記事に「有料」バッジを出す', () => {
-    const { container } = render(<NoteArticleCard article={findArticle(PAID_KEY)} />);
+  it('有料記事に「有料」バッジを出す（labels.paid で差し替えられる）', () => {
+    const { container, rerender } = render(<NoteArticleCard article={findArticle(PAID_KEY)} />);
     expect(container.querySelector('span.nbk-card__badge')?.textContent).toBe('有料');
+    rerender(<NoteArticleCard article={findArticle(PAID_KEY)} labels={{ paid: 'Paid' }} />);
+    expect(container.querySelector('span.nbk-card__badge')?.textContent).toBe('Paid');
+  });
+
+  it('headingLevel で見出しレベルを変えられる（既定は h2）', () => {
+    const { container } = render(<NoteArticleCard article={findArticle(FREE_KEY)} headingLevel={3} />);
+    expect(container.querySelector('h3.nbk-card__title')).not.toBeNull();
+    expect(container.querySelector('h2')).toBeNull();
+  });
+
+  it('既定の記事 URL・画像 URL が http(s) でなければ、リンク・画像にしない', () => {
+    for (const unsafe of ['javascript:alert(1)', ' JaVaScRiPt:alert(1)', 'java\tscript:alert(1)', 'data:x']) {
+      const article = { ...findArticle(FREE_KEY), url: unsafe, eyecatchUrl: unsafe };
+      const { container, unmount } = render(<NoteArticleCard article={article} />);
+      expect(container.querySelector('a'), unsafe).toBeNull();
+      expect(container.querySelector('img'), unsafe).toBeNull();
+      expect(container.querySelector('.nbk-card__title')?.textContent).toBe(article.title);
+      unmount();
+    }
+  });
+
+  it('日時として解釈できない値は、そのまま表示する（描画を失敗させない）', () => {
+    const article = { ...findArticle(FREE_KEY), publishedAt: 'not-a-date' };
+    const { container } = render(<NoteArticleCard article={article} />);
+    expect(container.querySelector('time')?.textContent).toBe('not-a-date');
   });
 
   it('値の無い項目は要素ごと出さない', () => {

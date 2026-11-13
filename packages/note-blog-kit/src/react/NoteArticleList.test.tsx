@@ -44,11 +44,19 @@ describe('NoteArticleList', () => {
     expect(container.querySelector('ul')?.className).toBe('nbk-article-list my-list');
   });
 
-  it('0件のときは empty を表示する（既定は「記事がありません」）', () => {
-    const { container, rerender } = render(<NoteArticleList articles={[]} />);
+  it('0件のときは empty を表示する（既定は「記事がありません」）。className は外側の要素に付く', () => {
+    const { container, rerender } = render(<NoteArticleList articles={[]} className="my-list" />);
     expect(container.querySelector('ul')).toBeNull();
-    expect(container.querySelector('p.nbk-article-list__empty')?.textContent).toBe('記事がありません');
+    const root = container.querySelector('div.nbk-article-list.nbk-article-list--empty');
+    expect(root?.className).toBe('nbk-article-list nbk-article-list--empty my-list');
+    expect(root?.querySelector('p.nbk-article-list__empty')?.textContent).toBe('記事がありません');
     rerender(<NoteArticleList articles={[]} empty="まだ記事がありません" />);
     expect(container.querySelector('p.nbk-article-list__empty')?.textContent).toBe('まだ記事がありません');
+  });
+
+  it('headingLevel を各カードに渡す', () => {
+    const { container } = render(<NoteArticleList articles={loadArticles(1)} headingLevel={3} />);
+    expect(container.querySelectorAll('h3.nbk-card__title')).toHaveLength(6);
+    expect(container.querySelector('h2')).toBeNull();
   });
 });

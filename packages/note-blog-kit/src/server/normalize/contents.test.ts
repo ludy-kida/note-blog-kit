@@ -106,6 +106,28 @@ describe('normalizeContentsPage', () => {
     expect(() => normalizeContentsPage(json, 1)).toThrow(NoteSchemaError);
   });
 
+  it('記事 URL・画像 URL が https でなければ NoteSchemaError（javascript: などを描画側に渡さない）', () => {
+    const unsafe = [
+      'javascript:alert(1)',
+      ' JaVaScRiPt:alert(1)',
+      'java\tscript:alert(1)',
+      'data:text/html,<script>alert(1)</script>',
+      'http://note.com/x',
+      '//evil.example/x',
+      'not a url',
+    ];
+    for (const field of ['noteUrl', 'eyecatch', 'userProfileImagePath'] as const) {
+      for (const value of unsafe) {
+        const json = mutate(1, (draft) => {
+          const first = draft.data.contents[0] as Record<string, unknown> & { user: Record<string, unknown> };
+          if (field === 'userProfileImagePath') first.user[field] = value;
+          else first[field] = value;
+        });
+        expect(() => normalizeContentsPage(json, 1), `${field}: ${JSON.stringify(value)}`).toThrow(NoteSchemaError);
+      }
+    }
+  });
+
   it('未知のキーが増えても失敗しない', () => {
     const json = mutate(1, (draft) => {
       draft.data.newTopLevelKey = 1;

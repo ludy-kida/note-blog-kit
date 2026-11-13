@@ -50,11 +50,12 @@ describe('NotePagination', () => {
         page={2}
         isLastPage={false}
         getHref={getHref}
-        labels={{ previous: '← 新しい記事', next: '古い記事 →' }}
+        labels={{ previous: '← 新しい記事', next: '古い記事 →', navigation: 'Pagination' }}
         className="my-pager"
       />,
     );
     expect(container.querySelector('nav')?.className).toBe('nbk-pagination my-pager');
+    expect(container.querySelector('nav')?.getAttribute('aria-label')).toBe('Pagination');
     expect(container.querySelector('.nbk-pagination__prev')?.textContent).toBe('← 新しい記事');
     expect(container.querySelector('.nbk-pagination__next')?.textContent).toBe('古い記事 →');
   });
