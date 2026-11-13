@@ -2,7 +2,7 @@
 /**
  * examples をビルドする（CI 用）。事前に `pnpm build` でライブラリをビルドしておくこと。
  *
- * - fixture モード（NOTE_BLOG_KIT_FIXTURES=1）で動かし、note にはアクセスしない
+ * - fixture モード（examples の既定）で動かし、note にはアクセスしない。実通信を有効にする NOTE_BLOG_KIT_LIVE は必ず外す
  * - 成功指標「Next.js の一覧ページを30行以内」を、examples/next/app/page.tsx の行数で確認する
  */
 import { spawnSync } from 'node:child_process';
@@ -21,9 +21,10 @@ if (lines > MAX_PAGE_LINES) {
 }
 console.log(`examples/next/app/page.tsx: ${lines} 行（上限 ${MAX_PAGE_LINES} 行）`);
 
+const { NOTE_BLOG_KIT_LIVE: _live, ...env } = process.env;
 const result = spawnSync('pnpm', ['-C', 'examples/next', 'build'], {
   cwd: root,
   stdio: 'inherit',
-  env: { ...process.env, NOTE_BLOG_KIT_FIXTURES: '1', NEXT_TELEMETRY_DISABLED: '1' },
+  env: { ...env, NEXT_TELEMETRY_DISABLED: '1' },
 });
 process.exit(result.status ?? 1);

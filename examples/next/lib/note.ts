@@ -1,25 +1,31 @@
 /**
- * 例専用の設定。本番のサイトでは NOTE_USER と、キャッシュを効かせる fetch だけがあれば足りる。
+ * 例専用の設定。本番のサイトでは不要（ユーザー名を直接書き、fetch は渡さなくてよい）。
  *
- * NOTE_BLOG_KIT_FIXTURES=1 のときは、リポジトリの fixtures/ を返す fetch を使い、note にアクセスしない
- * （CI とエージェントの確認はこのモードだけで行う）。
+ * 既定は fixture モード：リポジトリの fixtures/ を返す fetch を使い、note にはアクセスしない
+ * （CI とエージェントの確認はこのモードで行う。設定を忘れても実通信にならないよう、既定をこちらに倒している）。
+ * 実際の note から取得するのは NOTE_BLOG_KIT_LIVE=1 と NOTE_USER を両方指定したときだけ。
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-/** 表示する note のユーザー名 */
-export const NOTE_USER = process.env.NOTE_USER ?? 'kida_lw';
+const LIVE = process.env.NOTE_BLOG_KIT_LIVE === '1';
 
-/** 本番用：Next.js のデータキャッシュで1時間ごとに取り直す */
-const cachedFetch: typeof fetch = (input, init) => fetch(input, { ...init, next: { revalidate: 3600 } });
+if (LIVE && !process.env.NOTE_USER) {
+  throw new Error('NOTE_BLOG_KIT_LIVE=1 のときは NOTE_USER（note のユーザー名）を指定してください');
+}
 
-/** fixture 用：一覧 API の URL の page に応じて fixtures/contents/page-N.json を返す（4ページ目以降は最終ページ扱い） */
+/** 表示する note のユーザー名（fixture モードでは fixture の取得元） */
+export const NOTE_USER = LIVE ? (process.env.NOTE_USER as string) : 'kida_lw';
+
+/** fixture 用：一覧 API の URL の page に応じて fixtures/contents/page-N.json を返す（3ページ目を最終ページとする） */
 const fixtureFetch: typeof fetch = async (input) => {
   const page = Number(new URL(String(input)).searchParams.get('page') ?? '1');
   const file = join(process.cwd(), '..', '..', 'fixtures', 'contents', `page-${Math.min(page, 3)}.json`);
-  const json = JSON.parse(await readFile(file, 'utf8')) as { data: { isLastPage: boolean } };
+  const json = JSON.parse(await readFile(file, 'utf8')) as { data: { isLastPage: boolean; contents: unknown[] } };
   json.data.isLastPage = page >= 3;
+  if (page > 3) json.data.contents = [];
   return new Response(JSON.stringify(json), { headers: { 'content-type': 'application/json' } });
 };
 
-export const noteFetch: typeof fetch = process.env.NOTE_BLOG_KIT_FIXTURES === '1' ? fixtureFetch : cachedFetch;
+/** listArticles に渡す fetch */
+export const noteFetch: typeof fetch = LIVE ? fetch : fixtureFetch;

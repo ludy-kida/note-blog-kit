@@ -32,17 +32,23 @@ import 'note-blog-kit/styles.css';
 
 ```tsx
 // app/blog/page.tsx
+import { unstable_cache } from 'next/cache';
+import { notFound } from 'next/navigation';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
 import { listArticles } from 'note-blog-kit/server';
 
-// Next.js のデータキャッシュで1時間ごとに取り直す（高頻度に note へアクセスしないため）
-const cachedFetch: typeof fetch = (input, init) => fetch(input, { ...init, next: { revalidate: 3600 } });
+// 取得結果を1時間キャッシュする（キャッシュに当たれば note へのリクエストも、ライブラリの間隔待ちも起きない）
+const getPage = unstable_cache((page: number) => listArticles({ user: 'your_urlname', page }), ['note'], {
+  revalidate: 3600,
+});
 
 type Props = { searchParams: Promise<{ page?: string }> };
 
 export default async function BlogPage({ searchParams }: Props) {
-  const page = Number((await searchParams).page ?? '1') || 1;
-  const { articles, isLastPage, totalCount } = await listArticles({ user: 'your_urlname', page, fetch: cachedFetch });
+  const page = Number((await searchParams).page ?? '1');
+  if (!Number.isInteger(page) || page < 1 || page > 100) notFound();
+  const { articles, isLastPage, totalCount } = await getPage(page);
+  if (articles.length === 0 && page > 1) notFound();
   return (
     <main>
       <h1>ブログ</h1>
@@ -57,9 +63,10 @@ export default async function BlogPage({ searchParams }: Props) {
 
 ### キャッシュの推奨
 
-- `listArticles` は呼ぶたびに note へリクエストします。**必ずキャッシュしてください**。Next.js なら上の例のように `fetch` に `next: { revalidate }` を付けるのが簡単です
+- `listArticles` は呼ぶたびに note へリクエストします。**呼び出しの結果ごとキャッシュしてください**（Next.js なら上の例の `unstable_cache`、ほかの環境ではビルド時に JSON へ書き出すなど）
+- 同じプロセス内の連続リクエストは、ライブラリが自動で1秒以上空けます。この待ちは `listArticles` を呼ぶたびに入るため、`fetch` 単位のキャッシュ（`next: { revalidate }`）だけでは、同時アクセスが多いとページの表示が遅れます
+- **ページ番号に上限を設けてください**（上の例では100）。上限がないと、`?page=` を変えたアクセスでキャッシュに無いページを取りに行かせ続けられます
 - 全件の取得（`listAllArticles`）は1ページ6件ずつ取りに行くため時間がかかります。ビルド時やキャッシュの更新時に行ってください
-- 同じプロセス内の連続リクエストは、ライブラリが自動で1秒以上空けます
 
 動く例は [`examples/next`](examples/next) にあります（下の「開発」を参照）。
 
@@ -223,13 +230,13 @@ pnpm build
 ```
 
 ```bash
-# fixtures/ の保存済みレスポンスで動かす（note にアクセスしない）
-NOTE_BLOG_KIT_FIXTURES=1 pnpm -C examples/next dev
+# 既定は fixtures/ の保存済みレスポンスで動く（note にアクセスしない）
+pnpm -C examples/next dev
 ```
 
 ```bash
-# 実際の note から取得する（NOTE_USER に自分の urlname を指定）
-NOTE_USER=your_urlname pnpm -C examples/next dev
+# 実際の note から取得する（NOTE_BLOG_KIT_LIVE=1 と、自分の urlname の NOTE_USER を両方指定したときだけ）
+NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
 ```
 
 CI は `pnpm build:examples` で、fixture モードのビルドと一覧ページが30行以内であることを確認しています。
