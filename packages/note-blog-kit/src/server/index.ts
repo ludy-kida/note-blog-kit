@@ -28,4 +28,11 @@ export {
   type NoteSchemaIssue,
   NoteTimeoutError,
 } from './errors.js';
+export {
+  type IterateArticlesOptions,
+  type IterateArticlesResult,
+  iterateArticles,
+  type ListAllArticlesResult,
+  listAllArticles,
+} from './iterate-articles.js';
 export { type ListArticlesOptions, listArticles } from './list-articles.js';

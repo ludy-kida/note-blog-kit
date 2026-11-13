@@ -1,9 +1,14 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticlePage } from '../index.js';
+import type { NoteArticlePage, NoteArticleSummary } from '../index.js';
 import {
   type AnyNoteError,
+  type IterateArticlesOptions,
+  type IterateArticlesResult,
   isNoteError,
+  iterateArticles,
+  type ListAllArticlesResult,
   type ListArticlesOptions,
+  listAllArticles,
   listArticles,
   type NoteError,
   type NoteErrorCode,
@@ -26,6 +31,26 @@ describe('note-blog-kit/server の公開型', () => {
     expectTypeOf<ListArticlesOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
     expectTypeOf<ListArticlesOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<ListArticlesOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();
+  });
+
+  it('iterateArticles・listAllArticles の型', () => {
+    expectTypeOf(iterateArticles).returns.toEqualTypeOf<
+      AsyncGenerator<NoteArticleSummary, IterateArticlesResult, undefined>
+    >();
+    expectTypeOf(listAllArticles).returns.toEqualTypeOf<Promise<ListAllArticlesResult>>();
+    expectTypeOf<ListAllArticlesResult>().toExtend<IterateArticlesResult>();
+    expectTypeOf<ListAllArticlesResult['articles']>().toEqualTypeOf<NoteArticleSummary[]>();
+    expectTypeOf<IterateArticlesResult['truncated']>().toEqualTypeOf<boolean>();
+    expectTypeOf<IterateArticlesResult['totalCount']>().toEqualTypeOf<number | null>();
+    expectTypeOf<IterateArticlesResult['pages']>().toEqualTypeOf<number>();
+  });
+
+  it('IterateArticlesOptions は page を持たず、maxPages を持つ', () => {
+    expectTypeOf<IterateArticlesOptions['maxPages']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<{ user: string }>().toExtend<IterateArticlesOptions>();
+    // page は指定できない（全件取得は常に1ページ目から）
+    // @ts-expect-error page は IterateArticlesOptions にない
+    void listAllArticles({ user: 'x', page: 2 });
   });
 
   it('エラーの code はリテラルのユニオン', () => {
