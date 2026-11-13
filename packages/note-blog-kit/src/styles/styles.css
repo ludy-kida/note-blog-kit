@@ -1,0 +1,218 @@
+/*
+ * note-blog-kit のデフォルト CSS（任意）。import 'note-blog-kit/styles.css' で読み込む。
+ *
+ * - すべてのルールは @layer note-blog-kit の中にある。レイヤーに入っていない利用者の CSS はこれより優先される
+ *   （利用者がレイヤーを使っている場合の順序は README を参照）
+ * - 色・フォント・余白などは --nbk-* 変数で上書きできる（:root や任意の親要素で指定する）
+ * - セレクタは :root と nbk- から始まるクラス名だけを使い、サイトの他の要素には影響しない
+ */
+@layer note-blog-kit {
+  :root {
+    --nbk-font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", meiryo, sans-serif;
+    --nbk-color-text: #08131a;
+    --nbk-color-muted: #6e7b85;
+    --nbk-color-accent: #41c9b4;
+    --nbk-color-border: #e6e6e6;
+    --nbk-color-placeholder: #f2f2f2;
+    /* カードの背景。既定は透明（ページの背景色をそのまま使う） */
+    --nbk-color-surface: transparent;
+    --nbk-color-badge-bg: #08131a;
+    --nbk-color-badge-text: #fff;
+    --nbk-radius: 8px;
+    --nbk-list-gap: 24px;
+    --nbk-card-min-width: 280px;
+  }
+
+  /* 一覧 */
+  .nbk-article-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--nbk-card-min-width), 100%), 1fr));
+    gap: var(--nbk-list-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--nbk-font-family);
+    color: var(--nbk-color-text);
+  }
+
+  .nbk-article-list__item {
+    display: flex;
+    min-width: 0;
+  }
+
+  .nbk-article-list--empty {
+    display: block;
+  }
+
+  .nbk-article-list__empty {
+    margin: 0;
+    padding: calc(var(--nbk-list-gap) * 2) 0;
+    color: var(--nbk-color-muted);
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  /* カード */
+  .nbk-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    font-family: var(--nbk-font-family);
+    color: var(--nbk-color-text);
+    background: var(--nbk-color-surface);
+  }
+
+  .nbk-card__eyecatch {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1280 / 670;
+    object-fit: cover;
+    border: 1px solid var(--nbk-color-border);
+    border-radius: var(--nbk-radius);
+    background: var(--nbk-color-placeholder);
+  }
+
+  .nbk-card__title {
+    display: -webkit-box;
+    margin: 4px 0 0;
+    overflow: hidden;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .nbk-card__link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  /*
+   * カード全体をクリックできるようにする。
+   * カード内に別のリンク（タグなど）を足す場合は、その要素に position: relative と z-index を付けて上に出す
+   */
+  .nbk-card__link::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    border-radius: var(--nbk-radius);
+  }
+
+  .nbk-card__link:hover {
+    color: var(--nbk-color-accent);
+  }
+
+  .nbk-card__link:focus-visible {
+    outline: none;
+  }
+
+  .nbk-card__link:focus-visible::after {
+    outline: 2px solid var(--nbk-color-accent);
+    outline-offset: 4px;
+  }
+
+  .nbk-card__date {
+    color: var(--nbk-color-muted);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .nbk-card__badge {
+    align-self: flex-start;
+    padding: 2px 8px;
+    color: var(--nbk-color-badge-text);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.5;
+    background: var(--nbk-color-badge-bg);
+    border-radius: 999px;
+  }
+
+  .nbk-card__excerpt {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--nbk-color-muted);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .nbk-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nbk-card__tag {
+    color: var(--nbk-color-muted);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  /* ページ送り */
+  .nbk-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: calc(var(--nbk-list-gap) * 1.5) 0;
+    font-family: var(--nbk-font-family);
+    color: var(--nbk-color-text);
+  }
+
+  .nbk-pagination__prev,
+  .nbk-pagination__next {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 20px;
+    color: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid var(--nbk-color-border);
+    border-radius: 999px;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .nbk-pagination__prev:hover,
+  .nbk-pagination__next:hover {
+    color: var(--nbk-color-accent);
+    border-color: var(--nbk-color-accent);
+  }
+
+  .nbk-pagination__prev:focus-visible,
+  .nbk-pagination__next:focus-visible {
+    outline: 2px solid var(--nbk-color-accent);
+    outline-offset: 2px;
+  }
+
+  .nbk-pagination__status {
+    color: var(--nbk-color-muted);
+    font-size: 0.875rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nbk-card__link,
+    .nbk-pagination__prev,
+    .nbk-pagination__next {
+      transition: none;
+    }
+  }
+}

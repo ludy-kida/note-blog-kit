@@ -17,7 +17,9 @@
     "rss"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "engines": {
     "node": ">=20"
   },
@@ -68,6 +70,7 @@
         "default": "./dist/next/index.cjs"
       }
     },
+    "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -78,7 +81,7 @@
     "typecheck": "tsc --noEmit",
     "api": "node ../../scripts/run-api-extractor.mjs",
     "api:check": "node ../../scripts/run-api-extractor.mjs --check",
-    "check:dist": "publint --strict && attw --pack . --profile node16",
+    "check:dist": "publint --strict && attw --pack . --profile node16 --exclude-entrypoints ./styles.css",
     "size": "size-limit"
   },
   "publishConfig": {

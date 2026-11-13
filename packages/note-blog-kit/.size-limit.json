@@ -11,5 +11,12 @@
     "path": "dist/index.js",
     "limit": "3 KB",
     "gzip": true
+  },
+  {
+    "name": "note-blog-kit/styles.css (gzip)",
+    "path": "dist/styles.css",
+    "limit": "3 KB",
+    "gzip": true,
+    "rolldown": false
   }
 ]

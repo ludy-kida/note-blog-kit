@@ -99,6 +99,66 @@ export default async function BlogPage() {
 - **Next.js の typedRoutes**：有効にしている場合は `Link` の `href` が文字列を受け付けないため、`Link` を包んだコンポーネントを `linkComponent` に渡してください
 - **見出し画像**：note の CDN（assets.st-note.com）から直接読み込みます
 
+### デフォルト CSS（任意）
+
+note の見た目に合わせた CSS を用意しています。読み込まなければ、コンポーネントは見た目を持ちません。
+
+```ts
+// Next.js（App Router）なら app/layout.tsx、Pages Router なら pages/_app.tsx、Vite なら main.tsx などで読み込む
+import 'note-blog-kit/styles.css';
+```
+
+CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだけ当たり、サイトの他の要素には影響しません。色や余白は CSS 変数で変えられます。
+
+| 変数 | 既定値 | 用途 |
+| --- | --- | --- |
+| `--nbk-font-family` | Hiragino Sans など | 文字（サイトのフォントを使うなら `inherit`） |
+| `--nbk-color-text` | `#08131a` | タイトルなど |
+| `--nbk-color-muted` | `#6e7b85` | 日付・抜粋・タグ・件数 |
+| `--nbk-color-accent` | `#41c9b4` | ホバー・フォーカス |
+| `--nbk-color-border` | `#e6e6e6` | 枠線 |
+| `--nbk-color-placeholder` | `#f2f2f2` | 見出し画像の読み込み中の下地 |
+| `--nbk-color-surface` | `transparent` | カードの背景（既定はページの背景のまま） |
+| `--nbk-color-badge-bg` / `--nbk-color-badge-text` | `#08131a` / `#fff` | 「有料」バッジ |
+| `--nbk-radius` | `8px` | 角丸 |
+| `--nbk-list-gap` | `24px` | 一覧のカードの間隔、ページ送りの上下の余白 |
+| `--nbk-card-min-width` | `280px` | 一覧で1枚のカードが取る最小幅 |
+
+#### 優先順位（カスケードレイヤー）
+
+すべてのルールは `@layer note-blog-kit` の中にあります。
+
+- **レイヤーに入っていないあなたの CSS** は、詳細度に関係なく note-blog-kit より優先されます。サイト全体の要素スタイル（例：`a { text-decoration: underline }`、`h2 { margin: ... }`）もカードに効くので、必要ならクラス名で打ち消してください
+- **あなたがレイヤーを使っている場合**（Tailwind CSS v4 など）は、レイヤーの順序は最初に宣言された順で決まります。読み込む順番に頼らず、順序を宣言してください。Tailwind v4 なら、リセット（`base`）より後・ユーティリティ（`utilities`）より前に置くと、リセットで太字や余白が消えず、`className` に渡したユーティリティクラスが効きます
+
+```css
+/* Tailwind v4 の例：グローバル CSS の先頭で順序を宣言する */
+@layer theme, base, note-blog-kit, components, utilities;
+@import "tailwindcss";
+```
+
+```css
+/* ブランド色に合わせる */
+:root {
+  --nbk-color-accent: #e5004f;
+}
+
+/* ダークモード（既定では配色を変えません） */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nbk-color-text: #f1f1f1;
+    --nbk-color-muted: #a3adb4;
+    --nbk-color-border: #333;
+    --nbk-color-placeholder: #222;
+  }
+}
+
+/* 個別の調整はクラス名で（レイヤーに入れなければ詳細度を気にせず上書きできる） */
+.nbk-card__title {
+  font-size: 1.125rem;
+}
+```
+
 ## 開発状況
 
 Phase 0（調査と検証）。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照。

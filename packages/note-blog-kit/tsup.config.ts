@@ -1,4 +1,11 @@
+import { copyFile, mkdir } from 'node:fs/promises';
 import { defineConfig } from 'tsup';
+
+/** デフォルト CSS は加工せずに dist へ置く（任意で import 'note-blog-kit/styles.css' する） */
+async function copyStyles(): Promise<void> {
+  await mkdir('dist', { recursive: true });
+  await copyFile('src/styles/styles.css', 'dist/styles.css');
+}
 
 export default defineConfig([
   {
@@ -15,6 +22,8 @@ export default defineConfig([
     treeshake: true,
     splitting: false,
     sourcemap: false,
+    // clean の後に動くよう、clean するこの設定でコピーする（watch 中に styles.css を編集しても再コピーはされない）
+    onSuccess: copyStyles,
   },
   {
     entry: { 'cli/index': 'src/cli/index.ts' },
