@@ -64,24 +64,48 @@ describe('styles.css', () => {
     expect(outside.trim(), 'レイヤーの外にルールがある').toBe('');
   });
 
-  it('使っている CSS 変数には :root に既定値がある', () => {
+  it('レイヤー名は note-blog-kit（互換性の対象）', () => {
+    expect([...cssWithoutComments.matchAll(/@layer\s+([^{;\s]+)/g)].map((match) => match[1])).toEqual([
+      'note-blog-kit',
+    ]);
+  });
+
+  it('CSS 変数の一覧は公開したとおり（互換性の対象。変えるときはこのテストと README を更新する）', () => {
     const rootBlock = /:root\s*\{([^}]*)\}/.exec(cssWithoutComments)?.[1] ?? '';
-    const defined = classNamesIn(rootBlock, /(--nbk-[a-z0-9-]+)\s*:/g);
+    const defined = [...classNamesIn(rootBlock, /(--nbk-[a-z0-9-]+)\s*:/g)].sort();
+    expect(defined).toEqual(
+      [
+        '--nbk-font-family',
+        '--nbk-color-text',
+        '--nbk-color-muted',
+        '--nbk-color-accent',
+        '--nbk-color-border',
+        '--nbk-color-placeholder',
+        '--nbk-color-surface',
+        '--nbk-color-badge-bg',
+        '--nbk-color-badge-text',
+        '--nbk-radius',
+        '--nbk-list-gap',
+        '--nbk-card-min-width',
+      ].sort(),
+    );
     const used = classNamesIn(cssWithoutComments, /var\(\s*(--nbk-[a-z0-9-]+)/g);
     expect(
-      [...used].filter((name) => !defined.has(name)),
+      [...used].filter((name) => !defined.includes(name)),
       '既定値のない変数',
     ).toEqual([]);
-    for (const name of [
-      '--nbk-font-family',
-      '--nbk-color-text',
-      '--nbk-color-muted',
-      '--nbk-color-accent',
-      '--nbk-color-border',
-      '--nbk-radius',
-      '--nbk-gap',
-    ]) {
-      expect(defined.has(name), name).toBe(true);
+  });
+
+  it('セレクタは :root と .nbk- のクラスだけ（サイトの他の要素に影響しない）', () => {
+    const { inside } = splitLayer(cssWithoutComments);
+    // { の直前までをセレクタとして取り出す（@media などの at-rule は除く）
+    const selectors = [...inside.matchAll(/([^{};]+)\{/g)]
+      .map((match) => (match[1] ?? '').trim())
+      .filter((selector) => !selector.startsWith('@'))
+      .flatMap((selector) => selector.split(',').map((part) => part.trim()));
+    expect(selectors.length).toBeGreaterThan(10);
+    for (const selector of selectors) {
+      expect(selector, selector).toMatch(/^(:root|\.nbk-[a-z0-9_-]+(:{1,2}[a-z-]+)*)$/);
     }
   });
 
@@ -91,6 +115,6 @@ describe('styles.css', () => {
       sideEffects: unknown;
     };
     expect(pkg.exports['./styles.css']).toBe('./dist/styles.css');
-    expect(Array.isArray(pkg.sideEffects) && pkg.sideEffects.some((glob) => String(glob).includes('.css'))).toBe(true);
+    expect(pkg.sideEffects).toEqual(['**/*.css']);
   });
 });

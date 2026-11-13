@@ -1,9 +1,10 @@
 /*
  * note-blog-kit のデフォルト CSS（任意）。import 'note-blog-kit/styles.css' で読み込む。
  *
- * - すべてのルールは @layer note-blog-kit の中にある。レイヤーに入っていない利用者の CSS が常に優先される
+ * - すべてのルールは @layer note-blog-kit の中にある。レイヤーに入っていない利用者の CSS はこれより優先される
+ *   （利用者がレイヤーを使っている場合の順序は README を参照）
  * - 色・フォント・余白などは --nbk-* 変数で上書きできる（:root や任意の親要素で指定する）
- * - セレクタは nbk- から始まるクラス名だけを使う
+ * - セレクタは :root と nbk- から始まるクラス名だけを使い、サイトの他の要素には影響しない
  */
 @layer note-blog-kit {
   :root {
@@ -12,11 +13,13 @@
     --nbk-color-muted: #6e7b85;
     --nbk-color-accent: #41c9b4;
     --nbk-color-border: #e6e6e6;
-    --nbk-color-surface: #fff;
+    --nbk-color-placeholder: #f2f2f2;
+    /* カードの背景。既定は透明（ページの背景色をそのまま使う） */
+    --nbk-color-surface: transparent;
     --nbk-color-badge-bg: #08131a;
     --nbk-color-badge-text: #fff;
     --nbk-radius: 8px;
-    --nbk-gap: 24px;
+    --nbk-list-gap: 24px;
     --nbk-card-min-width: 280px;
   }
 
@@ -24,7 +27,7 @@
   .nbk-article-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--nbk-card-min-width), 100%), 1fr));
-    gap: var(--nbk-gap);
+    gap: var(--nbk-list-gap);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -43,7 +46,7 @@
 
   .nbk-article-list__empty {
     margin: 0;
-    padding: calc(var(--nbk-gap) * 2) 0;
+    padding: calc(var(--nbk-list-gap) * 2) 0;
     color: var(--nbk-color-muted);
     font-size: 0.875rem;
     text-align: center;
@@ -70,7 +73,7 @@
     object-fit: cover;
     border: 1px solid var(--nbk-color-border);
     border-radius: var(--nbk-radius);
-    background: var(--nbk-color-border);
+    background: var(--nbk-color-placeholder);
   }
 
   .nbk-card__title {
@@ -92,7 +95,10 @@
     transition: color 0.15s ease;
   }
 
-  /* カード全体をクリックできるようにする */
+  /*
+   * カード全体をクリックできるようにする。
+   * カード内に別のリンク（タグなど）を足す場合は、その要素に position: relative と z-index を付けて上に出す
+   */
   .nbk-card__link::after {
     position: absolute;
     inset: 0;
@@ -164,7 +170,7 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin: calc(var(--nbk-gap) * 1.5) 0;
+    margin: calc(var(--nbk-list-gap) * 1.5) 0;
     font-family: var(--nbk-font-family);
     color: var(--nbk-color-text);
   }

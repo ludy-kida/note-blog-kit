@@ -22,6 +22,8 @@ export default defineConfig([
     treeshake: true,
     splitting: false,
     sourcemap: false,
+    // clean の後に動くよう、clean するこの設定でコピーする（watch 中に styles.css を編集しても再コピーはされない）
+    onSuccess: copyStyles,
   },
   {
     entry: { 'cli/index': 'src/cli/index.ts' },
@@ -30,6 +32,5 @@ export default defineConfig([
     target: 'node20',
     banner: { js: '#!/usr/bin/env node' },
     clean: false,
-    onSuccess: copyStyles,
   },
 ]);
