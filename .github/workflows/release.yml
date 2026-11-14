@@ -2,14 +2,20 @@
 # - changeset があれば、GitHub App の名義でリリース PR を作成・更新する（App の名義なので PR で CI が動く）
 # - changeset がなく未公開のバージョンがあれば、npm の trusted publishing（OIDC）で公開し、タグと GitHub Release を作る
 # npm への公開は、人がリリース PR をマージしたときだけ起きる（エージェントは公開しない）。
-# 事前に人が行う設定（GitHub App・npm の trusted publisher）は docs/release.md を参照。
+# 事前に人が行う設定（GitHub Environment・GitHub App・npm の trusted publisher）は docs/release.md を参照。
+#
+# 安全のための設計
+# - ジョブは Environment「release」で動く。Environment は main だけに制限し、npm の trusted publisher と
+#   App の秘密鍵も Environment に結びつける。作業ブランチでこのファイルを書き換えても、公開も秘密鍵の取得もできない
+# - 標準トークンは読み取りと OIDC だけ。書き込み（push・PR・タグ・Release）は GitHub App のトークンで行う
+# - App のトークンは changesets/action の直前に発行し、.git/config には残さない（persist-credentials: false）
+# - actions はコミット SHA で固定する（コメントのバージョンは参照用）
 name: Release
 
 on:
   push:
     branches: [main]
 
-# 標準トークンは読み取りと OIDC だけにし、書き込み（push・PR・タグ・Release）は GitHub App のトークンで行う
 permissions:
   contents: read
   id-token: write
@@ -22,25 +28,19 @@ jobs:
   release:
     if: github.repository == 'ludy-kida/note-blog-kit'
     runs-on: ubuntu-latest
+    environment: release
     steps:
-      - name: GitHub App のトークンを発行
-        id: app-token
-        uses: actions/create-github-app-token@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          persist-credentials: false
 
-      - uses: actions/checkout@v7
-        with:
-          token: ${{ steps.app-token.outputs.token }}
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
 
-      - uses: pnpm/action-setup@v5
-
-      # registry-url は付けない（認証は trusted publishing に任せ、ダミーのトークンを .npmrc に書かない）
-      - uses: actions/setup-node@v7
+      # registry-url は付けない（認証は trusted publishing に任せ、ダミーのトークンを .npmrc に書かない）。
+      # 公開するジョブなので依存のキャッシュは使わない
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-          cache: pnpm
 
       - name: npm が trusted publishing に対応しているか確認（11.5.1 以上）
         run: |
@@ -53,7 +53,15 @@ jobs:
 
       - run: pnpm build
 
-      - uses: changesets/action@v2.1.2
+      - name: GitHub App のトークンを発行
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      # push・コミット・タグは GitHub API（github-token）で行うため、git の認証情報は不要
+      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           version-script: pnpm exec changeset version
