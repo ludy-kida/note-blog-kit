@@ -1,15 +1,17 @@
-# Changesets の release PR を作成・更新する。
-# npm への公開は、人が release PR をマージしたときだけ行われる（エージェントは公開しない）。
-# 公開には npm の Trusted Publishing（OIDC）の設定が必要。
+# main への push で Changesets を実行する。
+# - changeset があれば、GitHub App の名義でリリース PR を作成・更新する（App の名義なので PR で CI が動く）
+# - changeset がなく未公開のバージョンがあれば、npm の trusted publishing（OIDC）で公開し、タグと GitHub Release を作る
+# npm への公開は、人がリリース PR をマージしたときだけ起きる（エージェントは公開しない）。
+# 事前に人が行う設定（GitHub App・npm の trusted publisher）は docs/release.md を参照。
 name: Release
 
 on:
   push:
     branches: [main]
 
+# 標準トークンは読み取りと OIDC だけにし、書き込み（push・PR・タグ・Release）は GitHub App のトークンで行う
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   id-token: write
 
 concurrency:
@@ -21,21 +23,41 @@ jobs:
     if: github.repository == 'ludy-kida/note-blog-kit'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - name: GitHub App のトークンを発行
+        id: app-token
+        uses: actions/create-github-app-token@v3
         with:
-          node-version: 22
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: pnpm/action-setup@v5
+
+      # registry-url は付けない（認証は trusted publishing に任せ、ダミーのトークンを .npmrc に書かない）
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+
+      - name: npm が trusted publishing に対応しているか確認（11.5.1 以上）
+        run: |
+          version="$(npm --version)"
+          echo "npm $version"
+          node -e "const [a,b,c]=process.argv[1].split('.').map(Number); process.exit(a>11||(a===11&&(b>5||(b===5&&c>=1)))?0:1)" "$version" \
+            || { echo "npm 11.5.1 以上が必要です（現在 $version）"; exit 1; }
+
       - run: pnpm install --frozen-lockfile
+
       - run: pnpm build
-      - uses: changesets/action@v1
+
+      - uses: changesets/action@v2.1.2
         with:
-          version: pnpm exec changeset version
-          publish: pnpm exec changeset publish
-          title: "chore: release"
-          commit: "chore: release"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          github-token: ${{ steps.app-token.outputs.token }}
+          version-script: pnpm exec changeset version
+          publish-script: pnpm exec changeset publish
+          pr-title: "chore: release"
+          commit-message: "chore: release"
+          create-github-releases: true
