@@ -1,6 +1,6 @@
 {
   "name": "note-blog-kit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Show your own note articles as a blog on React / Next.js sites (unofficial)",
   "license": "MIT",
   "author": "ludy-kida",
