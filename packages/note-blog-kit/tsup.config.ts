@@ -29,7 +29,7 @@ export default defineConfig([
     entry: { 'cli/index': 'src/cli/index.ts' },
     format: ['esm'],
     platform: 'node',
-    target: 'node20',
+    target: 'node22',
     banner: { js: '#!/usr/bin/env node' },
     clean: false,
   },
