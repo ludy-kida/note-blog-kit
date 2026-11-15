@@ -105,6 +105,17 @@ describe('sanitizeNoteBody：境界', () => {
       '<div data-nbk-toc></div><p>後</p>',
     ],
     ['入れ子の div', '<div><div><p>a</p></div>b</div><p>c</p>', '<p>a</p>b<p>c</p>'],
+    [
+      '消した画像の後のリンク',
+      '<img src=x><a href="https://example.com/">リンク</a><p>後</p>',
+      '<a href="https://example.com/">リンク</a><p>後</p>',
+    ],
+    [
+      '段落の中で消した画像の後の強調',
+      '<p><img src=x><strong>太字</strong> 後</p><p>次</p>',
+      '<p><strong>太字</strong> 後</p><p>次</p>',
+    ],
+    ['空の div の後の見出し', '<div></div><h2>見出し</h2><p>本文</p>', '<h2>見出し</h2><p>本文</p>'],
   ])('許可しない要素を消しても、後の要素の閉じタグが壊れない（%s）', (_name, input, expected) => {
     const output = sanitizeNoteBody(input);
     expect(output).toBe(expected);
