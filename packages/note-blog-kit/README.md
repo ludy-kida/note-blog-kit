@@ -19,7 +19,7 @@
 npm install note-blog-kit
 ```
 
-React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 20 以上で動きます。
+React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 22.12 以上で動きます。
 
 ### 2. デフォルト CSS を読み込む（任意）
 
