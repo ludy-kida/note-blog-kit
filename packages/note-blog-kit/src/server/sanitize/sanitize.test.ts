@@ -3,8 +3,29 @@ import { describe, expect, it } from 'vitest';
 import { PRESERVE_CASES, type SanitizeCase, UNSAFE_CASES } from './cases.js';
 import { sanitizeNoteBody } from './sanitize.js';
 
+const VOID_TAGS = new Set(['br', 'hr', 'img']);
+
+/** 出力のタグがすべて許可タグで、開きと閉じが正しく対応していること */
+function expectWellFormed(output: string): void {
+  const stack: string[] = [];
+  for (const m of output.matchAll(/<(\/?)([a-z0-9-]+)[^>]*>/g)) {
+    const [, closing, name] = m as unknown as [string, string, string];
+    expect(name, output).toMatch(
+      /^(p|br|h[234]|strong|em|s|a|ul|ol|li|blockquote|figure|figcaption|img|pre|code|hr|table|thead|tbody|tr|th|td|div)$/,
+    );
+    if (VOID_TAGS.has(name)) continue;
+    if (closing) {
+      expect(stack.pop(), `</${name}> の対応が崩れている：${output}`).toBe(name);
+    } else {
+      stack.push(name);
+    }
+  }
+  expect(stack, `閉じていないタグがある：${output}`).toEqual([]);
+}
+
 function expectCase(c: SanitizeCase): void {
   const output = sanitizeNoteBody(c.input);
+  expectWellFormed(output);
   const lower = output.toLowerCase();
   for (const s of c.mustNotContain) {
     expect(lower, `「${s}」が残っている：${output}`).not.toContain(s.toLowerCase());
@@ -69,6 +90,31 @@ describe('sanitizeNoteBody：境界', () => {
     );
   });
 
+  it.each([
+    [
+      'div の後のリンク',
+      '<div>x</div><a href="https://example.com/">リンク</a><p>後</p>',
+      'x<a href="https://example.com/">リンク</a><p>後</p>',
+    ],
+    ['消した画像の後の段落', '<img src="https://evil.example/x.png"><p>a</p>', '<p>a</p>'],
+    ['div の後の表', '<div>x</div><table><tr><td>a</td></tr></table>', 'x<table><tr><td>a</td></tr></table>'],
+    ['目次の後の段落', '<table-of-contents><p>x</p></table-of-contents><p>後</p>', '<div data-nbk-toc></div><p>後</p>'],
+    [
+      '目次の中の目次・script・画像',
+      '<table-of-contents><table-of-contents>a</table-of-contents><script>alert(1)</script><img src=x onerror=alert(1)><br></table-of-contents><p>後</p>',
+      '<div data-nbk-toc></div><p>後</p>',
+    ],
+    ['入れ子の div', '<div><div><p>a</p></div>b</div><p>c</p>', '<p>a</p>b<p>c</p>'],
+  ])('許可しない要素を消しても、後の要素の閉じタグが壊れない（%s）', (_name, input, expected) => {
+    const output = sanitizeNoteBody(input);
+    expect(output).toBe(expected);
+    expectWellFormed(output);
+  });
+
+  it('閉じていない目次は、その後をすべて目次の中身として捨てる（ブラウザの解釈と同じ）', () => {
+    expect(sanitizeNoteBody('<table-of-contents><p>after</p>')).toBe('<div data-nbk-toc></div>');
+  });
+
   it('ポート付きの assets.st-note.com の画像は消す', () => {
     expect(sanitizeNoteBody('<img src="https://assets.st-note.com:8443/x.png">')).toBe('');
   });
@@ -99,6 +145,7 @@ function textOf(html: string): string {
 describe('sanitizeNoteBody：fixture の本文が崩れない', () => {
   it.each(notes)('%s', (_key, note) => {
     const output = sanitizeNoteBody(note.body);
+    expectWellFormed(output);
 
     for (const tag of ['p', 'h2', 'h3', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'figure', 'img']) {
       expect(countTags(output, tag), tag).toBe(countTags(note.body, tag));
