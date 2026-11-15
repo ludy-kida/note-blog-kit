@@ -31,7 +31,9 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 
 ## 1. 許可するタグ
 
-`p` `br` `h2` `h3` `strong` `em` `a` `ul` `ol` `li` `blockquote` `figure` `figcaption` `img`
+- fixture で使われている要素：`p` `br` `h2` `h3` `strong` `em` `a` `ul` `ol` `li` `blockquote` `figure` `figcaption` `img`
+- fixture に例はないが、note のエディタで使える要素（人の判断で許可。決定事項 1）：`pre` `code` `hr` `h4` `s` `table` `thead` `tbody` `tr` `th` `td`
+  - `th` `td` は `colspan` `rowspan`（数字だけ）を残す
 
 `table-of-contents` は、目次を差し込む位置の目印として **`<div data-nbk-toc></div>`** に置き換える（中身は捨てる）。React 側（#10）でこの位置に目次を描画できるようにするため。
 
@@ -47,8 +49,9 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 | 要素 | 残す属性 | 扱い |
 | --- | --- | --- |
 | `a` | `href` | スキームが `http:` `https:` `mailto:` のものだけ。それ以外は `href` を消す（リンクのテキストは残す） |
-| `a` | `target` | `_blank` のときだけ残す。その場合 `rel` を **`nofollow noopener noreferrer`** に書き換える（元の `rel` は使わない） |
-| `img` | `src` | スキームが `https:` のものだけ。それ以外は `img` ごと消す |
+| `a` | `target` | `_blank` のときだけ残す |
+| `a` | `rel` | 元の `rel` は使わず、次の規則で付け直す。`target="_blank"` なら `nofollow noopener noreferrer`、アフィリエイトリンク（下記）なら `sponsored` を加える。どちらでもなければ付けない |
+| `img` | `src` | **`https://assets.st-note.com/` で始まるものだけ**（決定事項 2）。それ以外は `img` ごと消す |
 | `img` | `alt` `width` `height` | `width` `height` は数字だけのとき残す。`loading="lazy"` と `decoding="async"` を付ける |
 | すべての許可タグ | `id` | **`nbk-` を先頭に付けて**残す（例：`nbk-5bf2a080-…`）。目次のリンク先に使う。DOM clobbering（`id="location"` などでページの JavaScript を壊す攻撃）を防ぐため。`NoteTocItem.id` も同じ値にする |
 | すべての許可タグ | `name` | 消す（`id` と同じ値で、不要） |
@@ -59,19 +62,28 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 
 `id`・`data-nbk-embed-*` の値は、英数字と `-` `_` `.` `:` `/` 以外の文字を含む場合は消す（`data-nbk-embed-url` を除く）。
 
+### アフィリエイトリンクの判定（決定事項 3）
+
+`href` が次のどれかに当てはまるリンクをアフィリエイトリンクとみなし、`rel` に `sponsored` を加える。一覧にないサービスは判定しない（必要になったら、この一覧に足す）。
+
+| サービス | 条件 |
+| --- | --- |
+| Amazon アソシエイト | ホストが `amazon.co.jp`・`www.amazon.co.jp`・`amazon.com`・`www.amazon.com` で、クエリに `tag` がある。またはホストが `amzn.to`・`amzn.asia`（短縮 URL） |
+| 楽天アフィリエイト | ホストが `hb.afl.rakuten.co.jp` |
+| もしもアフィリエイト | ホストが `af.moshimo.com` |
+| A8.net | ホストが `px.a8.net` |
+| バリューコマース | ホストが `ck.jp.ap.valuecommerce.com` |
+
+ホストは大文字・小文字を区別せずに比較する。サブドメインの前方一致（`*.amazon.co.jp` など）はしない。
+
 ## 4. URL の判定
 
 - 実体参照（`&#106;` `&#x6A;` `&colon;` など）を解き、前後の空白と制御文字（タブ・改行を含む）を除いたあとのスキームで判定する
 - 相対 URL（`/path`・`#hash`・`path`）とプロトコル相対 URL（`//example.com`）は許可しない（note の本文の URL はすべて絶対 URL で、相対 URL は表示するサイトによって意味が変わるため）
 - 許可した URL の値は書き換えない（アフィリエイトリンクのクエリを壊さないため）
 
-## 5. 人に判断してほしい点
+## 5. 決定事項（2026-11-15、人が判断）
 
-承認のときに決める。決まったらこの節を「決定事項」に書き換える。
-
-1. **fixture に例のない要素**：note のエディタで使える可能性がある `pre` `code`（コードブロック）`hr`（区切り線）`h4` `table` 系 `s`（取り消し線）などを、最初から許可するか。例が出てから fixture を取り直して足すか
-   - 案：最初は許可しない（fixture にないものは使わない、という CLAUDE.md の原則に合わせる）。許可しない要素は「タグだけ消して中身のテキストを残す」ので、文字は失われない
-2. **画像の `src` のホスト**：`assets.st-note.com` に限るか、https なら許可するか
-   - 案：https なら許可（note が別の CDN に移ったときに画像が全部消えるのを避ける）
-3. **アフィリエイトリンクの `rel`**：Google の推奨に合わせて `sponsored` を加えるか
-   - 案：加えない（どのリンクがアフィリエイトかをライブラリが判定しない。必要なら利用者が `components` で差し替える）
+1. **fixture に例のない要素を最初から許可する**：`pre` `code` `hr` `h4` `s` と `table` 系。note のエディタで使える要素を、例が出る前から表示できるようにする。CLAUDE.md の「fixture にないキーを使わない」は JSON のキーの原則で、本文 HTML の要素はこの決定に従う
+2. **画像の読み込み元を `assets.st-note.com` に限る**：note の画像以外を読み込ませない。note が CDN を変えた場合は、この一覧を更新する（そのときは画像が表示されなくなるので、契約テストか利用者の報告で気づく）
+3. **アフィリエイトリンクに `rel="sponsored"` を付ける**：判定の条件は「アフィリエイトリンクの判定」の表のとおり

@@ -179,6 +179,17 @@ export const UNSAFE_CASES: SanitizeCase[] = [
     mustNotContain: ['<img', 'evil.example'],
   },
   {
+    name: 'https でも assets.st-note.com 以外の画像は img ごと消す',
+    input: '<img src="https://evil.example/x.png" alt="">',
+    mustNotContain: ['<img', 'evil.example'],
+  },
+  {
+    name: 'assets.st-note.com に似せたホストの画像は img ごと消す',
+    input:
+      '<img src="https://assets.st-note.com.evil.example/x.png" alt=""><img src="https://assets.st-note.com@evil.example/x.png" alt="">',
+    mustNotContain: ['<img', 'evil.example'],
+  },
+  {
     name: 'srcset を消す（src 以外から読み込ませない）',
     input: '<img src="https://assets.st-note.com/img/a.png" srcset="https://evil.example/x.png 2x" alt="">',
     mustNotContain: ['srcset', 'evil.example'],
@@ -243,9 +254,44 @@ export const PRESERVE_CASES: SanitizeCase[] = [
     mustContain: [
       'href="https://www.amazon.co.jp/dp/B0GCQWRYBG?tag=ludyworks-gift-22&amp;linkCode=ogi&amp;th=1&amp;psc=1&amp;language=ja_JP"',
       'target="_blank"',
-      'rel="nofollow noopener noreferrer"',
+      'rel="nofollow noopener noreferrer sponsored"',
       '<strong>商品名</strong>',
     ],
+  },
+  {
+    name: 'アフィリエイトでない target="_blank" のリンクには sponsored を付けない',
+    input: '<a href="https://example.com/page" rel="nofollow noopener" target="_blank">リンク</a>',
+    mustNotContain: ['sponsored'],
+    mustContain: ['target="_blank"', 'rel="nofollow noopener noreferrer"'],
+  },
+  {
+    name: 'tag のない Amazon のリンクはアフィリエイトとみなさない',
+    input: '<a href="https://www.amazon.co.jp/dp/B0GCQWRYBG">リンク</a>',
+    mustNotContain: ['sponsored', 'rel='],
+    mustContain: ['href="https://www.amazon.co.jp/dp/B0GCQWRYBG"'],
+  },
+  {
+    name: 'Amazon の短縮 URL は target がなくても sponsored を付ける',
+    input: '<a href="https://amzn.to/3AbCdEf">リンク</a>',
+    mustNotContain: ['nofollow'],
+    mustContain: ['href="https://amzn.to/3AbCdEf"', 'rel="sponsored"'],
+  },
+  {
+    name: '一覧にあるアフィリエイトのサービス（もしも・楽天・A8・バリューコマース）に sponsored を付ける',
+    input:
+      '<a href="https://af.moshimo.com/af/c/click?a_id=1">1</a><a href="https://hb.afl.rakuten.co.jp/hgc/x/">2</a><a href="https://px.a8.net/svt/ejp?a8mat=x">3</a><a href="https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=1">4</a>',
+    mustNotContain: [],
+    mustContain: [
+      'href="https://af.moshimo.com/af/c/click?a_id=1" rel="sponsored"',
+      'href="https://hb.afl.rakuten.co.jp/hgc/x/" rel="sponsored"',
+      'href="https://px.a8.net/svt/ejp?a8mat=x" rel="sponsored"',
+      'href="https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=1" rel="sponsored"',
+    ],
+  },
+  {
+    name: 'アフィリエイトのホストに似せた URL は sponsored の対象外',
+    input: '<a href="https://amazon.co.jp.evil.example/?tag=x">リンク</a>',
+    mustNotContain: ['sponsored'],
   },
   {
     name: 'target のない https のリンクは rel を付けずに残す',
@@ -306,6 +352,7 @@ export const PRESERVE_CASES: SanitizeCase[] = [
     mustContain: [
       'data-nbk-embed-service="external-article"',
       'href="https://www.amazon.co.jp/dp/B0GCQWRYBG?tag=ludyworks-gift-22"',
+      'rel="nofollow noopener noreferrer sponsored"',
       '<strong>商品名</strong>',
       '<em>6,620円</em>',
     ],
@@ -327,6 +374,19 @@ export const PRESERVE_CASES: SanitizeCase[] = [
       '<ul><li><strong>強調</strong></li><li><em>斜体</em></li></ul>',
       '<ol><li>1つ目<br />改行</li></ol>',
     ],
+  },
+  {
+    name: 'コードブロック・区切り線・h4・取り消し線を残す（決定事項 1）',
+    input: '<h4>小見出し</h4><pre><code>const a = 1 &lt; 2;</code></pre><hr><p><s>取り消し</s></p>',
+    mustNotContain: [],
+    mustContain: ['<h4>小見出し</h4>', '<pre><code>const a = 1 &lt; 2;</code></pre>', '<hr />', '<s>取り消し</s>'],
+  },
+  {
+    name: '表を残し、数字の colspan・rowspan だけ残す（決定事項 1）',
+    input:
+      '<table><thead><tr><th colspan="2">見出し</th></tr></thead><tbody><tr><td rowspan="1">A</td><td colspan="x" style="color:red">B</td></tr></tbody></table>',
+    mustNotContain: ['colspan="x"', 'style='],
+    mustContain: ['<table><thead><tr><th colspan="2">見出し</th></tr></thead>', '<td rowspan="1">A</td>', '<td>B</td>'],
   },
   {
     name: '許可しない要素はタグだけ消して文字を残す',
