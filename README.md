@@ -181,6 +181,44 @@ export default async function BlogPage() {
 - **Next.js の typedRoutes**：有効にしている場合は `Link` の `href` が文字列を受け付けないため、`Link` を包んだコンポーネントを `linkComponent` に渡してください
 - **見出し画像**：note の CDN（assets.st-note.com）から直接読み込みます
 
+### 本文を表示する（React）
+
+`NoteArticleBody` は `getArticle` で取得した記事の本文を描画します。`dangerouslySetInnerHTML` は使わず、サニタイズ済みの本文を、許可したタグ・属性だけの React 要素にします。有料記事（`isPartial`）では、本文の後に「続きは note で」リンクを出します。
+
+```tsx
+import { getArticle } from 'note-blog-kit/server';
+import { NoteArticleBody } from 'note-blog-kit/react';
+
+export default async function Page({ params }: { params: Promise<{ key: string }> }) {
+  const article = await getArticle({ key: (await params).key });
+  return (
+    <article>
+      <h1>{article.title}</h1>
+      <NoteArticleBody
+        article={article}
+        components={{
+          // 画像・見出し・埋め込み・目次を任意のコンポーネントに置き換えられる
+          img: ({ src, alt, width, height }) => <img src={src} alt={alt} width={width} height={height} />,
+        }}
+        labels={{ readMore: '続きを note で読む' }}
+      />
+    </article>
+  );
+}
+```
+
+| props | 内容 |
+| --- | --- |
+| `article`（必須） | `getArticle` の戻り値 |
+| `components` | `img`（`src`・`alt`・`width`・`height`）、`heading`（`level`: 2〜4・`id`・`children`）、`embed`（`embed`: `NoteEmbed \| null`・`service`・`children`）、`toc`（`items`）を置き換える |
+| `readMoreHref` | 「続きは note で」のリンク先。既定は記事 URL（http(s) でなければ出さない） |
+| `linkComponent` | 「続きは note で」と note の埋め込みのリンクに使う要素。既定は `'a'` |
+| `labels` | `readMore`（既定「続きは note で」）、`toc`（既定「目次」） |
+
+- **既定の描画**：外部記事の埋め込みは中のリンクカード、note の埋め込みは記事へのリンクを出します（`iframe` は出しません）。目次の位置には `article.toc` を出し、本文にない見出し（有料部分）はリンクにしません
+- **クラス名**：`nbk-body`（`__more`・`__more-link`）、`nbk-toc`（`__title`・`__list`・`__item`・`__item--h2`/`--h3`・`__link`）、`nbk-embed`（`__link`、`data-service` 属性）
+- **他人の記事**：`getArticle` は誰の記事でも返します。URL から受け取ったキーで表示する場合は、`article.author.urlname` を確かめてください
+
 ### デフォルト CSS（任意）
 
 note の見た目に合わせた CSS を用意しています。読み込まなければ、コンポーネントは見た目を持ちません。
@@ -205,6 +243,10 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 | `--nbk-radius` | `8px` | 角丸 |
 | `--nbk-list-gap` | `24px` | 一覧のカードの間隔、ページ送りの上下の余白 |
 | `--nbk-card-min-width` | `280px` | 一覧で1枚のカードが取る最小幅 |
+| `--nbk-body-max-width` | `620px` | 本文の最大幅 |
+| `--nbk-body-font-size` / `--nbk-body-line-height` | `18px` / `2` | 本文の文字サイズ・行間（note に合わせた値） |
+| `--nbk-body-gap` | `1.5em` | 本文の段落などの間隔 |
+| `--nbk-color-code-bg` | `#f5f8fa` | コードブロック・目次の背景 |
 
 #### 優先順位（カスケードレイヤー）
 

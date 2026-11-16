@@ -16,6 +16,15 @@ export type {
   NoteSource,
   NoteTocItem,
 } from '../core/types.js';
+export {
+  NoteArticleBody,
+  type NoteArticleBodyProps,
+  type NoteBodyComponents,
+  type NoteBodyEmbedProps,
+  type NoteBodyHeadingProps,
+  type NoteBodyImageProps,
+  type NoteBodyTocProps,
+} from './NoteArticleBody.js';
 export { NoteArticleCard, type NoteArticleCardProps } from './NoteArticleCard.js';
 export { NoteArticleList, type NoteArticleListProps } from './NoteArticleList.js';
 export { NotePagination, type NotePaginationProps } from './NotePagination.js';

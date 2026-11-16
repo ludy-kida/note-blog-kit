@@ -4,6 +4,7 @@
 
 ```ts
 
+import { ComponentType } from 'react';
 import { ElementType } from 'react';
 import { ReactElement } from 'react';
 import { ReactNode } from 'react';
@@ -18,6 +19,22 @@ export interface NoteArticle extends NoteArticleSummary {
     isPartial: boolean;
     // (undocumented)
     toc: NoteTocItem[];
+}
+
+// @public
+export function NoteArticleBody(input: NoteArticleBodyProps): ReactElement;
+
+// @public
+export interface NoteArticleBodyProps {
+    article: NoteArticle;
+    className?: string;
+    components?: NoteBodyComponents;
+    labels?: {
+        readMore?: ReactNode;
+        toc?: ReactNode;
+    };
+    linkComponent?: NoteLinkComponent;
+    readMoreHref?: string;
 }
 
 // @public
@@ -87,6 +104,51 @@ export interface NoteAuthor {
     imageUrl: string | null;
     name: string;
     urlname: string;
+}
+
+// @public
+export interface NoteBodyComponents {
+    // (undocumented)
+    embed?: ComponentType<NoteBodyEmbedProps>;
+    // (undocumented)
+    heading?: ComponentType<NoteBodyHeadingProps>;
+    // (undocumented)
+    img?: ComponentType<NoteBodyImageProps>;
+    // (undocumented)
+    toc?: ComponentType<NoteBodyTocProps>;
+}
+
+// @public
+export interface NoteBodyEmbedProps {
+    children?: ReactNode;
+    embed: NoteEmbed | null;
+    service: string;
+}
+
+// @public
+export interface NoteBodyHeadingProps {
+    // (undocumented)
+    children?: ReactNode;
+    id?: string;
+    // (undocumented)
+    level: 2 | 3 | 4;
+}
+
+// @public
+export interface NoteBodyImageProps {
+    // (undocumented)
+    alt: string;
+    // (undocumented)
+    height?: number;
+    src: string;
+    // (undocumented)
+    width?: number;
+}
+
+// @public
+export interface NoteBodyTocProps {
+    // (undocumented)
+    items: NoteTocItem[];
 }
 
 // @public

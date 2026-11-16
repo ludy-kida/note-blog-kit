@@ -1,11 +1,18 @@
 import type { ReactElement, ReactNode } from 'react';
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticleSummary } from '../index.js';
+import type { NoteArticle, NoteArticleSummary, NoteEmbed, NoteTocItem } from '../index.js';
 import {
+  NoteArticleBody,
+  type NoteArticleBodyProps,
   NoteArticleCard,
   type NoteArticleCardProps,
   NoteArticleList,
   type NoteArticleListProps,
+  type NoteBodyComponents,
+  type NoteBodyEmbedProps,
+  type NoteBodyHeadingProps,
+  type NoteBodyImageProps,
+  type NoteBodyTocProps,
   type NoteHeadingLevel,
   type NoteLinkComponent,
   NotePagination,
@@ -13,6 +20,21 @@ import {
 } from './index.js';
 
 describe('note-blog-kit/react の公開型', () => {
+  it('NoteArticleBody は article だけが必須で、components の props が決まっている', () => {
+    expectTypeOf(NoteArticleBody).parameter(0).toEqualTypeOf<NoteArticleBodyProps>();
+    expectTypeOf(NoteArticleBody).returns.toEqualTypeOf<ReactElement>();
+    expectTypeOf<{ article: NoteArticle }>().toExtend<NoteArticleBodyProps>();
+    expectTypeOf<{ article: NoteArticleSummary }>().not.toExtend<NoteArticleBodyProps>();
+    expectTypeOf<NoteArticleBodyProps['labels']>().toEqualTypeOf<
+      { readMore?: ReactNode; toc?: ReactNode } | undefined
+    >();
+    expectTypeOf<NoteBodyImageProps>().toEqualTypeOf<{ src: string; alt: string; width?: number; height?: number }>();
+    expectTypeOf<NoteBodyHeadingProps['level']>().toEqualTypeOf<2 | 3 | 4>();
+    expectTypeOf<NoteBodyEmbedProps['embed']>().toEqualTypeOf<NoteEmbed | null>();
+    expectTypeOf<NoteBodyTocProps['items']>().toEqualTypeOf<NoteTocItem[]>();
+    expectTypeOf<keyof NoteBodyComponents>().toEqualTypeOf<'img' | 'heading' | 'embed' | 'toc'>();
+  });
+
   it('各コンポーネントは対応する props を受け取り、ReactElement を返す', () => {
     expectTypeOf(NoteArticleCard).parameter(0).toEqualTypeOf<NoteArticleCardProps>();
     expectTypeOf(NoteArticleList).parameter(0).toEqualTypeOf<NoteArticleListProps>();
