@@ -3,20 +3,28 @@ import { safeHttpUrl } from '../react/safe-url.js';
 
 /** OG 画像 */
 export interface NoteMetadataImage {
+  /** 画像 URL（https） */
   url: string;
+  /** 幅（px）。見出し画像の幅がわかるとき */
   width?: number;
+  /** 高さ（px）。見出し画像の高さがわかるとき */
   height?: number;
+  /** 代替テキスト。見出し画像の alt が空でないとき */
   alt?: string;
 }
 
 /**
  * {@link generateNoteMetadata} の戻り値。Next.js の `Metadata` にそのまま代入できる形
- * （`next` を依存に加えないため、型は自前で定義している）。
+ * （`next` を依存に加えないため、型は自前で定義している。代入できることは examples/next の型チェックで確かめている）。
  */
 export interface NoteMetadata {
+  /** タイトル（`formatTitle` を適用した後の値） */
   title: string;
+  /** 説明（記事の抜粋 `excerpt`） */
   description: string;
+  /** canonical。既定は `article.url`（note の元 URL） */
   alternates: { canonical: string };
+  /** Open Graph。`url` は canonical と同じ */
   openGraph: {
     type: 'article';
     title: string;
@@ -26,6 +34,7 @@ export interface NoteMetadata {
     /** 見出し画像（https のときだけ） */
     images?: NoteMetadataImage[];
   };
+  /** Twitter（X）カード */
   twitter: {
     /** 見出し画像があれば `summary_large_image`、なければ `summary` */
     card: 'summary_large_image' | 'summary';
@@ -70,9 +79,12 @@ function toImage(article: NoteArticle | NoteArticleSummary): NoteMetadataImage |
  * 記事の詳細ページの metadata を作る（Next.js App Router の `generateMetadata` から返す）。
  * canonical の既定値は note の元 URL（検索エンジンに note の記事を正として扱わせ、重複コンテンツを避ける）。
  *
+ * @throws {TypeError} `canonical` を渡さず、`article.url` が https の URL でないとき
+ *
  * @example
  * ```ts
  * export async function generateMetadata({ params }) {
+ *   // 実際には、自分の記事か（article.author.urlname）を確かめてから使う
  *   const article = await getArticle({ key: (await params).key });
  *   return generateNoteMetadata(article, { formatTitle: (title) => `${title} | ブログ` });
  * }
@@ -83,7 +95,9 @@ export function generateNoteMetadata(
   options: GenerateNoteMetadataOptions = {},
 ): NoteMetadata {
   const title = options.formatTitle ? options.formatTitle(article.title) : article.title;
-  const canonical = options.canonical ?? article.url;
+  const canonical = options.canonical ?? httpsOnly(article.url);
+  // 既定値（記事 URL）が https でない記事は、正規化を通っていないデータ。canonical を汚さないよう失敗させる
+  if (canonical === null) throw new TypeError(`article.url must be an https URL: ${JSON.stringify(article.url)}`);
   const image = toImage(article);
   const openGraph: NoteMetadata['openGraph'] = {
     type: 'article',

@@ -1,6 +1,6 @@
 import { type IterateArticlesOptions, listAllArticles } from '../server/iterate-articles.js';
 
-/** {@link generateNoteStaticParams} のオプション */
+/** `generateNoteStaticParams` のオプション */
 export interface GenerateNoteStaticParamsOptions<P extends string = 'key'> extends IterateArticlesOptions {
   /** 動的セグメントの名前（`app/blog/[key]/page.tsx` なら `'key'`）。英数字・_・- のみ。既定は `'key'` */
   param?: P;
@@ -20,13 +20,19 @@ const PARAM_RE = /^[A-Za-z0-9_-]{1,64}$/;
  * ```
  * @throws {TypeError} param・user・maxPages などが不正なとき
  */
-export async function generateNoteStaticParams<P extends string = 'key'>(
-  options: GenerateNoteStaticParamsOptions<P>,
-): Promise<Record<P, string>[]> {
-  const { param = 'key' as P, ...listOptions } = options;
+export function generateNoteStaticParams(
+  options: GenerateNoteStaticParamsOptions & { param?: undefined },
+): Promise<{ key: string }[]>;
+export function generateNoteStaticParams<P extends string>(
+  options: GenerateNoteStaticParamsOptions<P> & { param: P },
+): Promise<Record<P, string>[]>;
+export async function generateNoteStaticParams(
+  options: GenerateNoteStaticParamsOptions<string>,
+): Promise<Record<string, string>[]> {
+  const { param = 'key', ...listOptions } = options;
   if (typeof param !== 'string' || !PARAM_RE.test(param)) {
     throw new TypeError(`param must be a dynamic segment name: ${JSON.stringify(param)}`);
   }
   const { articles } = await listAllArticles(listOptions);
-  return articles.map((article) => ({ [param]: article.key }) as Record<P, string>);
+  return articles.map((article) => ({ [param]: article.key }));
 }

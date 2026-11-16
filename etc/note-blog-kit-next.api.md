@@ -14,7 +14,16 @@ export interface GenerateNoteMetadataOptions {
 }
 
 // @public
-export function generateNoteStaticParams<P extends string = 'key'>(options: GenerateNoteStaticParamsOptions<P>): Promise<Record<P, string>[]>;
+export function generateNoteStaticParams(options: GenerateNoteStaticParamsOptions & {
+    param?: undefined;
+}): Promise<{
+    key: string;
+}[]>;
+
+// @public (undocumented)
+export function generateNoteStaticParams<P extends string>(options: GenerateNoteStaticParamsOptions<P> & {
+    param: P;
+}): Promise<Record<P, string>[]>;
 
 // @public
 export interface GenerateNoteStaticParamsOptions<P extends string = 'key'> extends IterateArticlesOptions {
@@ -95,13 +104,10 @@ export interface NoteEyecatch {
 
 // @public
 export interface NoteMetadata {
-    // (undocumented)
     alternates: {
         canonical: string;
     };
-    // (undocumented)
     description: string;
-    // (undocumented)
     openGraph: {
         type: 'article';
         title: string;
@@ -110,9 +116,7 @@ export interface NoteMetadata {
         publishedTime: string;
         images?: NoteMetadataImage[];
     };
-    // (undocumented)
     title: string;
-    // (undocumented)
     twitter: {
         card: 'summary_large_image' | 'summary';
         title: string;
@@ -123,13 +127,9 @@ export interface NoteMetadata {
 
 // @public
 export interface NoteMetadataImage {
-    // (undocumented)
     alt?: string;
-    // (undocumented)
     height?: number;
-    // (undocumented)
     url: string;
-    // (undocumented)
     width?: number;
 }
 

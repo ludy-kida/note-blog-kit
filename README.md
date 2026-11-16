@@ -71,14 +71,18 @@ export default async function BlogPage({ searchParams }: Props) {
 ```tsx
 import { generateNoteMetadata, generateNoteStaticParams } from 'note-blog-kit/next';
 import { NoteArticleBody } from 'note-blog-kit/react';
-import { getArticle } from 'note-blog-kit/server';
+import { getArticle, isNoteError } from 'note-blog-kit/server';
 import { notFound } from 'next/navigation';
 
 const USER = 'your_urlname';
 type Props = { params: Promise<{ key: string }> };
 
 async function findArticle(key: string) {
-  const article = await getArticle({ key }).catch(() => null);
+  const article = await getArticle({ key }).catch((error: unknown) => {
+    // 不正なキー・見つからない記事だけ 404 にする（タイムアウトなどは 404 にしない）
+    if (error instanceof TypeError || (isNoteError(error) && error.code === 'NOTE_NOT_FOUND')) return null;
+    throw error;
+  });
   // getArticle は誰の記事でも返すので、自分の記事か確かめる
   if (article === null || article.author.urlname !== USER) notFound();
   return article;
@@ -104,6 +108,7 @@ export default async function ArticlePage({ params }: Props) {
 ```
 
 - **キャッシュ**：`generateMetadata` とページで同じ記事を取得するので、`unstable_cache` などで結果をキャッシュしてください（[`examples/next`](examples/next) の詳細ページを参照）
+- **URL のキーは外部から自由に指定されます**：上の例のままだと、形式が正しいキーなら自分の記事でなくても note に問い合わせます。公開するサイトでは、自分の記事のキーの一覧（`generateNoteStaticParams` の結果をキャッシュしたもの）にあるときだけ `getArticle` を呼んでください（`examples/next` はそうしています）
 - **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`maxPages`（既定 20 ページ）を超える古い記事はビルド時には生成しませんが、`dynamicParams` を既定の true のままにしておけば最初のアクセス時に表示できます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます
 - **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 

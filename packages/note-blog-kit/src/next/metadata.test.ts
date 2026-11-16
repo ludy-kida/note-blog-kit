@@ -66,6 +66,14 @@ describe('generateNoteMetadata', () => {
     }
   });
 
+  it('canonical を渡さず、記事 URL が https でなければ TypeError', () => {
+    expect(() => generateNoteMetadata({ ...free, url: 'javascript:alert(1)' })).toThrow(TypeError);
+    expect(
+      generateNoteMetadata({ ...free, url: 'javascript:alert(1)' }, { canonical: 'https://example.com/a' }).alternates
+        .canonical,
+    ).toBe('https://example.com/a');
+  });
+
   it('有料記事でも作れる', () => {
     const paid = loadNote(PAID_KEY);
     expect(generateNoteMetadata(paid).alternates.canonical).toBe(paid.url);

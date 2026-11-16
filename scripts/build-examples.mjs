@@ -28,7 +28,8 @@ if (lines > MAX_PAGE_LINES) {
 console.log(`examples/next/app/page.tsx: ${lines} 行（上限 ${MAX_PAGE_LINES} 行）`);
 
 const { NOTE_BLOG_KIT_LIVE: _live, NOTE_USER: _user, ...baseEnv } = process.env;
-const env = { ...baseEnv, NEXT_TELEMETRY_DISABLED: '1' };
+// NOTE_BLOG_KIT_LIVE=0 を明示する（Next.js は examples/next/.env* も読むが、process.env の値が優先される）
+const env = { ...baseEnv, NOTE_BLOG_KIT_LIVE: '0', NEXT_TELEMETRY_DISABLED: '1' };
 
 const build = spawnSync('pnpm', ['-C', 'examples/next', 'build'], { cwd: root, stdio: 'inherit', env });
 if (build.status !== 0) process.exit(build.status ?? 1);
