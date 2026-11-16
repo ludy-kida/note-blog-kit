@@ -8,6 +8,18 @@
 export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError | NoteTimeoutError | NoteSchemaError;
 
 // @public
+export function getArticle(options: GetArticleOptions): Promise<NoteArticle>;
+
+// @public
+export interface GetArticleOptions {
+    fetch?: typeof globalThis.fetch;
+    key: string;
+    minIntervalMs?: number;
+    signal?: AbortSignal;
+    timeoutMs?: number;
+}
+
+// @public
 export function isNoteError(value: unknown): value is AnyNoteError;
 
 // @public

@@ -1,6 +1,7 @@
 import type { NoteArticlePage } from '../core/types.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeContentsPage } from './normalize/contents.js';
+import { assertMilliseconds, DEFAULT_MIN_INTERVAL_MS, DEFAULT_TIMEOUT_MS } from './request-options.js';
 import { getDefaultThrottle } from './throttle.js';
 
 /** {@link listArticles} のオプション */
@@ -27,17 +28,6 @@ export interface ListArticlesOptions {
 }
 
 const USER_RE = /^[A-Za-z0-9_-]{1,64}$/;
-const DEFAULT_TIMEOUT_MS = 10_000;
-const DEFAULT_MIN_INTERVAL_MS = 1_000;
-/** setTimeout が扱える上限（これを超えると約 1ms に丸められ、待たなくなる） */
-const MAX_TIMER_MS = 2 ** 31 - 1;
-
-function assertMilliseconds(name: string, value: number, min: number): void {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > MAX_TIMER_MS) {
-    throw new TypeError(`${name} must be a finite number between ${min} and ${MAX_TIMER_MS}: ${String(value)}`);
-  }
-}
-
 /**
  * 記事一覧の1ページを取得する（サーバー専用。note は CORS に対応していない）。
  *

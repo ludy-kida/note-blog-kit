@@ -28,6 +28,7 @@ export {
   type NoteSchemaIssue,
   NoteTimeoutError,
 } from './errors.js';
+export { type GetArticleOptions, getArticle } from './get-article.js';
 export {
   type IterateArticlesOptions,
   type IterateArticlesResult,
