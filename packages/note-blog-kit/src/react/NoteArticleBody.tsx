@@ -7,7 +7,7 @@ import type { NoteLinkComponent } from './types.js';
 
 /** 本文の画像を置き換えるコンポーネントの props */
 export interface NoteBodyImageProps {
-  /** 画像 URL（http(s) のものだけが渡される） */
+  /** 画像 URL（note の CDN の https の URL だけが渡される） */
   src: string;
   /** 代替テキスト（空文字は装飾画像） */
   alt: string;
@@ -29,7 +29,7 @@ export interface NoteBodyHeadingProps {
 
 /** 本文の埋め込みを置き換えるコンポーネントの props */
 export interface NoteBodyEmbedProps {
-  /** `article.embeds` の中で key が一致するもの。見つからなければ null */
+  /** `article.embeds` の中で key が一致するもの。見つからないとき、URL が https でないとき、種類に許可しない文字があるときは null */
   embed: NoteEmbed | null;
   /** 埋め込みの種類（`note`・`external-article` など） */
   service: NoteEmbed['service'];
@@ -91,6 +91,10 @@ interface RenderContext {
 }
 
 const ID_RE = /^nbk-[A-Za-z0-9\-_.:/]+$/;
+/** 埋め込みの種類など、属性値に使える文字（/server の sanitize と同じ） */
+const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
+/** 本文の画像は note の CDN からだけ読み込む（docs/sanitize-policy.md の決定事項 2） */
+const IMAGE_PREFIX = 'https://assets.st-note.com/';
 const DIGITS = /^\d+$/;
 const REL_TOKENS = new Set(['nofollow', 'noopener', 'noreferrer', 'sponsored']);
 
@@ -129,6 +133,16 @@ function safeHref(value: string | undefined): string | null {
   return value;
 }
 
+function safeHttpsUrl(value: string | undefined): string | null {
+  const url = safeHttpUrl(value);
+  return url !== null && /^https:\/\//i.test(url) ? url : null;
+}
+
+function safeImageUrl(value: string | undefined): string | null {
+  const url = safeHttpsUrl(value);
+  return url?.toLowerCase().startsWith(IMAGE_PREFIX) ? url : null;
+}
+
 function collectIds(nodes: BodyNode[], ids: Set<string>): Set<string> {
   for (const node of nodes) {
     if (typeof node === 'string') continue;
@@ -141,13 +155,20 @@ function collectIds(nodes: BodyNode[], ids: Set<string>): Set<string> {
 function DefaultToc({ items, title, linkableIds }: NoteBodyTocProps): ReactNode {
   if (items.length === 0) return null;
   const ids = new Set(linkableIds);
+  // 手で組んだ toc に同じ id があっても key が重ならないよう、2回目以降は番号を付ける
+  const seen = new Map<string, number>();
+  const keyOf = (id: string) => {
+    const count = seen.get(id) ?? 0;
+    seen.set(id, count + 1);
+    return count === 0 ? id : `${id}:${count}`;
+  };
   return (
     <nav className="nbk-toc">
       <p className="nbk-toc__title">{title}</p>
       <ul className="nbk-toc__list">
         {items.map((item) => (
           <li
-            key={item.id}
+            key={keyOf(item.id)}
             className={item.level === 2 ? 'nbk-toc__item nbk-toc__item--h2' : 'nbk-toc__item nbk-toc__item--h3'}
           >
             {ids.has(item.id) ? (
@@ -171,7 +192,10 @@ function renderChildren(nodes: BodyNode[], ctx: RenderContext): ReactNode[] {
 function renderEmbed(el: BodyElement, ctx: RenderContext, key: number): ReactNode {
   const service = el.attrs['data-nbk-embed-service'] as string;
   const embedKey = el.attrs['data-nbk-embed-key'];
-  const embed = ctx.article.embeds.find((item) => item.key === embedKey) ?? null;
+  const found = ctx.article.embeds.find((item) => item.key === embedKey);
+  // components に渡す前に検証する（URL は https、種類は英数字と -_.:/ だけ）
+  const embed =
+    found !== undefined && safeHttpsUrl(found.url) !== null && SAFE_VALUE.test(found.service) ? found : null;
   const children = renderChildren(el.children, { ...ctx, inEmbed: true });
   const { embed: Embed } = ctx.components;
   if (Embed) {
@@ -181,7 +205,7 @@ function renderEmbed(el: BodyElement, ctx: RenderContext, key: number): ReactNod
       </Embed>
     );
   }
-  const url = service === 'note' ? safeHttpUrl(embed?.url ?? el.attrs['data-nbk-embed-url']) : null;
+  const url = service === 'note' ? safeHttpsUrl(embed?.url ?? el.attrs['data-nbk-embed-url']) : null;
   const { Link } = ctx;
   return (
     <figure key={key} className="nbk-embed" data-service={service}>
@@ -202,14 +226,15 @@ function renderNode(node: BodyNode, ctx: RenderContext, key: number): ReactNode 
   const id = attrs.id !== undefined && ID_RE.test(attrs.id) ? attrs.id : undefined;
 
   if (tag === 'div') {
-    if (!('data-nbk-toc' in attrs)) return renderChildren(node.children, ctx);
+    if (!Object.hasOwn(attrs, 'data-nbk-toc')) return renderChildren(node.children, ctx);
     const Toc = ctx.components.toc ?? DefaultToc;
     const linkableIds = ctx.article.toc.filter((item) => ctx.ids.has(item.id)).map((item) => item.id);
     return <Toc key={key} items={ctx.article.toc} linkableIds={linkableIds} title={ctx.tocTitle} />;
   }
-  if (tag === 'figure' && attrs['data-nbk-embed-service'] !== undefined) return renderEmbed(node, ctx, key);
+  const service = attrs['data-nbk-embed-service'];
+  if (tag === 'figure' && service !== undefined && SAFE_VALUE.test(service)) return renderEmbed(node, ctx, key);
   if (tag === 'img') {
-    const src = safeHttpUrl(attrs.src);
+    const src = safeImageUrl(attrs.src);
     if (src === null) return null;
     const props: NoteBodyImageProps = { src, alt: attrs.alt ?? '' };
     const width = toNumber(attrs.width);
@@ -259,7 +284,10 @@ function renderNode(node: BodyNode, ctx: RenderContext, key: number): ReactNode 
     if (href !== null) props.href = href;
     if (attrs.target === '_blank') props.target = '_blank';
     const rel = (attrs.rel ?? '').split(/\s+/).filter((token) => REL_TOKENS.has(token));
-    if (props.target !== undefined) rel.push(...['noopener', 'noreferrer'].filter((token) => !rel.includes(token)));
+    // target="_blank" には /server と同じく nofollow noopener noreferrer を付ける
+    if (props.target !== undefined) {
+      rel.push(...['nofollow', 'noopener', 'noreferrer'].filter((token) => !rel.includes(token)));
+    }
     if (rel.length > 0) props.rel = rel.join(' ');
   } else if (tag === 'th' || tag === 'td') {
     const colSpan = toNumber(attrs.colspan);

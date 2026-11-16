@@ -226,9 +226,9 @@ describe('NoteArticleBody：components で置き換える', () => {
 describe('NoteArticleBody：本文の変換', () => {
   const html = (bodyHtml: string) => renderToStaticMarkup(<NoteArticleBody article={withBody(bodyHtml)} />);
 
-  it('許可しないタグは中身だけ、許可しない属性は捨てる', () => {
+  it('許可しないタグは中身だけ（script は中身ごと）、許可しない属性は捨てる', () => {
     expect(html('<p onclick="x" class="a" style="color:red">本文<span>中</span><script>alert(1)</script></p>')).toBe(
-      '<div class="nbk-body"><p class="nbk-body__p">本文中alert(1)</p></div>',
+      '<div class="nbk-body"><p class="nbk-body__p">本文中</p></div>',
     );
   });
 
@@ -262,6 +262,89 @@ describe('NoteArticleBody：本文の変換', () => {
         expect(out, c.name).not.toContain(s);
       }
     }
+  });
+
+  it('本文の画像は note の CDN の https の URL だけを描画する', () => {
+    const out = html(
+      '<img src="https://evil.example/t.gif"><img src="http://assets.st-note.com/a.png"><img src="https://assets.st-note.com.evil.example/a.png"><img src="https://assets.st-note.com/ok.png">',
+    );
+    expect(out.match(/<img/g)).toHaveLength(1);
+    expect(out).toContain('src="https://assets.st-note.com/ok.png"');
+  });
+
+  it('中身ごと捨てる要素は、中のテキストやタグも描画しない', () => {
+    expect(
+      html(
+        '<p>a</p><script>alert(1)</script><style>p{}</style><textarea><a href="https://x.example/">x</a></textarea><p>b</p>',
+      ),
+    ).toBe('<div class="nbk-body"><p class="nbk-body__p">a</p><p class="nbk-body__p">b</p></div>');
+    expect(html('<p>a</p><script>never closed')).toBe('<div class="nbk-body"><p class="nbk-body__p">a</p></div>');
+  });
+
+  it('React が警告する入れ子を作らない（table 直下の tr・テキスト、p の中の p、a の中の a）', () => {
+    expect(html('<table>text<tr><td>1</td></tr></table>')).toBe(
+      '<div class="nbk-body"><table class="nbk-body__table"><tbody><tr><td class="nbk-body__td">1</td></tr></tbody></table></div>',
+    );
+    expect(html('<p>a<p>b</p></p>')).toBe(
+      '<div class="nbk-body"><p class="nbk-body__p">a</p><p class="nbk-body__p">b</p></div>',
+    );
+    expect(html('<a href="https://a.example/"><a href="https://b.example/">x</a></a>')).toBe(
+      '<div class="nbk-body"><a class="nbk-body__a" href="https://a.example/"></a><a class="nbk-body__a" href="https://b.example/">x</a></div>',
+    );
+  });
+
+  it('target="_blank" には nofollow noopener noreferrer を付ける', () => {
+    expect(html('<a href="https://a.example/" target="_blank" rel="opener">x</a>')).toContain(
+      'rel="nofollow noopener noreferrer"',
+    );
+  });
+
+  it('深い入れ子でも落ちない', () => {
+    expect(() => html('<strong>'.repeat(5000))).not.toThrow();
+  });
+
+  it('閉じていないタグが大量にあっても、入力長にほぼ比例する時間で終わる', () => {
+    const start = performance.now();
+    html('<a x'.repeat(40000));
+    html('<script>'.repeat(20000));
+    expect(performance.now() - start).toBeLessThan(2000);
+  });
+
+  it('constructor・__proto__ などの属性名でも壊れない', () => {
+    expect(html('<p constructor="x" __proto__="y">a</p><div data-nbk-toc constructor="z"></div>')).toBe(
+      '<div class="nbk-body"><p class="nbk-body__p">a</p></div>',
+    );
+  });
+
+  it('埋め込みの URL が https でない・種類に許可しない文字がある embeds は components に null で渡す', () => {
+    const received: NoteBodyEmbedProps['embed'][] = [];
+    const embedHtml = '<figure data-nbk-embed-service="note" data-nbk-embed-key="k1"></figure>';
+    for (const embed of [
+      { key: 'k1', service: 'note', url: 'javascript:alert(1)' },
+      { key: 'k1', service: 'note', url: 'http://example.com/' },
+      { key: 'k1', service: 'a"b', url: 'https://example.com/' },
+    ]) {
+      render(
+        <NoteArticleBody
+          article={withBody(embedHtml, { embeds: [embed] })}
+          components={{
+            embed: (props) => {
+              received.push(props.embed);
+              return null;
+            },
+          }}
+        />,
+      );
+    }
+    expect(received).toEqual([null, null, null]);
+  });
+
+  it('目次に同じ id が重なっても警告なく描画する', () => {
+    const item = { id: 'nbk-a', text: 'A', level: 2 as const };
+    const markup = renderToStaticMarkup(
+      <NoteArticleBody article={withBody('<div data-nbk-toc></div>', { toc: [item, item] })} />,
+    );
+    expect(markup.match(/<li/g)).toHaveLength(2);
   });
 
   it('サニタイズしていない入力を渡されても、危険なものを描画しない', () => {
