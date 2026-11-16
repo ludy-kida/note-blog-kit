@@ -24,7 +24,7 @@ export interface NoteArticleSummary {
   url: string;
   /** ISO 8601 */
   publishedAt: string;
-  /** 本文先頭のプレーンテキスト */
+  /** 本文先頭のプレーンテキスト。`<` などがそのまま入りうるので、HTML として挿入しないこと */
   excerpt: string;
   eyecatchUrl: string | null;
   /** 先頭の # を除いたハッシュタグ。RSS では常に空 */
@@ -49,6 +49,7 @@ export interface NoteEyecatch {
 export interface NoteTocItem {
   /** 本文中の見出しの id */
   id: string;
+  /** 見出しのプレーンテキスト。HTML として挿入しないこと */
   text: string;
   level: 2 | 3;
 }

@@ -57,6 +57,11 @@ describe('getArticle', () => {
     await expect(getArticle({ ...base, fetch })).rejects.toBeInstanceOf(NoteSchemaError);
   });
 
+  it('要求と違うキーの記事が返ってきたら NoteSchemaError', async () => {
+    const fetch = mockFetch(() => new Response(fixture('notes/n52a7f4fa0a2e')));
+    await expect(getArticle({ ...base, fetch })).rejects.toBeInstanceOf(NoteSchemaError);
+  });
+
   it('不正な key・オプションは TypeError で、fetch を呼ばない', async () => {
     const fetch = mockFetch();
     const tricky = { toString: () => 'n55256baa5425' } as unknown as string;

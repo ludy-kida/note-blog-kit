@@ -32,7 +32,8 @@ const noteSchema = z.object({
   embedded_contents: z.array(z.unknown()),
   user: z.object({
     nickname: z.string(),
-    urlname: z.string(),
+    // 著者の確認やリンクの組み立てに使われるため、note のユーザー名の形式に限る
+    urlname: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
     user_profile_image_path: optionalHttpsUrl,
   }),
 });
@@ -49,7 +50,7 @@ const tocItemSchema = z.object({
 
 const embedSchema = z.object({
   key: z.string().regex(SAFE_VALUE),
-  service: z.string().min(1),
+  service: z.string().regex(SAFE_VALUE),
   url: z.string().refine(isHttpsUrl),
 });
 

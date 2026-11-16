@@ -145,6 +145,16 @@ describe('normalizeNote', () => {
     expect(normalizeNote(raw).embeds).toEqual([{ key: 'emb1', service: 'note', url: 'https://example.com/a' }]);
   });
 
+  it('許可しない文字を含む service の埋め込みは除き、形式の違う urlname は NoteSchemaError', () => {
+    const raw = fixture(FREE);
+    raw.data.embedded_contents = [{ key: 'emb1', service: '"><x onclick=1>', url: 'https://example.com/' }];
+    expect(normalizeNote(raw).embeds).toEqual([]);
+
+    const badUser = fixture(FREE);
+    (badUser.data.user as Record<string, unknown>).urlname = 'a/../b';
+    expect(() => normalizeNote(badUser)).toThrow(NoteSchemaError);
+  });
+
   it('必須のキーがない・型が違うときは NoteSchemaError', () => {
     const missing = fixture(FREE);
     delete missing.data.can_read;

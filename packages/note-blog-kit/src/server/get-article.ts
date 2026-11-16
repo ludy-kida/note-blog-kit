@@ -1,4 +1,5 @@
 import type { NoteArticle } from '../core/types.js';
+import { NoteSchemaError } from './errors.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeNote } from './normalize/note.js';
 import { assertMilliseconds, DEFAULT_MIN_INTERVAL_MS, DEFAULT_TIMEOUT_MS } from './request-options.js';
@@ -54,5 +55,12 @@ export async function getArticle(options: GetArticleOptions): Promise<NoteArticl
   const url = `${NOTE_ORIGIN}/api/v3/notes/${key}`;
   await getDefaultThrottle()(minIntervalMs, signal);
   const json = await fetchNoteJson(url, { fetch: options.fetch ?? globalThis.fetch, timeoutMs, signal });
-  return normalizeNote(json);
+  const article = normalizeNote(json);
+  // 利用者がリンクやキャッシュキーに使うため、要求したキーの記事が返ってきたことを確かめる
+  if (article.key !== key) {
+    throw new NoteSchemaError('note returned a different article than requested', {
+      issues: [{ path: 'data.key', message: `Expected ${key}` }],
+    });
+  }
+  return article;
 }

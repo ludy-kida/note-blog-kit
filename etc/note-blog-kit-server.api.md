@@ -222,7 +222,6 @@ export interface NoteTocItem {
     id: string;
     // (undocumented)
     level: 2 | 3;
-    // (undocumented)
     text: string;
 }
 
