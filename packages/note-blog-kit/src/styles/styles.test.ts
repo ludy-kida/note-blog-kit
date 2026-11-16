@@ -91,7 +91,9 @@ describe('styles.css', () => {
         '--nbk-body-font-size',
         '--nbk-body-line-height',
         '--nbk-body-gap',
-        '--nbk-color-code-bg',
+        '--nbk-color-subtle',
+        '--nbk-color-button-bg',
+        '--nbk-color-button-text',
       ].sort(),
     );
     const used = classNamesIn(cssWithoutComments, /var\(\s*(--nbk-[a-z0-9-]+)/g);

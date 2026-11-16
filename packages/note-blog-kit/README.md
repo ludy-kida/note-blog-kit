@@ -216,7 +216,11 @@ export default async function Page({ params }: { params: Promise<{ key: string }
 | `labels` | `readMore`（既定「続きは note で」）、`toc`（既定「目次」） |
 
 - **既定の描画**：外部記事の埋め込みは中のリンクカード、note の埋め込みは記事へのリンクを出します（`iframe` は出しません）。目次の位置には `article.toc` を出し、本文にない見出し（有料部分）はリンクにしません
-- **クラス名**：`nbk-body`（`__more`・`__more-link`）、`nbk-toc`（`__title`・`__list`・`__item`・`__item--h2`/`--h3`・`__link`）、`nbk-embed`（`__link`、`data-service` 属性）
+- **クラス名**：
+  - `nbk-body`（`__more`・`__more-link`）
+  - 本文の要素：`nbk-body__p`・`__h2`・`__h3`・`__h4`・`__a`・`__ul`・`__ol`・`__blockquote`・`__figure`・`__figcaption`・`__img`・`__pre`・`__code`・`__hr`・`__table`・`__th`・`__td`。`li`・`strong`・`em` などにはクラスを付けません。`components` で置き換えた画像・見出しにも付きません
+  - `nbk-toc`（`__title`・`__list`・`__item`・`__item--h2`/`--h3`・`__link`）
+  - `nbk-embed`（`data-service` 属性）。埋め込みの中のリンクは `nbk-body__a` ではなく `nbk-embed__link` になります
 - **他人の記事**：`getArticle` は誰の記事でも返します。URL から受け取ったキーで表示する場合は、`article.author.urlname` を確かめてください
 
 ### デフォルト CSS（任意）
@@ -246,7 +250,8 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 | `--nbk-body-max-width` | `620px` | 本文の最大幅 |
 | `--nbk-body-font-size` / `--nbk-body-line-height` | `18px` / `2` | 本文の文字サイズ・行間（note に合わせた値） |
 | `--nbk-body-gap` | `1.5em` | 本文の段落などの間隔 |
-| `--nbk-color-code-bg` | `#f5f8fa` | コードブロック・目次の背景 |
+| `--nbk-color-subtle` | `#f5f8fa` | コードブロック・目次の背景 |
+| `--nbk-color-button-bg` / `--nbk-color-button-text` | `#08131a` / `#fff` | 「続きは note で」ボタン |
 
 #### 優先順位（カスケードレイヤー）
 

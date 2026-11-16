@@ -29,9 +29,13 @@ describe('note-blog-kit/react の公開型', () => {
       { readMore?: ReactNode; toc?: ReactNode } | undefined
     >();
     expectTypeOf<NoteBodyImageProps>().toEqualTypeOf<{ src: string; alt: string; width?: number; height?: number }>();
-    expectTypeOf<NoteBodyHeadingProps['level']>().toEqualTypeOf<2 | 3 | 4>();
+    expectTypeOf<NoteBodyHeadingProps>().toEqualTypeOf<{ level: 2 | 3 | 4; id?: string; children?: ReactNode }>();
+    expectTypeOf<NoteBodyEmbedProps['service']>().toEqualTypeOf<NoteEmbed['service']>();
+    expectTypeOf<NoteArticleBodyProps['linkComponent']>().toEqualTypeOf<NoteLinkComponent | undefined>();
+    expectTypeOf<(props: NoteBodyImageProps) => ReactElement>().toExtend<NoteBodyComponents['img']>();
+    expectTypeOf<'img'>().not.toExtend<NoteBodyComponents['img']>();
     expectTypeOf<NoteBodyEmbedProps['embed']>().toEqualTypeOf<NoteEmbed | null>();
-    expectTypeOf<NoteBodyTocProps['items']>().toEqualTypeOf<NoteTocItem[]>();
+    expectTypeOf<NoteBodyTocProps>().toEqualTypeOf<{ items: NoteTocItem[]; linkableIds: string[]; title: ReactNode }>();
     expectTypeOf<keyof NoteBodyComponents>().toEqualTypeOf<'img' | 'heading' | 'embed' | 'toc'>();
   });
 

@@ -183,8 +183,27 @@ describe('NoteArticleBody：components で置き換える', () => {
     expect(embeds[3]?.embed).toEqual(free.embeds[3]);
     expect(screen.getAllByTestId('embed-external-article')[0]?.querySelector('a strong')).not.toBeNull();
 
-    expect(tocs).toEqual([{ items: free.toc }]);
+    expect(tocs).toEqual([{ items: free.toc, linkableIds: free.toc.map((item) => item.id), title: '目次' }]);
     expect(container.querySelector('nav.nbk-toc')).toBeNull();
+  });
+
+  it('有料記事の toc には、本文に見出しがある項目の id だけを linkableIds で渡す', () => {
+    const received: NoteBodyTocProps[] = [];
+    render(
+      <NoteArticleBody
+        article={paid}
+        labels={{ toc: 'もくじ' }}
+        components={{
+          toc: (props) => {
+            received.push(props);
+            return null;
+          },
+        }}
+      />,
+    );
+    expect(received[0]?.items).toHaveLength(31);
+    expect(received[0]?.linkableIds.length).toBeLessThan(31);
+    expect(received[0]?.title).toBe('もくじ');
   });
 
   it('embeds にない埋め込みは embed: null で渡す', () => {

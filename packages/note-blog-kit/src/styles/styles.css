@@ -26,7 +26,9 @@
     --nbk-body-font-size: 18px;
     --nbk-body-line-height: 2;
     --nbk-body-gap: 1.5em;
-    --nbk-color-code-bg: #f5f8fa;
+    --nbk-color-subtle: #f5f8fa;
+    --nbk-color-button-bg: #08131a;
+    --nbk-color-button-text: #fff;
   }
 
   /* 一覧 */
@@ -310,7 +312,7 @@
     overflow-x: auto;
     font-size: 0.8em;
     line-height: 1.7;
-    background: var(--nbk-color-code-bg);
+    background: var(--nbk-color-subtle);
     border-radius: var(--nbk-radius);
   }
 
@@ -340,7 +342,7 @@
   /* 目次 */
   .nbk-toc {
     padding: 1em 1.5em;
-    background: var(--nbk-color-code-bg);
+    background: var(--nbk-color-subtle);
     border-radius: var(--nbk-radius);
   }
 
@@ -357,17 +359,16 @@
     line-height: 1.8;
   }
 
+  .nbk-toc__item {
+    margin: 0;
+  }
+
   .nbk-toc__item--h2 {
     font-weight: 700;
   }
 
-  .nbk-toc__item,
   .nbk-toc__item--h3 {
     padding-left: 1em;
-  }
-
-  .nbk-toc__item--h2 {
-    padding-left: 0;
   }
 
   .nbk-toc__link {
@@ -404,11 +405,11 @@
   .nbk-body__more-link {
     display: inline-block;
     padding: 0.5em 2em;
-    color: var(--nbk-color-badge-text);
+    color: var(--nbk-color-button-text);
     font-size: 0.875em;
     font-weight: 700;
     text-decoration: none;
-    background: var(--nbk-color-badge-bg);
+    background: var(--nbk-color-button-bg);
     border-radius: 999px;
   }
 

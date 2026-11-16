@@ -108,13 +108,9 @@ export interface NoteAuthor {
 
 // @public
 export interface NoteBodyComponents {
-    // (undocumented)
     embed?: ComponentType<NoteBodyEmbedProps>;
-    // (undocumented)
     heading?: ComponentType<NoteBodyHeadingProps>;
-    // (undocumented)
     img?: ComponentType<NoteBodyImageProps>;
-    // (undocumented)
     toc?: ComponentType<NoteBodyTocProps>;
 }
 
@@ -122,33 +118,29 @@ export interface NoteBodyComponents {
 export interface NoteBodyEmbedProps {
     children?: ReactNode;
     embed: NoteEmbed | null;
-    service: string;
+    service: NoteEmbed['service'];
 }
 
 // @public
 export interface NoteBodyHeadingProps {
-    // (undocumented)
     children?: ReactNode;
     id?: string;
-    // (undocumented)
     level: 2 | 3 | 4;
 }
 
 // @public
 export interface NoteBodyImageProps {
-    // (undocumented)
     alt: string;
-    // (undocumented)
     height?: number;
     src: string;
-    // (undocumented)
     width?: number;
 }
 
 // @public
 export interface NoteBodyTocProps {
-    // (undocumented)
     items: NoteTocItem[];
+    linkableIds: string[];
+    title: ReactNode;
 }
 
 // @public

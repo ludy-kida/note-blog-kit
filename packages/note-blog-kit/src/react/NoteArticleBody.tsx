@@ -9,16 +9,21 @@ import type { NoteLinkComponent } from './types.js';
 export interface NoteBodyImageProps {
   /** 画像 URL（http(s) のものだけが渡される） */
   src: string;
+  /** 代替テキスト（空文字は装飾画像） */
   alt: string;
+  /** 幅（px）。本文の値が数字だけのときに渡る */
   width?: number;
+  /** 高さ（px）。本文の値が数字だけのときに渡る */
   height?: number;
 }
 
 /** 本文の見出しを置き換えるコンポーネントの props */
 export interface NoteBodyHeadingProps {
+  /** 見出しのレベル（本文に出るのは h2〜h4。{@link NoteHeadingLevel} とは別） */
   level: 2 | 3 | 4;
   /** 目次のリンク先になる id（nbk- から始まる） */
   id?: string;
+  /** 見出しの中身 */
   children?: ReactNode;
 }
 
@@ -27,21 +32,30 @@ export interface NoteBodyEmbedProps {
   /** `article.embeds` の中で key が一致するもの。見つからなければ null */
   embed: NoteEmbed | null;
   /** 埋め込みの種類（`note`・`external-article` など） */
-  service: string;
+  service: NoteEmbed['service'];
   /** 既定の中身（外部記事ならリンクカード。note の埋め込みは空） */
   children?: ReactNode;
 }
 
 /** 目次（本文中の目次の位置）を置き換えるコンポーネントの props */
 export interface NoteBodyTocProps {
+  /** `article.toc`（有料記事では有料部分の見出しも含む） */
   items: NoteTocItem[];
+  /** 本文に見出しがある項目の id（ページ内リンクにできるもの） */
+  linkableIds: string[];
+  /** 見出しの文言（`labels.toc`、既定は「目次」） */
+  title: ReactNode;
 }
 
 /** {@link NoteArticleBody} で置き換えられる要素 */
 export interface NoteBodyComponents {
+  /** 画像。置き換えると既定のクラス名と遅延読み込み（loading・decoding）は付かない */
   img?: ComponentType<NoteBodyImageProps>;
+  /** 見出し（h2〜h4）。置き換えると既定のクラス名は付かない */
   heading?: ComponentType<NoteBodyHeadingProps>;
+  /** 埋め込み（note の記事・外部記事など） */
   embed?: ComponentType<NoteBodyEmbedProps>;
+  /** 本文中の目次の位置に出すもの */
   toc?: ComponentType<NoteBodyTocProps>;
 }
 
@@ -52,8 +66,9 @@ export interface NoteArticleBodyProps {
   /** 本文の要素を任意のコンポーネントに置き換える */
   components?: NoteBodyComponents;
   /**
-   * 「続きは note で」のリンク先。既定は `article.url`（http(s) でなければ出さない）。
-   * 利用者が渡す値はそのまま `href` に入るため、信頼できない値を渡さないこと
+   * 「続きは note で」のリンク先。既定は `article.url`（http(s) でなければ出さない）。`isPartial` でなければ使わない。
+   * 利用者が渡す値はそのまま `href` に入るため、信頼できない値（`javascript:` など）を渡さないこと。
+   * React 18 はこうした値をブロックしない
    */
   readMoreHref?: string;
   /** 「続きは note で」と note の埋め込みのリンクに使う要素。既定は `'a'` */
@@ -123,8 +138,9 @@ function collectIds(nodes: BodyNode[], ids: Set<string>): Set<string> {
   return ids;
 }
 
-function DefaultToc({ items, title, ids }: NoteBodyTocProps & { title: ReactNode; ids: Set<string> }): ReactNode {
+function DefaultToc({ items, title, linkableIds }: NoteBodyTocProps): ReactNode {
   if (items.length === 0) return null;
+  const ids = new Set(linkableIds);
   return (
     <nav className="nbk-toc">
       <p className="nbk-toc__title">{title}</p>
@@ -187,12 +203,9 @@ function renderNode(node: BodyNode, ctx: RenderContext, key: number): ReactNode 
 
   if (tag === 'div') {
     if (!('data-nbk-toc' in attrs)) return renderChildren(node.children, ctx);
-    const { toc: Toc } = ctx.components;
-    return Toc ? (
-      <Toc key={key} items={ctx.article.toc} />
-    ) : (
-      <DefaultToc key={key} items={ctx.article.toc} title={ctx.tocTitle} ids={ctx.ids} />
-    );
+    const Toc = ctx.components.toc ?? DefaultToc;
+    const linkableIds = ctx.article.toc.filter((item) => ctx.ids.has(item.id)).map((item) => item.id);
+    return <Toc key={key} items={ctx.article.toc} linkableIds={linkableIds} title={ctx.tocTitle} />;
   }
   if (tag === 'figure' && attrs['data-nbk-embed-service'] !== undefined) return renderEmbed(node, ctx, key);
   if (tag === 'img') {
