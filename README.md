@@ -62,7 +62,50 @@ export default async function BlogPage({ searchParams }: Props) {
 }
 ```
 
-記事のリンク先は、既定では note の記事ページです。自分のサイトの詳細ページにしたい場合は `getHref` と `linkComponent={Link}` を渡します（詳細ページの作り方は今後のリリースで追加します）。
+記事のリンク先は、既定では note の記事ページです。自分のサイトの詳細ページにしたい場合は `getHref` と `linkComponent={Link}` を渡します（下の「4. 詳細ページを作る」）。
+
+### 4. 詳細ページを作る（任意）
+
+`app/articles/[key]/page.tsx` を作ります。`note-blog-kit/next` のヘルパーで、静的生成するキーと metadata を作れます。
+
+```tsx
+import { generateNoteMetadata, generateNoteStaticParams } from 'note-blog-kit/next';
+import { NoteArticleBody } from 'note-blog-kit/react';
+import { getArticle } from 'note-blog-kit/server';
+import { notFound } from 'next/navigation';
+
+const USER = 'your_urlname';
+type Props = { params: Promise<{ key: string }> };
+
+async function findArticle(key: string) {
+  const article = await getArticle({ key }).catch(() => null);
+  // getArticle は誰の記事でも返すので、自分の記事か確かめる
+  if (article === null || article.author.urlname !== USER) notFound();
+  return article;
+}
+
+// ビルド時に新しい記事から 20 ページ分（120件）を生成する（maxPages で変更できる）
+export const generateStaticParams = () => generateNoteStaticParams({ user: USER });
+
+export async function generateMetadata({ params }: Props) {
+  // canonical は既定で note の元 URL。自分のサイトを正にするなら { canonical: '...' } を渡す
+  return generateNoteMetadata(await findArticle((await params).key));
+}
+
+export default async function ArticlePage({ params }: Props) {
+  const article = await findArticle((await params).key);
+  return (
+    <main>
+      <h1>{article.title}</h1>
+      <NoteArticleBody article={article} />
+    </main>
+  );
+}
+```
+
+- **キャッシュ**：`generateMetadata` とページで同じ記事を取得するので、`unstable_cache` などで結果をキャッシュしてください（[`examples/next`](examples/next) の詳細ページを参照）
+- **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`maxPages`（既定 20 ページ）を超える古い記事はビルド時には生成しませんが、`dynamicParams` を既定の true のままにしておけば最初のアクセス時に表示できます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます
+- **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 
 ### キャッシュの推奨
 
@@ -309,7 +352,7 @@ pnpm -C examples/next dev
 NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
 ```
 
-CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる）を確認しています。
+CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる・詳細ページに本文と canonical が出る・fixture にない記事が 404 になる）を確認しています。fixture にある記事本文は2件だけなので、自分の全記事が崩れず表示できるかは、実際の note から取得するモードで `/articles/{記事キー}` を開いて目で確かめてください。
 
 ### README を変えたとき
 

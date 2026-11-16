@@ -9,7 +9,7 @@ import {
 } from './request-options.js';
 import { getDefaultThrottle } from './throttle.js';
 
-/** {@link listArticles} のオプション */
+/** `listArticles` のオプション（`note-blog-kit/next` からも参照するため @link は使わない） */
 export interface ListArticlesOptions extends NoteRequestOptions {
   /** note のユーザー名（note.com/{user} の部分）。英数字・_・- のみ */
   user: string;
