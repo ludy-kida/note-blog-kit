@@ -28,6 +28,7 @@ export {
   type NoteSchemaIssue,
   NoteTimeoutError,
 } from './errors.js';
+export { type GetArticleOptions, getArticle } from './get-article.js';
 export {
   type IterateArticlesOptions,
   type IterateArticlesResult,
@@ -36,3 +37,4 @@ export {
   listAllArticles,
 } from './iterate-articles.js';
 export { type ListArticlesOptions, listArticles } from './list-articles.js';
+export type { NoteRequestOptions } from './request-options.js';

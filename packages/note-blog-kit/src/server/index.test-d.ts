@@ -1,7 +1,9 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticlePage, NoteArticleSummary } from '../index.js';
+import type { NoteArticle, NoteArticlePage, NoteArticleSummary } from '../index.js';
 import {
   type AnyNoteError,
+  type GetArticleOptions,
+  getArticle,
   type IterateArticlesOptions,
   type IterateArticlesResult,
   isNoteError,
@@ -14,11 +16,37 @@ import {
   type NoteErrorCode,
   type NoteHttpError,
   type NoteNotFoundError,
+  type NoteRequestOptions,
   type NoteSchemaError,
   type NoteSchemaIssue,
 } from './index.js';
 
 describe('note-blog-kit/server の公開型', () => {
+  it('取得関数のオプションは NoteRequestOptions を共有する', () => {
+    expectTypeOf<ListArticlesOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<GetArticleOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<IterateArticlesOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<NoteRequestOptions>().toEqualTypeOf<{
+      fetch?: typeof globalThis.fetch;
+      signal?: AbortSignal;
+      timeoutMs?: number;
+      minIntervalMs?: number;
+    }>();
+  });
+
+  it('getArticle は key だけが必須で、NoteArticle を返す', () => {
+    expectTypeOf(getArticle).parameter(0).toEqualTypeOf<GetArticleOptions>();
+    expectTypeOf(getArticle).returns.toEqualTypeOf<Promise<NoteArticle>>();
+    expectTypeOf<{ key: string }>().toExtend<GetArticleOptions>();
+    expectTypeOf<{ user: string }>().not.toExtend<GetArticleOptions>();
+    expectTypeOf<{ fetch?: typeof fetch }>().not.toExtend<GetArticleOptions>();
+    expectTypeOf<GetArticleOptions['key']>().toEqualTypeOf<string>();
+    expectTypeOf<GetArticleOptions['fetch']>().toEqualTypeOf<typeof globalThis.fetch | undefined>();
+    expectTypeOf<GetArticleOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
+    expectTypeOf<GetArticleOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<GetArticleOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();
+  });
+
   it('listArticles は NoteArticlePage を返す', () => {
     expectTypeOf(listArticles).parameter(0).toEqualTypeOf<ListArticlesOptions>();
     expectTypeOf(listArticles).returns.toEqualTypeOf<Promise<NoteArticlePage>>();

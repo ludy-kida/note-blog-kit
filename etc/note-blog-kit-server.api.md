@@ -8,6 +8,14 @@
 export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError | NoteTimeoutError | NoteSchemaError;
 
 // @public
+export function getArticle(options: GetArticleOptions): Promise<NoteArticle>;
+
+// @public
+export interface GetArticleOptions extends NoteRequestOptions {
+    key: string;
+}
+
+// @public
 export function isNoteError(value: unknown): value is AnyNoteError;
 
 // @public
@@ -37,12 +45,8 @@ export interface ListAllArticlesResult extends IterateArticlesResult {
 export function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage>;
 
 // @public
-export interface ListArticlesOptions {
-    fetch?: typeof globalThis.fetch;
-    minIntervalMs?: number;
+export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
-    signal?: AbortSignal;
-    timeoutMs?: number;
     user: string;
 }
 
@@ -174,6 +178,14 @@ export class NoteNotFoundError extends NoteError {
 }
 
 // @public
+export interface NoteRequestOptions {
+    fetch?: typeof globalThis.fetch;
+    minIntervalMs?: number;
+    signal?: AbortSignal;
+    timeoutMs?: number;
+}
+
+// @public
 export class NoteSchemaError extends NoteError {
     constructor(message: string, options: NoteErrorOptions & {
         issues: readonly NoteSchemaIssue[];
@@ -210,7 +222,6 @@ export interface NoteTocItem {
     id: string;
     // (undocumented)
     level: 2 | 3;
-    // (undocumented)
     text: string;
 }
 

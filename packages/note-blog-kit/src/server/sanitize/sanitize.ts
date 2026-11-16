@@ -79,7 +79,7 @@ const LINK_SCHEMES = new Set(['http:', 'https:', 'mailto:']);
 const IMAGE_PREFIX = 'https://assets.st-note.com/';
 const IMAGE_HOST = 'assets.st-note.com';
 /** id・data-nbk-embed-*（URL を除く）に使える文字 */
-const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
+export const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
 const DIGITS = /^\d+$/;
 
 const AMAZON_HOSTS = new Set(['amazon.co.jp', 'www.amazon.co.jp', 'amazon.com', 'www.amazon.com']);

@@ -130,6 +130,26 @@ for await (const article of iterateArticles({ user: 'your_urlname' })) {
 - `listAllArticles` は途中のページで失敗すると、それまでに集めた記事を返さずにエラーを投げます。途中までの記事も使いたい場合は `iterateArticles` を使ってください
 - `for await` では打ち切りの有無を受け取れません。必要なら `listAllArticles` を使うか、`next()` を手で回して戻り値（`done: true` のときの `value`）を読んでください
 
+### 記事1件を取得する（サーバー側）
+
+```ts
+import { getArticle } from 'note-blog-kit/server';
+
+const article = await getArticle({ key: 'n55256baa5425' }); // 記事 URL の /n/ の後ろ
+
+// note の API は記事キーだけで誰の記事でも返します。他人の記事を表示しないよう、著者を確かめてください
+if (article.author.urlname !== 'your_urlname') {
+  // 404 として扱う
+}
+
+article.bodyHtml; // サニタイズ済みの本文 HTML（サニタイズは外せません）
+article.isPartial; // 有料記事で本文が途中までのとき true（「続きは note で」を出す）
+article.toc; // 目次（id は本文の見出しの id と同じ。有料記事では有料部分の見出しも含む）
+article.embeds; // 本文中の埋め込み（本文の <figure data-nbk-embed-key> と key で対応）
+```
+
+`key` は `n` と英小文字・数字だけを受け付け、それ以外は送信せずに `TypeError` を投げます（ページの URL から受け取った値なら 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
+
 ### 一覧を表示する（React）
 
 `note-blog-kit/react` のコンポーネントは、取得済みのデータを受け取って描画するだけです。見た目は持たず、`nbk-` から始まるクラス名を付けます。フックを使わないため、Server Component としても使えます（React 18 / 19）。
