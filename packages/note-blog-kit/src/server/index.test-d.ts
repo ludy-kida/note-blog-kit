@@ -16,11 +16,24 @@ import {
   type NoteErrorCode,
   type NoteHttpError,
   type NoteNotFoundError,
+  type NoteRequestOptions,
   type NoteSchemaError,
   type NoteSchemaIssue,
 } from './index.js';
 
 describe('note-blog-kit/server の公開型', () => {
+  it('取得関数のオプションは NoteRequestOptions を共有する', () => {
+    expectTypeOf<ListArticlesOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<GetArticleOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<IterateArticlesOptions>().toExtend<NoteRequestOptions>();
+    expectTypeOf<NoteRequestOptions>().toEqualTypeOf<{
+      fetch?: typeof globalThis.fetch;
+      signal?: AbortSignal;
+      timeoutMs?: number;
+      minIntervalMs?: number;
+    }>();
+  });
+
   it('getArticle は key だけが必須で、NoteArticle を返す', () => {
     expectTypeOf(getArticle).parameter(0).toEqualTypeOf<GetArticleOptions>();
     expectTypeOf(getArticle).returns.toEqualTypeOf<Promise<NoteArticle>>();

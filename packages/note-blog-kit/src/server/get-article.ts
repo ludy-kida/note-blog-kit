@@ -2,28 +2,18 @@ import type { NoteArticle } from '../core/types.js';
 import { NoteSchemaError } from './errors.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeNote } from './normalize/note.js';
-import { assertMilliseconds, DEFAULT_MIN_INTERVAL_MS, DEFAULT_TIMEOUT_MS } from './request-options.js';
+import {
+  assertMilliseconds,
+  DEFAULT_MIN_INTERVAL_MS,
+  DEFAULT_TIMEOUT_MS,
+  type NoteRequestOptions,
+} from './request-options.js';
 import { getDefaultThrottle } from './throttle.js';
 
 /** {@link getArticle} のオプション */
-export interface GetArticleOptions {
+export interface GetArticleOptions extends NoteRequestOptions {
   /** 記事キー（例: n55256baa5425。記事 URL の /n/ の後ろ）。n と英小文字・数字のみ */
   key: string;
-  /**
-   * fetch の差し替え（テストやキャッシュ層のため）。既定は globalThis.fetch。
-   * 差し替えた fetch でも Cookie・認証ヘッダーを付けないこと（note の公開情報だけを取得する前提）
-   */
-  fetch?: typeof globalThis.fetch;
-  /** 中断用のシグナル。間隔の制限で待っている間も含め、中断したらすぐにその理由をそのまま投げる */
-  signal?: AbortSignal;
-  /** タイムアウト（ミリ秒）。1〜2147483647。既定は 10000 */
-  timeoutMs?: number;
-  /**
-   * 連続リクエストの最小間隔（ミリ秒）。0〜2147483647。既定は 1000。
-   * 送信順はプロセス全体（ESM・CJS の併用やパッケージの重複を含む）で、listArticles などと1本の列にまとめられ、
-   * この呼び出しは「直前の送信から minIntervalMs 経つまで」待ってから送られる。
-   */
-  minIntervalMs?: number;
 }
 
 const KEY_RE = /^n[0-9a-z]{1,32}$/;

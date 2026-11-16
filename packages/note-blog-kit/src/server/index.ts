@@ -37,3 +37,4 @@ export {
   listAllArticles,
 } from './iterate-articles.js';
 export { type ListArticlesOptions, listArticles } from './list-articles.js';
+export type { NoteRequestOptions } from './request-options.js';

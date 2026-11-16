@@ -11,12 +11,8 @@ export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError 
 export function getArticle(options: GetArticleOptions): Promise<NoteArticle>;
 
 // @public
-export interface GetArticleOptions {
-    fetch?: typeof globalThis.fetch;
+export interface GetArticleOptions extends NoteRequestOptions {
     key: string;
-    minIntervalMs?: number;
-    signal?: AbortSignal;
-    timeoutMs?: number;
 }
 
 // @public
@@ -49,12 +45,8 @@ export interface ListAllArticlesResult extends IterateArticlesResult {
 export function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage>;
 
 // @public
-export interface ListArticlesOptions {
-    fetch?: typeof globalThis.fetch;
-    minIntervalMs?: number;
+export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
-    signal?: AbortSignal;
-    timeoutMs?: number;
     user: string;
 }
 
@@ -183,6 +175,14 @@ export class NoteNotFoundError extends NoteError {
     // (undocumented)
     name: string;
     readonly url: string;
+}
+
+// @public
+export interface NoteRequestOptions {
+    fetch?: typeof globalThis.fetch;
+    minIntervalMs?: number;
+    signal?: AbortSignal;
+    timeoutMs?: number;
 }
 
 // @public
