@@ -99,9 +99,16 @@ describe('normalizeContentsPage', () => {
     expect(first?.author.imageUrl).toBeNull();
   });
 
-  it('fixture にない null は受け付けず NoteSchemaError（契約テストで形の変化を検知するため）', () => {
+  it('見出し画像のない記事（eyecatch: null。実データで確認）は eyecatchUrl: null', () => {
     const json = mutate(1, (draft) => {
       (draft.data.contents[1] as Record<string, unknown>).eyecatch = null;
+    });
+    expect(normalizeContentsPage(json, 1).articles[1]?.eyecatchUrl).toBeNull();
+  });
+
+  it('想定していない null は受け付けず NoteSchemaError（契約テストで形の変化を検知するため）', () => {
+    const json = mutate(1, (draft) => {
+      (draft.data.contents[1] as Record<string, unknown>).likeCount = null;
     });
     expect(() => normalizeContentsPage(json, 1)).toThrow(NoteSchemaError);
   });
