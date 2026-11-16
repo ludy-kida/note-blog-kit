@@ -1,11 +1,12 @@
 /**
- * React のテスト用に、fixture から NoteArticleSummary を作る（テスト専用。公開しない）。
+ * React のテスト用に、fixture から NoteArticleSummary・NoteArticle を作る（テスト専用。公開しない）。
  * /react の実装コードはこのファイルも /server も import しないこと。
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import type { NoteArticleSummary } from '../core/types.js';
+import type { NoteArticle, NoteArticleSummary } from '../core/types.js';
 import { normalizeContentsPage } from '../server/normalize/contents.js';
+import { normalizeNote } from '../server/normalize/note.js';
 
 /**
  * リポジトリのルート（pnpm-workspace.yaml のある場所）を探す。
@@ -32,6 +33,12 @@ export function findArticle(key: string): NoteArticleSummary {
   const article = [1, 2, 3].flatMap((page) => loadArticles(page)).find((item) => item.key === key);
   if (article === undefined) throw new Error(`fixture に ${key} がありません`);
   return article;
+}
+
+/** fixtures/notes の記事を、getArticle と同じ正規化を通して NoteArticle にする */
+export function loadNote(key: string): NoteArticle {
+  const json: unknown = JSON.parse(readFileSync(join(findRepoRoot(), 'fixtures', 'notes', `${key}.json`), 'utf8'));
+  return normalizeNote(json);
 }
 
 /** 無料記事（見出し画像・抜粋・ハッシュタグあり） */

@@ -21,6 +21,14 @@
     --nbk-radius: 8px;
     --nbk-list-gap: 24px;
     --nbk-card-min-width: 280px;
+    /* 本文（NoteArticleBody）。既定は note の本文に合わせる */
+    --nbk-body-max-width: 620px;
+    --nbk-body-font-size: 18px;
+    --nbk-body-line-height: 2;
+    --nbk-body-gap: 1.5em;
+    --nbk-color-subtle: #f5f8fa;
+    --nbk-color-button-bg: #08131a;
+    --nbk-color-button-text: #fff;
   }
 
   /* 一覧 */
@@ -206,6 +214,207 @@
   .nbk-pagination__status {
     color: var(--nbk-color-muted);
     font-size: 0.875rem;
+  }
+
+  /* 本文。要素ごとに付く nbk-body__* クラスだけに当てる */
+  .nbk-body {
+    max-width: var(--nbk-body-max-width);
+    margin: 0 auto;
+    font-family: var(--nbk-font-family);
+    font-size: var(--nbk-body-font-size);
+    line-height: var(--nbk-body-line-height);
+    color: var(--nbk-color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .nbk-body__p,
+  .nbk-body__ul,
+  .nbk-body__ol,
+  .nbk-body__blockquote,
+  .nbk-body__figure,
+  .nbk-body__pre,
+  .nbk-body__table,
+  .nbk-toc,
+  .nbk-embed,
+  .nbk-body__more {
+    margin: 0 0 var(--nbk-body-gap);
+  }
+
+  /* リストの項目の中の段落（note はリストの項目を段落で包む）や、最後の段落の下に余白を残さない */
+  .nbk-body__p:last-child {
+    margin-bottom: 0;
+  }
+
+  .nbk-body__h2,
+  .nbk-body__h3,
+  .nbk-body__h4 {
+    margin: 2.5em 0 var(--nbk-body-gap);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .nbk-body__h2 {
+    font-size: 1.333em;
+  }
+
+  .nbk-body__h3 {
+    font-size: 1.111em;
+  }
+
+  .nbk-body__h4 {
+    font-size: 1em;
+  }
+
+  .nbk-body__a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .nbk-body__a:hover {
+    color: var(--nbk-color-accent);
+  }
+
+  .nbk-body__ul,
+  .nbk-body__ol {
+    padding-left: 1.5em;
+  }
+
+  .nbk-body__blockquote {
+    padding: 0 0 0 1em;
+    color: var(--nbk-color-muted);
+    text-align: left;
+    border-left: 4px solid var(--nbk-color-border);
+  }
+
+  .nbk-body__figure {
+    text-align: center;
+  }
+
+  .nbk-body__img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: bottom;
+  }
+
+  .nbk-body__figcaption {
+    margin-top: 0.5em;
+    color: var(--nbk-color-muted);
+    font-size: 0.75em;
+  }
+
+  .nbk-body__figcaption:empty {
+    display: none;
+  }
+
+  .nbk-body__pre {
+    padding: 1em;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.7;
+    background: var(--nbk-color-subtle);
+    border-radius: var(--nbk-radius);
+  }
+
+  .nbk-body__code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .nbk-body__hr {
+    margin: 2.5em 0;
+    border: 0;
+    border-top: 1px solid var(--nbk-color-border);
+  }
+
+  .nbk-body__table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.875em;
+  }
+
+  .nbk-body__th,
+  .nbk-body__td {
+    padding: 0.5em 0.75em;
+    border: 1px solid var(--nbk-color-border);
+  }
+
+  /* 目次 */
+  .nbk-toc {
+    padding: 1em 1.5em;
+    background: var(--nbk-color-subtle);
+    border-radius: var(--nbk-radius);
+  }
+
+  .nbk-toc__title {
+    margin: 0 0 0.5em;
+    font-weight: 700;
+  }
+
+  .nbk-toc__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875em;
+    line-height: 1.8;
+  }
+
+  .nbk-toc__item {
+    margin: 0;
+  }
+
+  .nbk-toc__item--h2 {
+    font-weight: 700;
+  }
+
+  .nbk-toc__item--h3 {
+    padding-left: 1em;
+  }
+
+  .nbk-toc__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .nbk-toc__link:hover {
+    color: var(--nbk-color-accent);
+  }
+
+  /* 埋め込み */
+  .nbk-embed {
+    padding: 1em;
+    border: 1px solid var(--nbk-color-border);
+    border-radius: var(--nbk-radius);
+  }
+
+  .nbk-embed__link {
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .nbk-embed__link:hover {
+    color: var(--nbk-color-accent);
+  }
+
+  /* 続きは note で */
+  .nbk-body__more {
+    text-align: center;
+  }
+
+  .nbk-body__more-link {
+    display: inline-block;
+    padding: 0.5em 2em;
+    color: var(--nbk-color-button-text);
+    font-size: 0.875em;
+    font-weight: 700;
+    text-decoration: none;
+    background: var(--nbk-color-button-bg);
+    border-radius: 999px;
+  }
+
+  .nbk-body__more-link:hover {
+    opacity: 0.8;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -4,6 +4,7 @@
 
 ```ts
 
+import { ComponentType } from 'react';
 import { ElementType } from 'react';
 import { ReactElement } from 'react';
 import { ReactNode } from 'react';
@@ -18,6 +19,22 @@ export interface NoteArticle extends NoteArticleSummary {
     isPartial: boolean;
     // (undocumented)
     toc: NoteTocItem[];
+}
+
+// @public
+export function NoteArticleBody(input: NoteArticleBodyProps): ReactElement;
+
+// @public
+export interface NoteArticleBodyProps {
+    article: NoteArticle;
+    className?: string;
+    components?: NoteBodyComponents;
+    labels?: {
+        readMore?: ReactNode;
+        toc?: ReactNode;
+    };
+    linkComponent?: NoteLinkComponent;
+    readMoreHref?: string;
 }
 
 // @public
@@ -87,6 +104,43 @@ export interface NoteAuthor {
     imageUrl: string | null;
     name: string;
     urlname: string;
+}
+
+// @public
+export interface NoteBodyComponents {
+    embed?: ComponentType<NoteBodyEmbedProps>;
+    heading?: ComponentType<NoteBodyHeadingProps>;
+    img?: ComponentType<NoteBodyImageProps>;
+    toc?: ComponentType<NoteBodyTocProps>;
+}
+
+// @public
+export interface NoteBodyEmbedProps {
+    children?: ReactNode;
+    embed: NoteEmbed | null;
+    service: NoteEmbed['service'];
+}
+
+// @public
+export interface NoteBodyHeadingProps {
+    children?: ReactNode;
+    id?: string;
+    level: 2 | 3 | 4;
+}
+
+// @public
+export interface NoteBodyImageProps {
+    alt: string;
+    height?: number;
+    src: string;
+    width?: number;
+}
+
+// @public
+export interface NoteBodyTocProps {
+    items: NoteTocItem[];
+    linkableIds: string[];
+    title: ReactNode;
 }
 
 // @public
