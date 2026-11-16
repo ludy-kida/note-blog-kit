@@ -133,7 +133,7 @@ for await (const article of iterateArticles({ user: 'your_urlname' })) {
 ### 記事1件を取得する（サーバー側）
 
 ```ts
-import { getArticle, isNoteError } from 'note-blog-kit/server';
+import { getArticle } from 'note-blog-kit/server';
 
 const article = await getArticle({ key: 'n55256baa5425' }); // 記事 URL の /n/ の後ろ
 
@@ -148,7 +148,7 @@ article.toc; // 目次（id は本文の見出しの id と同じ。有料記事
 article.embeds; // 本文中の埋め込み（本文の <figure data-nbk-embed-key> と key で対応）
 ```
 
-オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
+`key` は `n` と英小文字・数字だけを受け付け、それ以外は送信せずに `TypeError` を投げます（ページの URL から受け取った値なら 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
 
 ### 一覧を表示する（React）
 

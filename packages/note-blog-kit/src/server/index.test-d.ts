@@ -26,6 +26,9 @@ describe('note-blog-kit/server の公開型', () => {
     expectTypeOf(getArticle).returns.toEqualTypeOf<Promise<NoteArticle>>();
     expectTypeOf<{ key: string }>().toExtend<GetArticleOptions>();
     expectTypeOf<{ user: string }>().not.toExtend<GetArticleOptions>();
+    expectTypeOf<{ fetch?: typeof fetch }>().not.toExtend<GetArticleOptions>();
+    expectTypeOf<GetArticleOptions['key']>().toEqualTypeOf<string>();
+    expectTypeOf<GetArticleOptions['fetch']>().toEqualTypeOf<typeof globalThis.fetch | undefined>();
     expectTypeOf<GetArticleOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
     expectTypeOf<GetArticleOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<GetArticleOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();

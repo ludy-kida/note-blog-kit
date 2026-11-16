@@ -19,7 +19,8 @@ export interface GetArticleOptions {
   timeoutMs?: number;
   /**
    * 連続リクエストの最小間隔（ミリ秒）。0〜2147483647。既定は 1000。
-   * listArticles などと同じく、送信順はプロセス全体で1本の列にまとめられる。
+   * 送信順はプロセス全体（ESM・CJS の併用やパッケージの重複を含む）で、listArticles などと1本の列にまとめられ、
+   * この呼び出しは「直前の送信から minIntervalMs 経つまで」待ってから送られる。
    */
   minIntervalMs?: number;
 }
@@ -29,6 +30,7 @@ const KEY_RE = /^n[0-9a-z]{1,32}$/;
 /**
  * 記事1件を取得する（サーバー専用。note は CORS に対応していない）。
  * 本文（`bodyHtml`）はサニタイズ済み。有料記事は無料部分だけで、`isPartial` が true になる。
+ * 有料記事の `toc` は有料部分の見出しも含むため、一部の `id` は `bodyHtml` の中にない。
  *
  * note の API は記事キーだけで誰の記事でも返す。ページの URL から受け取ったキーをそのまま渡す場合は、
  * 他人の記事を表示しないよう、`article.author.urlname` が自分のユーザー名か確かめること。
