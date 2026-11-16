@@ -1,4 +1,5 @@
 import { unstable_cache } from 'next/cache';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
 import { listArticles } from 'note-blog-kit/server';
@@ -22,7 +23,7 @@ export default async function BlogPage({ searchParams }: Props) {
   return (
     <main>
       <h1>ブログ</h1>
-      <NoteArticleList articles={articles} />
+      <NoteArticleList articles={articles} getHref={(a) => `/articles/${a.key}`} linkComponent={Link} />
       <NotePagination page={page} isLastPage={isLastPage} totalCount={totalCount} getHref={(p) => `/?page=${p}`} />
     </main>
   );

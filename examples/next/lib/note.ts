@@ -20,9 +20,20 @@ export const NOTE_USER = LIVE ? (process.env.NOTE_USER as string) : 'kida_lw';
 /** キャッシュのキーに含めるモード（fixture の結果と実データが入れ替わらないようにする） */
 export const NOTE_MODE = LIVE ? 'live' : 'fixture';
 
-/** fixture 用：一覧 API の URL の page に応じて fixtures/contents/page-N.json を返す（3ページ目を最終ページとする） */
+/**
+ * fixture 用の fetch。
+ * - 記事本文 API（/api/v3/notes/{key}）：fixtures/notes/{key}.json があれば返し、なければ 404
+ * - 一覧 API：page に応じて fixtures/contents/page-N.json を返す（3ページ目を最終ページとする）
+ */
 const fixtureFetch: typeof fetch = async (input) => {
-  const page = Number(new URL(String(input)).searchParams.get('page') ?? '1');
+  const url = new URL(String(input));
+  const noteKey = /^\/api\/v3\/notes\/(n[0-9a-z]+)$/.exec(url.pathname)?.[1];
+  if (noteKey !== undefined) {
+    const file = join(process.cwd(), '..', '..', 'fixtures', 'notes', `${noteKey}.json`);
+    const body = await readFile(file, 'utf8').catch(() => null);
+    return body === null ? new Response('{"data":"not found"}', { status: 404 }) : new Response(body);
+  }
+  const page = Number(url.searchParams.get('page') ?? '1');
   const file = join(process.cwd(), '..', '..', 'fixtures', 'contents', `page-${Math.min(page, 3)}.json`);
   const json = JSON.parse(await readFile(file, 'utf8')) as {
     data: { isLastPage: boolean; totalCount: number; contents: unknown[] };
@@ -34,5 +45,8 @@ const fixtureFetch: typeof fetch = async (input) => {
   return new Response(JSON.stringify(json), { headers: { 'content-type': 'application/json' } });
 };
 
-/** listArticles に渡す fetch */
+/** listArticles・getArticle などに渡す fetch */
 export const noteFetch: typeof fetch = LIVE ? fetch : fixtureFetch;
+
+/** 取得の間隔。fixture モードでは通信しないので待たない（ビルドを速くする） */
+export const noteInterval: { minIntervalMs?: number } = LIVE ? {} : { minIntervalMs: 0 };

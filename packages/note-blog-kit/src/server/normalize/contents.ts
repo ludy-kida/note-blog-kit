@@ -13,7 +13,8 @@ const contentSchema = z.object({
   noteUrl: httpsUrl,
   publishAt: z.string().refine((value) => !Number.isNaN(Date.parse(value)), '日時として解釈できません'),
   body: z.string(),
-  eyecatch: optionalHttpsUrl,
+  // 見出し画像のない記事は null になる（実データで確認。fixture には例がない）
+  eyecatch: optionalHttpsUrl.nullable(),
   hashtags: z.array(z.object({ hashtag: z.object({ name: z.string() }) })),
   likeCount: z.number(),
   price: z.number(),
@@ -41,7 +42,7 @@ function toSummary(content: RawContent): NoteArticleSummary {
     url: content.noteUrl,
     publishedAt: new Date(content.publishAt).toISOString(),
     excerpt: content.body.trim(),
-    eyecatchUrl: emptyToNull(content.eyecatch),
+    eyecatchUrl: content.eyecatch === null ? null : emptyToNull(content.eyecatch),
     hashtags: content.hashtags.map(({ hashtag }) => hashtag.name.replace(/^#/, '')),
     likeCount: content.likeCount,
     price: content.price,

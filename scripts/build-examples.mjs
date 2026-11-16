@@ -6,6 +6,7 @@
  * - 成功指標「Next.js の一覧ページを30行以内」を、examples/next/app/page.tsx の行数で確認する
  * - 一覧ページは動的ページのため `next build` では実行されない。ビルド後に `next start` で起動し、
  *   fixture の取得から描画までが動くこと（一覧が出る・範囲外が 404 になる）を HTTP で確かめる
+ * - 詳細ページは fixture にある記事本文（無料・有料の2件）で、本文・canonical・「続きは note で」と 404 を確かめる
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -27,7 +28,8 @@ if (lines > MAX_PAGE_LINES) {
 console.log(`examples/next/app/page.tsx: ${lines} 行（上限 ${MAX_PAGE_LINES} 行）`);
 
 const { NOTE_BLOG_KIT_LIVE: _live, NOTE_USER: _user, ...baseEnv } = process.env;
-const env = { ...baseEnv, NEXT_TELEMETRY_DISABLED: '1' };
+// NOTE_BLOG_KIT_LIVE=0 を明示する（Next.js は examples/next/.env* も読むが、process.env の値が優先される）
+const env = { ...baseEnv, NOTE_BLOG_KIT_LIVE: '0', NEXT_TELEMETRY_DISABLED: '1' };
 
 const build = spawnSync('pnpm', ['-C', 'examples/next', 'build'], { cwd: root, stdio: 'inherit', env });
 if (build.status !== 0) process.exit(build.status ?? 1);
@@ -38,6 +40,23 @@ const CHECKS = [
   { path: '/?page=3', status: 200, includes: ['nbk-article-list', '3 / 3'], excludes: ['nbk-pagination__next'] },
   { path: '/?page=4', status: 404 },
   { path: '/?page=abc', status: 404 },
+  { path: '/', status: 200, includes: ['href="/articles/n55256baa5425"'] },
+  // 詳細ページ（fixture にある無料・有料記事）。canonical は note の元 URL
+  {
+    path: '/articles/n55256baa5425',
+    status: 200,
+    includes: [
+      'nbk-body',
+      'nbk-toc',
+      '<link rel="canonical" href="https://note.com/kida_lw/n/n55256baa5425"/>',
+      'ノンアルコールワインをクリスマスに。乾杯用スパークリング3選 | ブログ',
+    ],
+    excludes: ['<iframe', 'nbk-body__more'],
+  },
+  { path: '/articles/n52a7f4fa0a2e', status: 200, includes: ['nbk-body__more', '続きは note で'] },
+  // fixture にない記事・不正なキーは 404
+  { path: '/articles/n000000000000', status: 404 },
+  { path: '/articles/..%2Fx', status: 404 },
 ];
 
 // 子プロセスごと止められるよう、独立したプロセスグループで起動する

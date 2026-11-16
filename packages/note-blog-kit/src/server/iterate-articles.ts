@@ -1,7 +1,7 @@
 import type { NoteArticleSummary } from '../core/types.js';
 import { type ListArticlesOptions, listArticles } from './list-articles.js';
 
-/** {@link iterateArticles}・{@link listAllArticles} のオプション。`listArticles` のオプションから `page` を除いたもの */
+/** `iterateArticles`・`listAllArticles` のオプション（`note-blog-kit/next` からも参照するため @link は使わない）。`listArticles` のオプションから `page` を除いたもの */
 export interface IterateArticlesOptions extends Omit<ListArticlesOptions, 'page'> {
   /** 取得する最大ページ数（1 以上の整数）。既定は 20（1ページ6件なので120件） */
   maxPages?: number;
