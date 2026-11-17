@@ -5,10 +5,12 @@
 import { z } from 'zod';
 import type { NoteArticlePage, NoteArticleSummary } from '../../core/types.js';
 import { NoteSchemaError } from '../errors.js';
+import { NOTE_KEY_RE, NOTE_USER_RE } from '../patterns.js';
 import { emptyToNull, httpsUrl, optionalHttpsUrl } from './shared.js';
 
 const contentSchema = z.object({
-  key: z.string().min(1),
+  // リンク・キャッシュキーに使われるため、記事キーの形式に限る
+  key: z.string().regex(NOTE_KEY_RE),
   name: z.string(),
   noteUrl: httpsUrl,
   publishAt: z.string().refine((value) => !Number.isNaN(Date.parse(value)), '日時として解釈できません'),
@@ -20,7 +22,8 @@ const contentSchema = z.object({
   price: z.number(),
   user: z.object({
     nickname: z.string(),
-    urlname: z.string(),
+    // 著者の確認やリンクの組み立てに使われるため、note のユーザー名の形式に限る
+    urlname: z.string().regex(NOTE_USER_RE),
     userProfileImagePath: optionalHttpsUrl,
   }),
 });

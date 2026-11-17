@@ -106,6 +106,40 @@ describe('normalizeContentsPage', () => {
     expect(normalizeContentsPage(json, 1).articles[1]?.eyecatchUrl).toBeNull();
   });
 
+  it('記事キーの形式が違えば NoteSchemaError（リンクやキャッシュキーに使われるため）', () => {
+    for (const key of ['../admin', 'a/b?x=1', '', 'N55256BAA5425', 'n55256baa5425#x']) {
+      const json = mutate(1, (draft) => {
+        (draft.data.contents[2] as Record<string, unknown>).key = key;
+      });
+      const error = (() => {
+        try {
+          normalizeContentsPage(json, 1);
+        } catch (e) {
+          return e;
+        }
+      })();
+      expect(error, key).toBeInstanceOf(NoteSchemaError);
+      expect((error as NoteSchemaError).issues.map((issue) => issue.path)).toContain('data.contents.2.key');
+    }
+  });
+
+  it('著者のユーザー名の形式が違えば NoteSchemaError（著者の確認やリンクに使われるため）', () => {
+    for (const urlname of ['a/../b', '', 'a b']) {
+      const json = mutate(1, (draft) => {
+        (draft.data.contents[0] as { user: Record<string, unknown> }).user.urlname = urlname;
+      });
+      const error = (() => {
+        try {
+          normalizeContentsPage(json, 1);
+        } catch (e) {
+          return e;
+        }
+      })();
+      expect(error, urlname).toBeInstanceOf(NoteSchemaError);
+      expect((error as NoteSchemaError).issues.map((issue) => issue.path)).toContain('data.contents.0.user.urlname');
+    }
+  });
+
   it('想定していない null は受け付けず NoteSchemaError（契約テストで形の変化を検知するため）', () => {
     const json = mutate(1, (draft) => {
       (draft.data.contents[1] as Record<string, unknown>).likeCount = null;

@@ -2,6 +2,7 @@ import type { NoteArticle } from '../core/types.js';
 import { NoteSchemaError } from './errors.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeNote } from './normalize/note.js';
+import { NOTE_KEY_RE } from './patterns.js';
 import {
   assertMilliseconds,
   DEFAULT_MIN_INTERVAL_MS,
@@ -15,8 +16,6 @@ export interface GetArticleOptions extends NoteRequestOptions {
   /** 記事キー（例: n55256baa5425。記事 URL の /n/ の後ろ）。n と英小文字・数字のみ */
   key: string;
 }
-
-const KEY_RE = /^n[0-9a-z]{1,32}$/;
 
 /**
  * 記事1件を取得する（サーバー専用。note は CORS に対応していない）。
@@ -36,7 +35,7 @@ const KEY_RE = /^n[0-9a-z]{1,32}$/;
 export async function getArticle(options: GetArticleOptions): Promise<NoteArticle> {
   const { key, timeoutMs = DEFAULT_TIMEOUT_MS, minIntervalMs = DEFAULT_MIN_INTERVAL_MS, signal } = options;
   // 文字列への変換で値が変わるオブジェクトを受け付けないよう、型も確認する
-  if (typeof key !== 'string' || !KEY_RE.test(key)) {
+  if (typeof key !== 'string' || !NOTE_KEY_RE.test(key)) {
     throw new TypeError(`Invalid note article key: ${typeof key === 'string' ? JSON.stringify(key) : typeof key}`);
   }
   assertMilliseconds('timeoutMs', timeoutMs, 1);
