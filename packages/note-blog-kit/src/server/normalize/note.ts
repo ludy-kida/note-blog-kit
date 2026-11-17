@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import type { NoteArticle, NoteEmbed, NoteEyecatch, NoteTocItem } from '../../core/types.js';
 import { NoteSchemaError } from '../errors.js';
+import { NOTE_USER_RE } from '../patterns.js';
 import { SAFE_VALUE, sanitizeNoteBody } from '../sanitize/sanitize.js';
 import { emptyToNull, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js';
 
@@ -33,7 +34,7 @@ const noteSchema = z.object({
   user: z.object({
     nickname: z.string(),
     // 著者の確認やリンクの組み立てに使われるため、note のユーザー名の形式に限る
-    urlname: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
+    urlname: z.string().regex(NOTE_USER_RE),
     user_profile_image_path: optionalHttpsUrl,
   }),
 });

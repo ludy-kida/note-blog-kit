@@ -1,6 +1,7 @@
 import type { NoteArticlePage } from '../core/types.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeContentsPage } from './normalize/contents.js';
+import { NOTE_USER_RE } from './patterns.js';
 import {
   assertMilliseconds,
   DEFAULT_MIN_INTERVAL_MS,
@@ -17,7 +18,6 @@ export interface ListArticlesOptions extends NoteRequestOptions {
   page?: number;
 }
 
-const USER_RE = /^[A-Za-z0-9_-]{1,64}$/;
 /**
  * 記事一覧の1ページを取得する（サーバー専用。note は CORS に対応していない）。
  *
@@ -31,7 +31,7 @@ const USER_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export async function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage> {
   const { user, page = 1, timeoutMs = DEFAULT_TIMEOUT_MS, minIntervalMs = DEFAULT_MIN_INTERVAL_MS, signal } = options;
   // 文字列への変換で値が変わるオブジェクトを受け付けないよう、型も確認する
-  if (typeof user !== 'string' || !USER_RE.test(user)) {
+  if (typeof user !== 'string' || !NOTE_USER_RE.test(user)) {
     throw new TypeError(`Invalid note user name: ${typeof user === 'string' ? JSON.stringify(user) : typeof user}`);
   }
   if (typeof page !== 'number' || !Number.isInteger(page) || page < 1) {
