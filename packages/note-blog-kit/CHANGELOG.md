@@ -1,5 +1,19 @@
 # note-blog-kit
 
+## 0.2.0
+
+### Minor Changes
+
+- 9951d4e: `NoteArticleBody` を追加しました（`note-blog-kit/react`）。`getArticle` で取得した本文を、`dangerouslySetInnerHTML` を使わずに描画します。画像・見出し・埋め込み・目次を `components` で置き換えられ、有料記事では「続きは note で」リンクを出します。デフォルト CSS に、note の本文に合わせたスタイル（`nbk-body`・`nbk-body__*`・`nbk-toc`・`nbk-embed`）と変数（`--nbk-body-*`・`--nbk-color-subtle`・`--nbk-color-button-*`）を追加しました。
+- 0301ba0: `getArticle({ key })` を追加しました（`note-blog-kit/server`）。記事1件を取得し、サニタイズ済みの本文・目次・埋め込み・見出し画像を持つ `NoteArticle` を返します。取得関数に共通するオプションの型 `NoteRequestOptions` を追加し、`ListArticlesOptions`・`GetArticleOptions` はこれを継承するようにしました（オプションの内容は変わりません）。
+- 469acec: `note-blog-kit/next` に `generateNoteMetadata`（canonical の既定値は note の元 URL）と `generateNoteStaticParams`（`maxPages` で打ち切る）を追加しました。どちらも `next` には依存せず、Next.js の `Metadata`・`generateStaticParams` にそのまま渡せます。
+- b206d05: 対応する Node.js を 22.12 以上に上げました（Node.js 20 はサポートを終了しています）。本文 HTML のサニタイズに使う `sanitize-html` を依存に追加しました。
+
+### Patch Changes
+
+- 58dc5b3: 見出し画像のない記事が一覧にあると、`listArticles` などが `NoteSchemaError` で失敗していたのを直しました（`eyecatchUrl` は `null` になります）。
+- bd78fc2: 一覧の取得（`listArticles` など）で、記事キーと著者のユーザー名の形式を検証するようにしました。想定と違う形式のときは `NoteSchemaError` になります（`getArticle` と同じ規則）。
+
 ## 0.1.0
 
 ### Minor Changes
