@@ -128,7 +128,15 @@ describe('normalizeContentsPage', () => {
       const json = mutate(1, (draft) => {
         (draft.data.contents[0] as { user: Record<string, unknown> }).user.urlname = urlname;
       });
-      expect(() => normalizeContentsPage(json, 1), urlname).toThrow(NoteSchemaError);
+      const error = (() => {
+        try {
+          normalizeContentsPage(json, 1);
+        } catch (e) {
+          return e;
+        }
+      })();
+      expect(error, urlname).toBeInstanceOf(NoteSchemaError);
+      expect((error as NoteSchemaError).issues.map((issue) => issue.path)).toContain('data.contents.0.user.urlname');
     }
   });
 

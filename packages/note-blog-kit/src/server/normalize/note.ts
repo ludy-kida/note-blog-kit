@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import type { NoteArticle, NoteEmbed, NoteEyecatch, NoteTocItem } from '../../core/types.js';
 import { NoteSchemaError } from '../errors.js';
-import { NOTE_USER_RE } from '../patterns.js';
+import { NOTE_KEY_RE, NOTE_USER_RE } from '../patterns.js';
 import { SAFE_VALUE, sanitizeNoteBody } from '../sanitize/sanitize.js';
 import { emptyToNull, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js';
 
@@ -14,7 +14,7 @@ import { emptyToNull, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js
 const EXCERPT_LENGTH = 240;
 
 const noteSchema = z.object({
-  key: z.string().min(1),
+  key: z.string().regex(NOTE_KEY_RE),
   name: z.string(),
   body: z.string(),
   note_url: httpsUrl,
