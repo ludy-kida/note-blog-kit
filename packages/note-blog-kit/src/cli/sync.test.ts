@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -172,6 +172,52 @@ describe('note-blog-kit sync', () => {
     expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
     expect(await readdir(join(dir, 'articles'))).not.toContain('n55256baa5425.json');
     expect(output.err.join('\n')).toContain('n55256baa5425');
+  });
+
+  it('前回書き出した記事のうち、今回の一覧にない・書き出せなかった記事のファイルは消す', async () => {
+    await mkdir(join(dir, 'articles'), { recursive: true });
+    await writeFile(join(dir, 'articles', 'n000000000000.json'), '{"old":true}');
+    await writeFile(join(dir, 'articles', 'n55256baa5425.json'), '{"old":true}');
+    await writeFile(join(dir, 'articles', 'README.md'), '利用者のファイル');
+    const fetch = mockFetch((url) =>
+      url.pathname === '/api/v3/notes/n55256baa5425' ? new Response('oops', { status: 503 }) : undefined,
+    );
+    const { deps, output } = makeDeps(fetch);
+    expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+    const files = await readdir(join(dir, 'articles'));
+    expect(files).not.toContain('n000000000000.json');
+    expect(files).not.toContain('n55256baa5425.json');
+    expect(files).toContain('README.md');
+    expect(files.filter((name) => name.endsWith('.json'))).toHaveLength(17);
+    expect(output.out.join('\n')).toContain('n000000000000.json');
+  });
+
+  it('著者が --user と違う記事は一覧からも除く', async () => {
+    const fetch = mockFetch((url) => {
+      if (url.pathname.startsWith('/api/v2/') && url.searchParams.get('page') === '1') {
+        const json = JSON.parse(fixture('contents/page-1.json')) as {
+          data: { isLastPage: boolean; contents: { user: { urlname: string } }[] };
+        };
+        (json.data.contents[0] as { user: { urlname: string } }).user.urlname = 'someone_else';
+        json.data.isLastPage = true;
+        return new Response(JSON.stringify(json));
+      }
+      return undefined;
+    });
+    const { deps } = makeDeps(fetch);
+    expect(await run(['sync', '--user', 'kida_lw', '--out', dir, '--no-body'], deps)).toBe(1);
+    const index = await readJson<{ articles: NoteArticleSummary[] }>('articles.json');
+    expect(index.articles).toHaveLength(5);
+    expect(index.articles.every((a) => a.author.urlname === 'kida_lw')).toBe(true);
+  });
+
+  it('出力先に書けなければ終了コード 1（例外で落ちない）', async () => {
+    const file = join(dir, 'not-a-dir');
+    await writeFile(file, '');
+    const fetch = mockFetch();
+    const { deps, output } = makeDeps(fetch);
+    expect(await run(['sync', '--user', 'kida_lw', '--out', file, '--max-pages', '1', '--no-body'], deps)).toBe(1);
+    expect(output.err.join('\n')).toContain('書き出せませんでした');
   });
 
   it('一覧の取得に失敗したら終了コード 1 で、何も書き出さない', async () => {

@@ -2,7 +2,8 @@
  * `note-blog-kit sync`：記事の一覧と本文を JSON に書き出す（ビルド時に実行する）。
  * 取得は /server の関数を使う。取得の間隔はライブラリの既定（1秒）のままで、短くする引数は作らない。
  */
-import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { randomBytes } from 'node:crypto';
+import { mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { NoteArticleSummary } from '../core/types.js';
@@ -87,9 +88,31 @@ function parseSyncArgs(argv: string[]): SyncOptions | 'help' {
 
 /** 一時ファイルに書いてから rename する（途中で止まっても、壊れた JSON を残さない） */
 async function writeJson(path: string, value: unknown): Promise<void> {
-  const tmp = `${path}.tmp-${process.pid}`;
-  await writeFile(tmp, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
-  await rename(tmp, path);
+  // 推測しにくい名前で、既存のファイル（シンボリックリンクを含む）には書かない（wx）
+  const tmp = `${path}.tmp-${randomBytes(8).toString('hex')}`;
+  try {
+    await writeFile(tmp, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', flag: 'wx', mode: 0o644 });
+    await rename(tmp, path);
+  } catch (error) {
+    await rm(tmp, { force: true });
+    throw error;
+  }
+}
+
+const ARTICLE_FILE_RE = /^n[0-9a-z]{1,32}\.json$/;
+
+/**
+ * 今回書き出さなかった記事のファイルを消す（削除・非公開・有料化した記事の本文を公開し続けないため）。
+ * 消すのは記事キーの形の .json だけ（利用者が置いたほかのファイルには触れない）
+ */
+async function removeStaleArticles(dir: string, keep: Set<string>): Promise<string[]> {
+  const removed: string[] = [];
+  for (const name of await readdir(dir)) {
+    if (!ARTICLE_FILE_RE.test(name) || keep.has(name.slice(0, -'.json'.length))) continue;
+    await rm(join(dir, name), { force: true });
+    removed.push(name);
+  }
+  return removed;
 }
 
 function describeError(error: unknown): string {
@@ -131,17 +154,35 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
     return 1;
   }
 
-  await mkdir(out, { recursive: true });
-  await writeJson(join(out, 'articles.json'), { user, syncedAt: new Date().toISOString(), truncated, articles });
+  // 一覧は --user の記事だけにする（本文と同じ規則）
+  const others = articles.filter((article) => article.author.urlname !== user);
+  for (const article of others) {
+    stderr(`${article.key}: 著者が ${user} ではないため一覧から除きました（${article.author.urlname}）`);
+  }
+  articles = articles.filter((article) => article.author.urlname === user);
+
+  try {
+    await mkdir(out, { recursive: true });
+    await writeJson(join(out, 'articles.json'), { user, syncedAt: new Date().toISOString(), truncated, articles });
+  } catch (error) {
+    stderr(`${join(out, 'articles.json')} に書き出せませんでした: ${describeError(error)}`);
+    return 1;
+  }
   stdout(
     `記事 ${articles.length} 件の一覧を ${join(out, 'articles.json')} に書き出しました${truncated ? `（${maxPages} ページで打ち切り）` : ''}`,
   );
-  if (!body) return 0;
+  if (!body) return others.length > 0 ? 1 : 0;
 
   const dir = join(out, 'articles');
-  await mkdir(dir, { recursive: true });
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (error) {
+    stderr(`${dir} を作れませんでした: ${describeError(error)}`);
+    return 1;
+  }
   stdout(`本文を取得しています（${articles.length} 件、約 ${articles.length} 秒）...`);
-  let failures = 0;
+  let failures = others.length;
+  const written = new Set<string>();
   for (const summary of articles) {
     const { key } = summary;
     // 一覧の正規化で検証済みだが、ファイル名に使うので書き込む直前にも確かめる
@@ -158,13 +199,22 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
         continue;
       }
       await writeJson(join(dir, `${key}.json`), article);
+      written.add(key);
     } catch (error) {
-      stderr(`${key}: 本文の取得に失敗しました: ${describeError(error)}`);
+      stderr(`${key}: 本文を書き出せませんでした: ${describeError(error)}`);
       failures += 1;
     }
   }
-  const written = articles.length - failures;
-  stdout(`本文 ${written} 件を ${dir} に書き出しました`);
+  // 書き出せなかった記事の古い本文も消す（有料化などで前回の全文が残らないように）
+  let removed: string[];
+  try {
+    removed = await removeStaleArticles(dir, written);
+  } catch (error) {
+    stderr(`${dir} の古いファイルを消せませんでした: ${describeError(error)}`);
+    return 1;
+  }
+  stdout(`本文 ${written.size} 件を ${dir} に書き出しました`);
+  if (removed.length > 0) stdout(`前回の本文 ${removed.length} 件を消しました（${removed.join(', ')}）`);
   if (failures > 0) {
     stderr(`${failures} 件の本文を書き出せませんでした（上のメッセージを確認してください）`);
     return 1;
