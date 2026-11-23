@@ -1,0 +1,780 @@
+{
+  "data": {
+    "contents": [
+      {
+        "id": 138593202,
+        "type": "TextNote",
+        "status": "published",
+        "name": "note分析の決定版｜公式アナリティクスを超えた「自作ダッシュボード」でSEO順位とPVを自動計測する方法",
+        "description": null,
+        "likeCount": 19,
+        "price": 980,
+        "key": "n52a7f4fa0a2e",
+        "slug": "slug-n52a7f4fa0a2e",
+        "publishAt": "2025-12-19T19:07:21+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/237441809/rectangle_large_type_2_54c0f8d4339a62d0178bad9a5f9deb71.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": false,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n",
+        "separator": "9592a504-561f-49b1-8679-805590bc1e37",
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": true,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 5,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#note"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#マーケティング"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#エンジニア"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#GAS"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#note運用"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#LookerStudio"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n52a7f4fa0a2e&text=note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n52a7f4fa0a2e&t=note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?note%E5%88%86%E6%9E%90%E3%81%AE%E6%B1%BA%E5%AE%9A%E7%89%88%EF%BD%9C%E5%85%AC%E5%BC%8F%E3%82%A2%E3%83%8A%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9%E3%82%92%E8%B6%85%E3%81%88%E3%81%9F%E3%80%8C%E8%87%AA%E4%BD%9C%E3%83%80%E3%83%83%E3%82%B7%E3%83%A5%E3%83%9C%E3%83%BC%E3%83%89%E3%80%8D%E3%81%A7SEO%E9%A0%86%E4%BD%8D%E3%81%A8PV%E3%82%92%E8%87%AA%E5%8B%95%E8%A8%88%E6%B8%AC%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n52a7f4fa0a2e",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [
+          {
+            "type": "note",
+            "name": "¥980",
+            "action": "open_note_purchase_modal",
+            "order": 1
+          }
+        ],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": true,
+        "pinnedUserNoteId": 755247,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/237441809/square_large_54c0f8d4339a62d0178bad9a5f9deb71.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n52a7f4fa0a2e",
+        "imageCount": 81,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [
+          {
+            "key": "4f48fb593aa5",
+            "kind": "time_sale",
+            "status": "available",
+            "discountedPrice": 500,
+            "timeSale": {
+              "startAt": "2026-06-22T14:30:00.000+09:00",
+              "endAt": "2026-07-22T14:30:00.000+09:00",
+              "active": false
+            }
+          }
+        ],
+        "remainedCharNum": 22756,
+        "remainedImageNum": 80,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": false,
+          "lowestPrice": 980,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": 980
+        }
+      },
+      {
+        "id": 191011860,
+        "type": "TextNote",
+        "status": "published",
+        "name": "【注意喚起】「PHPの脆弱性対応」をうたうWordPress更新作業の高額請求に気をつけて",
+        "description": null,
+        "likeCount": 1,
+        "price": 0,
+        "key": "n739726ca45e7",
+        "slug": "slug-n739726ca45e7",
+        "publishAt": "2026-11-14T12:13:14+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": null,
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n「PHPの脆弱性で危険な状態です」という連絡が来たら2026年10月21日、Webサイトを動かすプログラム言語「PHP」に、重大な脆弱性が2件見つかりました（CVE-2026-109618、CVE-2026-109619。通称「PHP2Shell」）。\nログインなしで外部からサーバー上のプログラムを動かされるおそれがあるもので、10月26日には米CISAが「実際に悪用が確認された脆弱性」の一覧に追加しています。\n\n深刻な脆弱性であることは間違いありません。ただ、この騒ぎに便",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#wordpress"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サーバー"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#PHP"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#脆弱性"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#バージョン"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ぼったくり"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n739726ca45e7&text=%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n739726ca45e7&t=%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n739726ca45e7",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": null,
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n739726ca45e7",
+        "imageCount": 0,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 190646545,
+        "type": "TextNote",
+        "status": "published",
+        "name": "AI検索の時代にサジェスト汚染対策が必須な理由",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n1f476299000f",
+        "slug": "slug-n1f476299000f",
+        "publishAt": "2026-11-13T12:08:37+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/335107708/rectangle_large_type_2_4ea9f43ade02ca957a0a062e82b92598.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n\nGoogleの検索窓に自社名や自分の名前を入れたとき、「〇〇 やばい」「〇〇 詐欺」「〇〇 ブラック」といった言葉が並んでいたことはありませんか。\n\nこれまでサジェスト汚染は、「気分は悪いけれど、クリックされなければ実害は限られる」と後回しにされがちな問題でした。\nところが、検索の入口がAIの回答に置き換わりつつある今、その前提が崩れ始めています。\n\nこの記事では、なぜAI検索の時代にサジェスト汚染対策が「やったほうがいい」から「やらないと危ない」に変わったのかを、データ",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#マーケティング"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#検索"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#風評被害"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サジェスト"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#サジェスト汚染"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n1f476299000f&text=AI%E6%A4%9C%E7%B4%A2%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%AB%E3%82%B5%E3%82%B8%E3%82%A7%E3%82%B9%E3%83%88%E6%B1%9A%E6%9F%93%E5%AF%BE%E7%AD%96%E3%81%8C%E5%BF%85%E9%A0%88%E3%81%AA%E7%90%86%E7%94%B1%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n1f476299000f&t=AI%E6%A4%9C%E7%B4%A2%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%AB%E3%82%B5%E3%82%B8%E3%82%A7%E3%82%B9%E3%83%88%E6%B1%9A%E6%9F%93%E5%AF%BE%E7%AD%96%E3%81%8C%E5%BF%85%E9%A0%88%E3%81%AA%E7%90%86%E7%94%B1%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?AI%E6%A4%9C%E7%B4%A2%E3%81%AE%E6%99%82%E4%BB%A3%E3%81%AB%E3%82%B5%E3%82%B8%E3%82%A7%E3%82%B9%E3%83%88%E6%B1%9A%E6%9F%93%E5%AF%BE%E7%AD%96%E3%81%8C%E5%BF%85%E9%A0%88%E3%81%AA%E7%90%86%E7%94%B1%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n1f476299000f",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/335107708/square_large_4ea9f43ade02ca957a0a062e82b92598.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n1f476299000f",
+        "imageCount": 4,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 190643412,
+        "type": "TextNote",
+        "status": "published",
+        "name": "ノンアルコールワインをクリスマスに。乾杯用スパークリング3選",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n55256baa5425",
+        "slug": "slug-n55256baa5425",
+        "publishAt": "2026-11-12T09:38:42+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/335100586/rectangle_large_type_2_7c58efbf45938c6a7c6c44d30a45bccb.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\nこの記事はAmazonアソシエイトのリンクを含みます（PR）。\n\n飲めない人とクリスマスに乾杯するなら、泡のボトルを1本、表示のアルコール度数を見て選べば十分です。\n\n価格は2026年11月11日時点の目安です。\n購入前に実売価格を確かめてください。お酒を飲む人どうしで本物のシャンパンを探している人には、この記事は合いません。\n\n選ぶ基準\n\n表示のアルコール度数：\n「0.0%」「0%」「0.1%未満」など、表記は商品ごとに違います。\n運転する人や姊娠中の人がいるなら、まずこ",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#クリスマス"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#手土産"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ソバーキュリアス"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#スパークリングワイン"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#ノンアルコールワイン"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n55256baa5425&text=%E3%83%8E%E3%83%B3%E3%82%A2%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%AB%E3%83%AF%E3%82%A4%E3%83%B3%E3%82%92%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%81%AB%E3%80%82%E4%B9%BE%E6%9D%AF%E7%94%A8%E3%82%B9%E3%83%91%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%B3%E3%82%B03%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n55256baa5425&t=%E3%83%8E%E3%83%B3%E3%82%A2%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%AB%E3%83%AF%E3%82%A4%E3%83%B3%E3%82%92%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%81%AB%E3%80%82%E4%B9%BE%E6%9D%AF%E7%94%A8%E3%82%B9%E3%83%91%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%B3%E3%82%B03%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%83%8E%E3%83%B3%E3%82%A2%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%AB%E3%83%AF%E3%82%A4%E3%83%B3%E3%82%92%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%81%AB%E3%80%82%E4%B9%BE%E6%9D%AF%E7%94%A8%E3%82%B9%E3%83%91%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%B3%E3%82%B03%E9%81%B8%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n55256baa5425",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/335100586/square_large_7c58efbf45938c6a7c6c44d30a45bccb.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n55256baa5425",
+        "imageCount": 2,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 190554653,
+        "type": "TextNote",
+        "status": "published",
+        "name": "クリスマスディナーを冷凍で揃えたら、調理10分で終わる",
+        "description": null,
+        "likeCount": 4,
+        "price": 0,
+        "key": "n672750f0304d",
+        "slug": "slug-n672750f0304d",
+        "publishAt": "2026-11-11T18:54:35+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/production/uploads/images/334912090/rectangle_large_type_2_231b2100af68014b45c6f62d02ff0fbd.png?fit=bounds&quality=85&width=1280",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n子どもがいると、クリスマス当日に料理をする時間はありません。\nだから今年は作るのをやめて、冷凍で揃えました。やることは、解凍のタイミングを決めることだけです。\n\n豪華に見えるかどうかは、作ったかどうかと関係がない。揃えたのはこの4品です。\n\n選ぶ基準は3つ\n\n冷蔵庫で解凍するだけで出せる\n\n解凍時間が、商品ページに書いてある\n\n2歳の子と大人で、食べる物を分けられる\n\nわが家の基準です。当日に料理するのが楽しみな人には、この記事は向きません。\n\n解凍のタイムテーブル\n\n24",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#クリスマス"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#お取り寄せ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#時短ごはん"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#クリスマスディナー"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#冷凍グルメ"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#子連れクリスマス"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n672750f0304d&text=%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%87%E3%82%A3%E3%83%8A%E3%83%BC%E3%82%92%E5%86%B7%E5%87%8D%E3%81%A7%E6%8F%83%E3%81%88%E3%81%9F%E3%82%89%E3%80%81%E8%AA%BF%E7%90%8610%E5%88%86%E3%81%A7%E7%B5%82%E3%82%8F%E3%82%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n672750f0304d&t=%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%87%E3%82%A3%E3%83%8A%E3%83%BC%E3%82%92%E5%86%B7%E5%87%8D%E3%81%A7%E6%8F%83%E3%81%88%E3%81%9F%E3%82%89%E3%80%81%E8%AA%BF%E7%90%8610%E5%88%86%E3%81%A7%E7%B5%82%E3%82%8F%E3%82%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%83%87%E3%82%A3%E3%83%8A%E3%83%BC%E3%82%92%E5%86%B7%E5%87%8D%E3%81%A7%E6%8F%83%E3%81%88%E3%81%9F%E3%82%89%E3%80%81%E8%AA%BF%E7%90%8610%E5%88%86%E3%81%A7%E7%B5%82%E3%82%8F%E3%82%8B%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n672750f0304d",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/production/uploads/images/334912090/square_large_231b2100af68014b45c6f62d02ff0fbd.png?fit=bounds&format=jpeg&quality=85&width=360",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n672750f0304d",
+        "imageCount": 3,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      },
+      {
+        "id": 190387929,
+        "type": "TextNote",
+        "status": "published",
+        "name": "ChromebookのLinux環境でVS Codeの日本語入力を使えるようにする手順",
+        "description": null,
+        "likeCount": 0,
+        "price": 0,
+        "key": "n30206c9b01b5",
+        "slug": "slug-n30206c9b01b5",
+        "publishAt": "2026-11-10T20:10:27+09:00",
+        "thumbnailExternalUrl": "",
+        "eyecatch": "https://assets.st-note.com/img/1794308740-JAhQISlpfjzPBs1LbtH83Kge.png",
+        "user": {
+          "id": 7228382,
+          "key": "22dbcb41f66c9a19ec50306f865d31b4",
+          "name": "木田貴之",
+          "urlname": "kida_lw",
+          "nickname": "木田貴之",
+          "userProfileImagePath": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+          "customDomain": null,
+          "disableSupport": false,
+          "disableGuestPurchase": false,
+          "likeAppealText": "スキありがとうございます。",
+          "likeAppealImage": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+          "purchaseAppealTextNote": null,
+          "twitterNickname": null,
+          "shareAppeal": {
+            "text": null,
+            "image": null
+          },
+          "magazineAddAppeal": {
+            "text": "やったー！",
+            "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+          }
+        },
+        "canRead": true,
+        "isAuthor": false,
+        "externalUrl": null,
+        "customDomain": null,
+        "body": "\n\nはじめにChromebook の Linux 環境に入れた VS Code では、ChromeOS 側の日本語入力が効かないことがあります。\nこの記事では、Linux 側に日本語入力（fcitx5 + Mozc）を設定して、VS Code で日本語を入力できるようにするまでの手順をまとめます。\n\n筆者も新しい Chromebook に移行したときにこの問題にぶつかり、「再起動すると使えなくなる」「英数入力が US 配列になる」など、いくつかの罠にはまりました。\nこの記事は",
+        "separator": null,
+        "isLimited": false,
+        "isTrial": false,
+        "canUpdate": false,
+        "tweetText": "",
+        "twitterRelatedAccounts": "note_PR",
+        "isRefund": false,
+        "isLiked": false,
+        "commentCount": 0,
+        "anonymousLikeCount": 0,
+        "disableComment": false,
+        "hashtags": [
+          {
+            "hashtag": {
+              "name": "#linux"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#VScode"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#chromebook"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#日本語化"
+            }
+          },
+          {
+            "hashtag": {
+              "name": "#fcitx5"
+            }
+          }
+        ],
+        "twitterShareUrl": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n30206c9b01b5&text=Chromebook%E3%81%AELinux%E7%92%B0%E5%A2%83%E3%81%A7VS+Code%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%85%A5%E5%8A%9B%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E6%89%8B%E9%A0%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+        "facebookShareUrl": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n30206c9b01b5&t=Chromebook%E3%81%AELinux%E7%92%B0%E5%A2%83%E3%81%A7VS+Code%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%85%A5%E5%8A%9B%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E6%89%8B%E9%A0%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+        "lineShareUrl": "https://line.naver.jp/R/msg/text/?Chromebook%E3%81%AELinux%E7%92%B0%E5%A2%83%E3%81%A7VS+Code%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%85%A5%E5%8A%9B%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E6%89%8B%E9%A0%86%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n30206c9b01b5",
+        "audio": {},
+        "pictures": [],
+        "limitedMessage": null,
+        "labels": [],
+        "priorSale": null,
+        "canMultipleLimitedNote": false,
+        "isMembershipConnected": false,
+        "hasAvailableCirclePlans": false,
+        "isPinned": false,
+        "pinnedUserNoteId": null,
+        "spEyecatch": "https://assets.st-note.com/img/1794308740-JAhQISlpfjzPBs1LbtH83Kge.png",
+        "enableBacktoDraft": false,
+        "notificationMessages": [],
+        "isProfiled": false,
+        "isForWork": false,
+        "isCircleDescription": false,
+        "noteDraft": null,
+        "noteUrl": "https://note.com/kida_lw/n/n30206c9b01b5",
+        "imageCount": 3,
+        "format": "4.1",
+        "capabilities": {
+          "amazonpayCampaign": true,
+          "amazonpay": true,
+          "guestAmazonpay": true,
+          "rubyText": true,
+          "formulaText": true,
+          "duplication": true,
+          "noteComment": true
+        },
+        "discountCampaigns": [],
+        "remainedCharNum": 0,
+        "remainedImageNum": 0,
+        "remainedFileNum": 0,
+        "priceInfo": {
+          "isFree": true,
+          "lowestPrice": null,
+          "hasMultiple": false,
+          "hasSubscription": false,
+          "oneshotLowestPrice": null
+        }
+      }
+    ],
+    "isLastPage": false,
+    "totalCount": 239
+  }
+}

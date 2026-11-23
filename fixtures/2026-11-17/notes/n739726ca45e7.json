@@ -1,0 +1,662 @@
+{
+  "data": {
+    "id": 191011860,
+    "user_id": 7228382,
+    "status": "published",
+    "type": "TextNote",
+    "key": "n739726ca45e7",
+    "slug": "slug-n739726ca45e7",
+    "name": "【注意喚起】「PHPの脆弱性対応」をうたうWordPress更新作業の高額請求に気をつけて",
+    "body": "<figure name=\"64dca86a-5e81-43ba-81ad-523221f3cf66\" id=\"64dca86a-5e81-43ba-81ad-523221f3cf66\"><blockquote><p name=\"df0d23f8-2598-4e9e-970b-c002af91b969\" id=\"df0d23f8-2598-4e9e-970b-c002af91b969\">この記事は約11分で読めます。</p></blockquote><figcaption></figcaption></figure><table-of-contents name=\"a1a896a1-6f96-493f-b427-24ef0c4405fc\" id=\"a1a896a1-6f96-493f-b427-24ef0c4405fc\"><br></table-of-contents><h2 name=\"901e7c2c-c088-484a-8c77-8be00ea2184e\" id=\"901e7c2c-c088-484a-8c77-8be00ea2184e\">「PHPの脆弱性で危険な状態です」という連絡が来たら</h2><p name=\"60043c85-d7ae-43a4-9508-3cae0ae498b6\" id=\"60043c85-d7ae-43a4-9508-3cae0ae498b6\">2026年10月21日、Webサイトを動かすプログラム言語「PHP」に、重大な脆弱性が2件見つかりました（CVE-2026-109618、CVE-2026-109619。通称「PHP2Shell」）。<br>ログインなしで外部からサーバー上のプログラムを動かされるおそれがあるもので、10月26日には米CISAが<a href=\"https://atsoho.com/blog/php2shell-php-vulnerability\" target=\"_blank\" rel=\"nofollow noopener\">「実際に悪用が確認された脆弱性」の一覧に追加</a>しています。</p><p name=\"b0fd1d17-4230-43af-a54a-b58372df932e\" id=\"b0fd1d17-4230-43af-a54a-b58372df932e\">深刻な脆弱性であることは間違いありません。ただ、この騒ぎに便乗して、</p><figure name=\"78326518-da4a-4a78-a5e3-3c4ef37b53cd\" id=\"78326518-da4a-4a78-a5e3-3c4ef37b53cd\"><blockquote><p name=\"bdd40c8d-245f-4024-bf36-656aadb7bdbf\" id=\"bdd40c8d-245f-4024-bf36-656aadb7bdbf\">「PHPの脆弱性により、御社のWordPressサイトは危険な状態です」 「すぐに更新作業をしないと、ハッキングされる危険性があります」</p></blockquote><figcaption></figcaption></figure><p name=\"5b038011-8cf9-4998-bb76-967b9ecabf59\" id=\"5b038011-8cf9-4998-bb76-967b9ecabf59\">といった連絡とともに、高額な「更新作業」の見積もりを出してくる業者が増えています。</p><p name=\"445216f4-e9db-4b62-820f-f78d475be8ab\" id=\"445216f4-e9db-4b62-820f-f78d475be8ab\">先に結論を言うと、<strong>一般的なレンタルサーバーでWordPressを動かしているなら、今回の脆弱性のためにあなたが費用を払って作業する必要は、基本的にありません</strong>。<br>この記事では、その理由と、本当に作業が必要なケースの見分け方をまとめます。</p><h2 name=\"264d73bf-492e-490b-a502-2b02a25f532d\" id=\"264d73bf-492e-490b-a502-2b02a25f532d\">共用レンタルサーバーなら、対策はサーバー会社が済ませている</h2><p name=\"0158b88d-2404-4dca-8ce3-03f554867fe1\" id=\"0158b88d-2404-4dca-8ce3-03f554867fe1\">今回の脆弱性は、WordPressではなく、その土台で動くPHPそのものの問題です。<br>そのため、直す方法は「PHPを修正版に入れ替えること」で、<a href=\"https://atsoho.com/blog/php2shell-php-vulnerability\" target=\"_blank\" rel=\"nofollow noopener\">WordPressやプラグインを更新しても解消しません</a>。</p><p name=\"9812c78d-298a-41c0-9773-276da8a94f82\" id=\"9812c78d-298a-41c0-9773-276da8a94f82\">そして、エックスサーバーやさくらのレンタルサーバのような<strong>共用レンタルサーバーでは、PHPを管理しているのはサーバー会社</strong>です。<br>主要各社は、すでに修正を終えたと発表しています。</p><p name=\"54631eb4-c688-4177-9b1b-d0c560f82ab9\" id=\"54631eb4-c688-4177-9b1b-d0c560f82ab9\">サーバーごとの公表されている対応</p><h3 name=\"85ac1130-fd68-493a-aa16-394e380999af\" id=\"85ac1130-fd68-493a-aa16-394e380999af\">エックスサーバー</h3><p name=\"c582249d-ea05-46bc-aa1f-9f1d8bfedad5\" id=\"c582249d-ea05-46bc-aa1f-9f1d8bfedad5\">10月26日までに、<a href=\"https://www.xserver.ne.jp/php_vulnerability.php\" target=\"_blank\" rel=\"nofollow noopener\">PHP 5.1〜8.5のすべての対象サーバーへの対応が完了</a>。利用者の作業は原則不要</p><h3 name=\"f2318730-a041-4c27-92c8-f9d131a64fee\" id=\"f2318730-a041-4c27-92c8-f9d131a64fee\">さくらのレンタルサーバ</h3><p name=\"4025a851-e9ed-43c5-a298-88b858fc5275\" id=\"4025a851-e9ed-43c5-a298-88b858fc5275\"><a href=\"https://help.sakura.ad.jp/notification/n-2700/\" target=\"_blank\" rel=\"nofollow noopener\">コントロールパネルから選べるすべてのPHPバージョンへの対応を完了</a>。利用者の緊急の対応はなし</p><h3 name=\"49dd25ae-6170-40b9-9a94-67e137f066ce\" id=\"49dd25ae-6170-40b9-9a94-67e137f066ce\">ConoHa WING</h3><p name=\"d1974e05-12ef-4af7-9b21-8f3aeba68706\" id=\"d1974e05-12ef-4af7-9b21-8f3aeba68706\"><a href=\"https://tency.co.jp/information/php-critical-vulnerability-2026-10/\" target=\"_blank\" rel=\"nofollow noopener\">PHP 5.6〜8.5の提供中の全バージョンに修正を適用</a>。脆弱性対策のためだけにバージョンを変える必要はない</p><h3 name=\"7c2969cd-b5fd-4472-b36b-36873d0fae6d\" id=\"7c2969cd-b5fd-4472-b36b-36873d0fae6d\">ロリポップ！、mixhost、ColorfulBoxなど</h3><p name=\"08989ca0-0306-475d-a78c-f20399bd0d0d\" id=\"08989ca0-0306-475d-a78c-f20399bd0d0d\">も<a href=\"https://www.rebellion-inc.jp/news/ca916a28-c8b1-420e-9280-f42bf582739b\" target=\"_blank\" rel=\"nofollow noopener\">対応完了を発表</a>しています（10月22日時点の報道）。ご利用中のサーバー会社のお知らせも確認してください。</p><h3 name=\"07bfa916-8e12-414d-92a3-b508f79da135\" id=\"07bfa916-8e12-414d-92a3-b508f79da135\">古いPHPでも直っている場合がある</h3><p name=\"c53ba600-4fe7-4cc9-b9c8-b6c4546531a2\" id=\"c53ba600-4fe7-4cc9-b9c8-b6c4546531a2\">PHPの開発元が修正版を出したのは、8.2〜8.5だけです。しかし大手のサーバー会社は、開発元のサポートが終わった古いバージョンにも、独自に修正を当てています。</p><p name=\"39697b5c-eb1d-4cfd-88e1-4b8a2cf408ee\" id=\"39697b5c-eb1d-4cfd-88e1-4b8a2cf408ee\">注意したいのは、<strong>修正済みでもバージョン番号が変わらない場合がある</strong>ことです。たとえばConoHa WINGでは、PHP 8.5.11と表示されていても、今回の脆弱性への<a href=\"https://tency.co.jp/information/php-critical-vulnerability-2026-10/\" target=\"_blank\" rel=\"nofollow noopener\">修正は適用済みの場合がある</a>と案内されています。<strong>「バージョンが古いままなので危険です」という説明は、それだけでは根拠になりません</strong>。</p><h2 name=\"93df33c3-17c0-418d-8bac-03a8d153a49e\" id=\"93df33c3-17c0-418d-8bac-03a8d153a49e\">自分で対応が必要になるケース</h2><p name=\"6146d9e9-f8b4-4896-802e-9f7f3e2ab761\" id=\"6146d9e9-f8b4-4896-802e-9f7f3e2ab761\">もちろん、作業が必要な場合もあります。次のいずれかに当てはまるなら、サーバー会社任せにはできません。</p><ul name=\"6c41b7bf-48b7-4969-8294-f0b05d176037\" id=\"6c41b7bf-48b7-4969-8294-f0b05d176037\"><li><p name=\"ad9bf7d9-b160-46fd-9c5a-b3ee177e1a05\" id=\"ad9bf7d9-b160-46fd-9c5a-b3ee177e1a05\"><strong>VPSや自社サーバー、AWSなどのクラウドで動かしている</strong>：OSやPHPの管理は利用者の責任です。エックスサーバーも、<a href=\"https://www.xserver.ne.jp/php_vulnerability.php\" target=\"_blank\" rel=\"nofollow noopener\">VPSでは同社による修正パッチの適用は行っていない</a>と明記しています</p></li><li><p name=\"c0fdae95-8593-442c-9f9c-1211e3596829\" id=\"c0fdae95-8593-442c-9f9c-1211e3596829\"><strong>サーバー会社が用意したものではなく、自分でインストールしたPHPを使っている</strong>：さくらインターネットも、こうしたPHPは<a href=\"https://help.sakura.ad.jp/notification/n-2700/\" target=\"_blank\" rel=\"nofollow noopener\">利用者自身での対応が必要</a>としています</p></li><li><p name=\"b6bebec9-d301-4c11-8344-d684fb576a7c\" id=\"b6bebec9-d301-4c11-8344-d684fb576a7c\"><strong>使っているPHPのバージョンが、サーバー会社の対応済みリストに入っていない</strong>：事業者によって、どこまで古いバージョンに対応したかは異なります</p></li></ul><h2 name=\"6f86d3ff-f193-4822-88ad-a33968e4245b\" id=\"6f86d3ff-f193-4822-88ad-a33968e4245b\">自分のサイトが対象か、確認する方法</h2><p name=\"7817b679-6d7a-4141-9229-83cb8d835eb9\" id=\"7817b679-6d7a-4141-9229-83cb8d835eb9\">確認は3ステップで、専門知識がなくてもできます。</p><h3 name=\"1daddfe5-c1da-4a09-a1f2-155c1543982f\" id=\"1daddfe5-c1da-4a09-a1f2-155c1543982f\">1. PHPのバージョンを確認する</h3><p name=\"f5479c9a-555e-4667-8250-e6174e1900c1\" id=\"f5479c9a-555e-4667-8250-e6174e1900c1\">WordPressの管理画面で、<a href=\"https://atsoho.com/blog/php2shell-php-vulnerability\" target=\"_blank\" rel=\"nofollow noopener\">「ツール」→「サイトヘルス」→「情報」タブ→「サーバー」欄</a>を開くと、PHPのバージョンが表示されます。レンタルサーバーの管理画面でも確認できます。</p><h3 name=\"c055b462-3efd-438f-9478-065f59242154\" id=\"c055b462-3efd-438f-9478-065f59242154\">2. サーバーの種類を確認する</h3><p name=\"a3bb0ede-f79f-4280-88d3-d3502bd4ff5f\" id=\"a3bb0ede-f79f-4280-88d3-d3502bd4ff5f\">契約しているのが「共用レンタルサーバー」か「VPS・クラウド」かを確認します。契約書や毎月の請求書、サーバー会社の管理画面を見れば分かります。制作会社に任せていて分からない場合は、まずそれを聞いてみてください。</p><h3 name=\"76866da0-2894-4c49-9aac-e99a42d2b92e\" id=\"76866da0-2894-4c49-9aac-e99a42d2b92e\">3. サーバー会社のお知らせと照らし合わせる</h3><p name=\"ee0b4e2c-6e28-4892-a577-880cf57cee51\" id=\"ee0b4e2c-6e28-4892-a577-880cf57cee51\">ご利用のサーバー会社の公式サイトで、今回の脆弱性（CVE-2026-109618／CVE-2026-109619）についてのお知らせを探し、手順1で確認したバージョンが「対応済み」に入っているかを確かめます。</p><p name=\"d2db6cda-af66-48b4-83f9-8e25b264d878\" id=\"d2db6cda-af66-48b4-83f9-8e25b264d878\"><strong>共用レンタルサーバーで、使っているバージョンが対応済みなら、今回の件で追加の作業は不要</strong>です。</p><h2 name=\"bd58fc64-5a05-4127-87c8-b4df0a8f4e32\" id=\"bd58fc64-5a05-4127-87c8-b4df0a8f4e32\">こんな言い回しには注意</h2><p name=\"092f42c9-7916-4525-b438-fb6abcf8db06\" id=\"092f42c9-7916-4525-b438-fb6abcf8db06\">不安をあおって判断を急がせるのは、不当な請求によくある手口です。次のような表現が出てきたら、いったん立ち止まってください。</p><ul name=\"1e68c567-01c9-4ed6-ab5d-9c932478e1a6\" id=\"1e68c567-01c9-4ed6-ab5d-9c932478e1a6\"><li><p name=\"e819c82b-c526-423d-94ab-23095ec2c163\" id=\"e819c82b-c526-423d-94ab-23095ec2c163\">「御社のサイトは<strong>危険な状態</strong>です」</p></li><li><p name=\"d3430d77-de12-4e01-9ba6-e9471a486e4b\" id=\"d3430d77-de12-4e01-9ba6-e9471a486e4b\">「作業しないと<strong>ハッキングされる危険性</strong>があります」</p></li><li><p name=\"2ed0b786-d057-4e81-8c2e-afdeb68cf5a4\" id=\"2ed0b786-d057-4e81-8c2e-afdeb68cf5a4\">「<strong>本日中に</strong>ご判断ください」「<strong>今すぐ</strong>対応が必要です」</p></li><li><p name=\"30171cc8-4e16-4b6e-aec7-bd6858047daf\" id=\"30171cc8-4e16-4b6e-aec7-bd6858047daf\">「<strong>WordPressの更新作業</strong>で対策します」</p></li></ul><p name=\"8ee8bc1b-2153-4914-a78e-6311033e3a24\" id=\"8ee8bc1b-2153-4914-a78e-6311033e3a24\">最後の「WordPressの更新作業」は特に要注意です。前に書いたとおり、今回の脆弱性はPHPの問題で、<strong>WordPressを更新しても直りません</strong>。この説明で見積もりを出してくる時点で、説明の正確さを疑ってよいでしょう。</p><h2 name=\"e368ff17-d978-47bb-bd3e-6b87b4b650f8\" id=\"e368ff17-d978-47bb-bd3e-6b87b4b650f8\">見積もりを受けたら、必ず確かめること</h2><p name=\"2480ec7f-b964-4545-946b-c6e5d61d7c99\" id=\"2480ec7f-b964-4545-946b-c6e5d61d7c99\">作業を依頼するかどうかを決める前に、次の3つを書面で出してもらってください。まともな業者なら、すぐに答えられるはずです。</p><ol name=\"692ffb02-9182-48b6-8942-2380b1f68232\" id=\"692ffb02-9182-48b6-8942-2380b1f68232\"><li><p name=\"a87d18b5-fb44-4047-a955-307c40d36906\" id=\"a87d18b5-fb44-4047-a955-307c40d36906\"><strong>作業内容</strong>：具体的に何をするのか。「PHPを◯◯から◯◯へ変更」「プラグインの動作確認」など</p></li><li><p name=\"a96d8a31-1c27-4809-b121-245b76ae86d6\" id=\"a96d8a31-1c27-4809-b121-245b76ae86d6\"><strong>必要性</strong>：なぜ自社のサイトでその作業が必要なのか。サーバー会社がすでに修正を適用しているのに、なお必要だという根拠は何か</p></li><li><p name=\"b2af0a0b-6efd-4047-963b-4affd8e0d59e\" id=\"b2af0a0b-6efd-4047-963b-4affd8e0d59e\"><strong>工数</strong>：誰が何時間かけるのか。金額の内訳</p></li></ol><p name=\"ae7fb21a-7c18-4437-a188-42b28b36b3b9\" id=\"ae7fb21a-7c18-4437-a188-42b28b36b3b9\">答えが曖昧なら、ご利用のサーバー会社のサポートに「自分のサーバーは今回の脆弱性に対応済みか」を直接問い合わせるのが確実です。ほかの制作会社にセカンドオピニオンを求めるのもよいでしょう。</p><h2 name=\"812d1542-4ff3-4856-b2fd-fc03fa87f84a\" id=\"812d1542-4ff3-4856-b2fd-fc03fa87f84a\">ただし、正当な作業もある</h2><p name=\"b85df102-c1db-4725-90dc-4cd9e2335cae\" id=\"b85df102-c1db-4725-90dc-4cd9e2335cae\">ここまで読んで「保守の提案はすべて怪しい」と思われるのは本意ではありません。区別したいのは、**今回の脆弱性への「緊急対応」と、以前から必要だった「計画的な保守」**です。</p><h3 name=\"0da3b78e-b56e-4331-8b86-1f11f1ac98e2\" id=\"0da3b78e-b56e-4331-8b86-1f11f1ac98e2\">PHPのバージョンアップは、いずれ必要</h3><p name=\"72842292-fcd7-425d-9aa7-02bc935cb446\" id=\"72842292-fcd7-425d-9aa7-02bc935cb446\">PHP 8.1以前は、開発元のサポートがすでに終わっています。PHP 8.2も、<a href=\"https://github.com/php/php-src/releases/tag/php-8.2.35\" target=\"_blank\" rel=\"nofollow noopener\">2026年12月31日でサポートが終了</a>します。今回はサーバー会社が古いバージョンにも独自に修正を当ててくれましたが、次も同じとは限りません。</p><p name=\"59be651d-53df-4747-a0af-e141da1de9fb\" id=\"59be651d-53df-4747-a0af-e141da1de9fb\">PHPを新しいバージョンに上げると、古いテーマやプラグインが動かなくなることがあります。そのため、動作確認をしながらバージョンを上げる作業には、正当な費用がかかります。ただしこれは「今すぐやらないとハッキングされる」作業ではなく、スケジュールを立てて進める作業です。</p><h3 name=\"f4924ea3-3043-4172-a7f7-f647395d5261\" id=\"f4924ea3-3043-4172-a7f7-f647395d5261\">WordPress本体の更新も別の話</h3><p name=\"9233fd8d-159d-4a20-9efb-875b5d5f3079\" id=\"9233fd8d-159d-4a20-9efb-875b5d5f3079\">WordPressそのものにも、10月28日に公開された<a href=\"https://innovatopia.jp/cyber-security/cyber-security-news/119800/\" target=\"_blank\" rel=\"nofollow noopener\">7.1.4のように重要なセキュリティ更新</a>が出ることがあります。これはPHPの脆弱性とは別の問題です。自動更新が有効なら、多くの場合は自動で適用されます。管理画面の「ダッシュボード」→「更新」で、最新になっているか確認できます。</p><h3 name=\"1c002da2-2ecc-431d-a996-ca2d3b3ee035\" id=\"1c002da2-2ecc-431d-a996-ca2d3b3ee035\">見分けるポイント</h3><p name=\"c66f1243-a823-4749-ba3b-d6b6bd0542de\" id=\"c66f1243-a823-4749-ba3b-d6b6bd0542de\">正当な提案の例<br>「PHP 8.1のサポートが終わっているので、年内に8.3へ上げましょう」<br>バージョンやサポート期限など、確認できる事実を示す<br>計画的に、余裕をもったスケジュール<br>作業内容と工数の内訳がある</p><p name=\"10f38d26-ab50-4764-a277-306deed28242\" id=\"10f38d26-ab50-4764-a277-306deed28242\">注意したい提案の例<br>「PHPの脆弱性で危険な状態です」<br>サーバー会社の対応状況に触れない<br>「今日中」「今すぐ」と急がせる<br>「一式」で中身が分からない</p><h2 name=\"2bf338c0-ddee-43e6-bdde-f03f8a94c108\" id=\"2bf338c0-ddee-43e6-bdde-f03f8a94c108\">問い合わせフォームプラグインの対応状況</h2><p name=\"7a65bfdd-f43d-464a-b4fe-b351c0bc79ed\" id=\"7a65bfdd-f43d-464a-b4fe-b351c0bc79ed\">「お問い合わせフォームのファイル添付機能が狙われるので改修が必要です」という提案を受けることもあるかもしれません。<br>ここは2つの話を分けて考える必要があります。</p><h3 name=\"5b56993a-b0af-4157-a1b0-b6b80a4d33f8\" id=\"5b56993a-b0af-4157-a1b0-b6b80a4d33f8\">PHPの脆弱性は、フォームプラグインでは防げない</h3><p name=\"02bfd6fc-af55-4890-a80e-13aaa1ed23c4\" id=\"02bfd6fc-af55-4890-a80e-13aaa1ed23c4\">今回のPHP2Shellは、PHPがWebへのリクエストを受け取って処理する段階で起きる問題で、<a href=\"https://github.com/spontena/pb-php/releases/tag/v2.1.5\" target=\"_blank\" rel=\"nofollow noopener\">アプリケーションのコードが動く前に悪用され得ます</a>。<br>WordPressやLaravelといった<a href=\"https://redhat.sios.jp/news/php2shell-cve-2026-109618-109619/\" target=\"_blank\" rel=\"nofollow noopener\">上で動くアプリケーションの実装とは無関係</a>とされています。</p><p name=\"8d94e7a8-3417-416a-9520-5fc9d8fe9014\" id=\"8d94e7a8-3417-416a-9520-5fc9d8fe9014\">つまり、<strong>フォームプラグインを更新しても、入れ替えても、ファイル添付欄を外しても、今回のPHPの脆弱性への対策にはなりません</strong>。<br>対策はあくまで、PHPを修正済みのものにすること（共用レンタルサーバーなら、サーバー会社が対応済み）です。</p><h3 name=\"fe689808-29a4-4fe1-a1d7-fbffe0914bb2\" id=\"fe689808-29a4-4fe1-a1d7-fbffe0914bb2\">ただし、フォームプラグイン自体の脆弱性は別にある</h3><p name=\"e27facab-f62e-485b-b402-303b2586d2a8\" id=\"e27facab-f62e-485b-b402-303b2586d2a8\">一方で、主要なフォームプラグインには、<strong>PHPとは関係なく、プラグイン自身の脆弱性</strong>が今年相次いで見つかっています。<br>こちらは、プラグインを最新版に更新する必要があります。</p><p name=\"862347dd-fe75-4de6-9d00-90d6baceccd6\" id=\"862347dd-fe75-4de6-9d00-90d6baceccd6\">プラグイン</p><p name=\"10275d74-2328-404c-b187-3a62beef9c10\" id=\"10275d74-2328-404c-b187-3a62beef9c10\">2026年に公表された主な脆弱性</p><h3 name=\"d937971c-e4c9-4368-82bb-b12f6cfa5baf\" id=\"d937971c-e4c9-4368-82bb-b12f6cfa5baf\">Contact Form 7</h3><p name=\"7b591687-d2da-4112-9d15-ef1212056afc\" id=\"7b591687-d2da-4112-9d15-ef1212056afc\">6.2〜6.2.3に、<a href=\"https://smartscope.blog/blog/contact-form-7-unauthenticated-file-upload-vulnerability-6-2026/\" target=\"_blank\" rel=\"nofollow noopener\">ログインなしで任意のファイルをアップロードされる脆弱性</a>（CVE-2026-114432）。ファイル添付欄のあるフォームが対象</p><p name=\"5d71946b-e9fb-43f2-a0d7-0041477c3e84\" id=\"5d71946b-e9fb-43f2-a0d7-0041477c3e84\">修正版:6.2.4（10月29日公開）</p><h3 name=\"f61b9c75-583a-469d-86d3-a5de949b8751\" id=\"f61b9c75-583a-469d-86d3-a5de949b8751\">Forminator</h3><p name=\"40ffa017-fe24-4ac5-976e-262866d6eaee\" id=\"40ffa017-fe24-4ac5-976e-262866d6eaee\">1.56.1以前に、<a href=\"https://rocket-boys.co.jp/?p=38998\" target=\"_blank\" rel=\"nofollow noopener\">ログインなしで任意のファイルをアップロードされる脆弱性</a>（CVE-2026-15748）</p><p name=\"54f64764-eb30-406c-8bca-9cb0c2ee3b75\" id=\"54f64764-eb30-406c-8bca-9cb0c2ee3b75\">修正版:1.56.2（7月31日公開）</p><h3 name=\"63442664-dbd6-4760-ba68-8ef9c7a0fbc2\" id=\"63442664-dbd6-4760-ba68-8ef9c7a0fbc2\">MW WP Form</h3><p name=\"80a23f9d-48dd-41d6-bce2-6795b6fedfc9\" id=\"80a23f9d-48dd-41d6-bce2-6795b6fedfc9\">ログインなしで任意のファイルを移動され、<a href=\"https://wordpress.org/plugins/mw-wp-form/\" target=\"_blank\" rel=\"nofollow noopener\">サイトの乗っ取りにつながるおそれがある脆弱性</a>（CVE-2026-4347）</p><p name=\"510f1dfc-744c-4bf2-9e0e-faf5c809a7bb\" id=\"510f1dfc-744c-4bf2-9e0e-faf5c809a7bb\">修正版:5.1.1・5.1.2（4月公開）。その後も5.1.6までセキュリティ修正が続く</p><p name=\"cfdd9f14-bc17-4acc-87a6-485a17ff359d\" id=\"cfdd9f14-bc17-4acc-87a6-485a17ff359d\">どのプラグインも、管理画面の「プラグイン」画面で版を確認し、最新版へ更新すれば対応できます。自動更新を有効にしていれば、すでに更新済みのことも多いでしょう。</p><h3 name=\"91466398-6f8d-4984-a8ff-32fee296d342\" id=\"91466398-6f8d-4984-a8ff-32fee296d342\">費用がかかり得るのは、こんなとき</h3><p name=\"79586a64-2668-465e-a012-eeec2a73b797\" id=\"79586a64-2668-465e-a012-eeec2a73b797\">フォームプラグインの更新そのものは、通常は数分で終わる作業です。ただし、次のような場合は確認作業が必要になり、正当に費用がかかることがあります。</p><ul name=\"e199d3c8-3c86-4c6f-8321-676dd44df933\" id=\"e199d3c8-3c86-4c6f-8321-676dd44df933\"><li><p name=\"e075248a-3baf-452a-ae4a-633b8a8d3e31\" id=\"e075248a-3baf-452a-ae4a-633b8a8d3e31\"><strong>Contact Form 7を6.2.4に上げる場合</strong>：添付できるファイルの扱いが「禁止する拡張子の一覧」から「許可する拡張子の一覧」に変わりました。zipなど一覧にない形式を受け付けているフォームは、<a href=\"https://smartscope.blog/blog/contact-form-7-unauthenticated-file-upload-vulnerability-6-2026/\" target=\"_blank\" rel=\"nofollow noopener\">設定の追加が必要になる場合があります</a></p></li><li><p name=\"6aae991e-cbe9-4063-a3b6-c7a452077b34\" id=\"6aae991e-cbe9-4063-a3b6-c7a452077b34\"><strong>MW WP Formでファイル・画像の添付を使っている場合</strong>：添付用のショートコード（[mwform_file]、[mwform_image]）は、<a href=\"https://wordpress.org/plugins/mw-wp-form/\" target=\"_blank\" rel=\"nofollow noopener\">次の5.2で削除される予定</a>と告知されています。添付機能の作り直しや、別のプラグインへの移行が必要になります</p></li></ul><p name=\"576e10c3-e84d-4167-8609-189f827e054c\" id=\"576e10c3-e84d-4167-8609-189f827e054c\">こうした作業の見積もりを受けたら、「PHPの脆弱性対応」ではなく「フォームプラグインの更新と動作確認」として、内容と工数を確認してください。名目と中身が合っているかどうかが、判断のポイントです。</p><h2 name=\"3c16326e-e9e1-4456-a385-3484fa9a9dca\" id=\"3c16326e-e9e1-4456-a385-3484fa9a9dca\">本当に作業が必要？ 3分チェックリスト</h2><p name=\"6761923f-a4e7-4741-8fb7-72c45cb4d679\" id=\"6761923f-a4e7-4741-8fb7-72c45cb4d679\">「PHPの脆弱性対応」の見積もりを受け取ったら、上から順に確認してください。</p><ul name=\"a377b841-cd68-4388-8e83-955e422c0eae\" id=\"a377b841-cd68-4388-8e83-955e422c0eae\"><li><p name=\"81810ce2-d08b-418d-9fbe-bf3c3952e518\" id=\"81810ce2-d08b-418d-9fbe-bf3c3952e518\">サーバーは<strong>共用レンタルサーバー</strong>か？（VPS・自社サーバー・クラウドなら、作業が必要な可能性が高い）</p></li><li><p name=\"45d6535b-88da-4eb6-be62-c456a0dbbb4b\" id=\"45d6535b-88da-4eb6-be62-c456a0dbbb4b\">サイトヘルスで確認した<strong>PHPのバージョン</strong>は？</p></li><li><p name=\"5d7d1a60-43b7-4a6a-9dd1-c2fc3c07e6e4\" id=\"5d7d1a60-43b7-4a6a-9dd1-c2fc3c07e6e4\">そのバージョンは、サーバー会社のお知らせで「対応済み」に入っているか？</p></li><li><p name=\"1739f245-e0aa-421f-aaca-cb9ab1cbe4de\" id=\"1739f245-e0aa-421f-aaca-cb9ab1cbe4de\">サーバー会社が用意したPHPを使っているか？（自分でインストールしたPHPではないか）</p></li><li><p name=\"a79caf64-8161-49f6-b16b-0f06caa54aaa\" id=\"a79caf64-8161-49f6-b16b-0f06caa54aaa\">見積もりに<strong>作業内容・必要性・工数</strong>が書かれているか？</p></li><li><p name=\"d666e846-c11c-48bb-b5de-0be72c0f46ba\" id=\"d666e846-c11c-48bb-b5de-0be72c0f46ba\">「WordPressの更新で直す」といった、<strong>不正確な説明</strong>がされていないか？</p></li><li><p name=\"e66f4671-e612-4b74-9cb8-459974718553\" id=\"e66f4671-e612-4b74-9cb8-459974718553\">「今日中」「今すぐ」と<strong>判断を急がされて</strong>いないか？</p></li></ul><p name=\"6e5ce0f8-1568-40b0-acf4-042492ac4ed3\" id=\"6e5ce0f8-1568-40b0-acf4-042492ac4ed3\">共用レンタルサーバーで、使っているPHPが対応済みなら、<strong>今回の脆弱性のために費用を払って作業する必要は基本的にありません</strong>。迷ったら、契約前にサーバー会社のサポートに問い合わせましょう。</p><h2 name=\"b592eb67-71b7-4c46-92ae-a2ae0f9dd846\" id=\"b592eb67-71b7-4c46-92ae-a2ae0f9dd846\">まとめ</h2><p name=\"22592dca-e264-4038-b056-fd48e2c71d6e\" id=\"22592dca-e264-4038-b056-fd48e2c71d6e\">今回のPHPの脆弱性は深刻ですが、共用レンタルサーバーでは、サーバー会社が古いバージョンまで含めて対応を済ませています。「危険な状態です」「ハッキングされます」という言葉に焦らず、まず自分の環境を確かめてください。</p><p name=\"88d6b44c-3112-45b1-8a05-f30e946458db\" id=\"88d6b44c-3112-45b1-8a05-f30e946458db\">一方で、PHP 8.1以前のサポート切れや、8.2の年内のサポート終了は事実です。不安をあおる「緊急作業」ではなく、根拠と内訳のある「計画的な保守」として、信頼できる相手と進めていきましょう。</p><h2 name=\"3c72c429-d9a1-4d28-95ca-1b1c913cc2cc\" id=\"3c72c429-d9a1-4d28-95ca-1b1c913cc2cc\">おすすめ記事</h2><figure name=\"24c81c0d-51f9-4acf-8e65-de80c46e887d\" id=\"24c81c0d-51f9-4acf-8e65-de80c46e887d\" data-src=\"https://note.com/kida_lw/n/n6e77a2044196\" data-identifier=\"n6e77a2044196\" embedded-service=\"note\" embedded-content-key=\"emb0be204d58a00\">\n</figure><figure name=\"19183d96-2a21-4566-974d-ff5d6c3ec37b\" id=\"19183d96-2a21-4566-974d-ff5d6c3ec37b\" data-src=\"https://note.com/kida_lw/n/n5a654a6bf5d3\" data-identifier=\"n5a654a6bf5d3\" embedded-service=\"note\" embedded-content-key=\"embb0f64c533132\">\n</figure><figure name=\"592a0f9f-5dc5-4e64-a8c3-de1aa4555100\" id=\"592a0f9f-5dc5-4e64-a8c3-de1aa4555100\" data-src=\"https://note.com/kida_lw/n/n61a13b0350ca\" data-identifier=\"n61a13b0350ca\" embedded-service=\"note\" embedded-content-key=\"embd9cae9fe3480\">\n</figure><h2 name=\"f0400326-2ded-4eed-8aa2-3ac6964d6c08\" id=\"f0400326-2ded-4eed-8aa2-3ac6964d6c08\">参考</h2><ul name=\"9de5fb49-810e-4a2c-be10-efea6923278e\" id=\"9de5fb49-810e-4a2c-be10-efea6923278e\"><li><p name=\"d60bc496-7005-43d6-acef-78bf276266ab\" id=\"d60bc496-7005-43d6-acef-78bf276266ab\"><a href=\"https://www.xserver.ne.jp/php_vulnerability.php\" target=\"_blank\" rel=\"nofollow noopener\">エックスサーバー「PHPの脆弱性（CVE-2026-109618／CVE-2026-109619）対応状況とよくある質問」</a></p></li><li><p name=\"e916f87f-ddc2-44a0-a66e-e2b6e752fca8\" id=\"e916f87f-ddc2-44a0-a66e-e2b6e752fca8\"><a href=\"https://help.sakura.ad.jp/notification/n-2700/\" target=\"_blank\" rel=\"nofollow noopener\">さくらインターネット「【完了】PHPの脆弱性への対応状況について」</a></p></li><li><p name=\"795b8a38-bec5-44ed-bb0a-e05217a71344\" id=\"795b8a38-bec5-44ed-bb0a-e05217a71344\"><a href=\"https://tency.co.jp/information/php-critical-vulnerability-2026-10/\" target=\"_blank\" rel=\"nofollow noopener\">テンシー「PHPに重大な脆弱性｜主要レンタルサーバーの対応状況」</a></p></li><li><p name=\"08fc5821-48f9-4b35-9642-37f018c25a4f\" id=\"08fc5821-48f9-4b35-9642-37f018c25a4f\"><a href=\"https://www.rebellion-inc.jp/news/ca916a28-c8b1-420e-9280-f42bf582739b\" target=\"_blank\" rel=\"nofollow noopener\">リベリオン「PHPの重大な脆弱性『PHP2Shell』とは」</a></p></li><li><p name=\"9d44a42f-32a5-4474-815a-d02a185bcaf5\" id=\"9d44a42f-32a5-4474-815a-d02a185bcaf5\"><a href=\"https://atsoho.com/blog/php2shell-php-vulnerability\" target=\"_blank\" rel=\"nofollow noopener\">atsoho「php2shellとは｜WordPressのサイトで今すぐ確かめること」</a></p></li><li><p name=\"74c5b0f1-6226-4227-8dca-ddf19888e8c6\" id=\"74c5b0f1-6226-4227-8dca-ddf19888e8c6\"><a href=\"https://github.com/php/php-src/releases/tag/php-8.2.35\" target=\"_blank\" rel=\"nofollow noopener\">PHP 8.2.35 リリースノート（GitHub）</a></p></li><li><p name=\"f676d1f2-c609-4487-a594-cd2898be65b6\" id=\"f676d1f2-c609-4487-a594-cd2898be65b6\"><a href=\"https://innovatopia.jp/cyber-security/cyber-security-news/119800/\" target=\"_blank\" rel=\"nofollow noopener\">innovatopia「WordPress 7.1.4、更新処理の脆弱性を修正」</a></p></li></ul>",
+    "separator": null,
+    "description": "",
+    "index": [
+      {
+        "body": "「PHPの脆弱性で危険な状態です」という連絡が来たら",
+        "name": "901e7c2c-c088-484a-8c77-8be00ea2184e",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "「PHPの脆弱性で危険な状態です」という連絡が来たら"
+            }
+          ]
+        }
+      },
+      {
+        "body": "共用レンタルサーバーなら、対策はサーバー会社が済ませている",
+        "name": "264d73bf-492e-490b-a502-2b02a25f532d",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "共用レンタルサーバーなら、対策はサーバー会社が済ませている"
+            }
+          ]
+        }
+      },
+      {
+        "body": "エックスサーバー",
+        "name": "85ac1130-fd68-493a-aa16-394e380999af",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "エックスサーバー"
+            }
+          ]
+        }
+      },
+      {
+        "body": "さくらのレンタルサーバ",
+        "name": "f2318730-a041-4c27-92c8-f9d131a64fee",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "さくらのレンタルサーバ"
+            }
+          ]
+        }
+      },
+      {
+        "body": "ConoHa WING",
+        "name": "49dd25ae-6170-40b9-9a94-67e137f066ce",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "ConoHa WING"
+            }
+          ]
+        }
+      },
+      {
+        "body": "ロリポップ！、mixhost、ColorfulBoxなど",
+        "name": "7c2969cd-b5fd-4472-b36b-36873d0fae6d",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "ロリポップ！、mixhost、ColorfulBoxなど"
+            }
+          ]
+        }
+      },
+      {
+        "body": "古いPHPでも直っている場合がある",
+        "name": "07bfa916-8e12-414d-92a3-b508f79da135",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "古いPHPでも直っている場合がある"
+            }
+          ]
+        }
+      },
+      {
+        "body": "自分で対応が必要になるケース",
+        "name": "93df33c3-17c0-418d-8bac-03a8d153a49e",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "自分で対応が必要になるケース"
+            }
+          ]
+        }
+      },
+      {
+        "body": "自分のサイトが対象か、確認する方法",
+        "name": "6f86d3ff-f193-4822-88ad-a33968e4245b",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "自分のサイトが対象か、確認する方法"
+            }
+          ]
+        }
+      },
+      {
+        "body": "1. PHPのバージョンを確認する",
+        "name": "1daddfe5-c1da-4a09-a1f2-155c1543982f",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "1. PHPのバージョンを確認する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "2. サーバーの種類を確認する",
+        "name": "c055b462-3efd-438f-9478-065f59242154",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "2. サーバーの種類を確認する"
+            }
+          ]
+        }
+      },
+      {
+        "body": "3. サーバー会社のお知らせと照らし合わせる",
+        "name": "76866da0-2894-4c49-9aac-e99a42d2b92e",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "3. サーバー会社のお知らせと照らし合わせる"
+            }
+          ]
+        }
+      },
+      {
+        "body": "こんな言い回しには注意",
+        "name": "bd58fc64-5a05-4127-87c8-b4df0a8f4e32",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "こんな言い回しには注意"
+            }
+          ]
+        }
+      },
+      {
+        "body": "見積もりを受けたら、必ず確かめること",
+        "name": "e368ff17-d978-47bb-bd3e-6b87b4b650f8",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "見積もりを受けたら、必ず確かめること"
+            }
+          ]
+        }
+      },
+      {
+        "body": "ただし、正当な作業もある",
+        "name": "812d1542-4ff3-4856-b2fd-fc03fa87f84a",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "ただし、正当な作業もある"
+            }
+          ]
+        }
+      },
+      {
+        "body": "PHPのバージョンアップは、いずれ必要",
+        "name": "0da3b78e-b56e-4331-8b86-1f11f1ac98e2",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "PHPのバージョンアップは、いずれ必要"
+            }
+          ]
+        }
+      },
+      {
+        "body": "WordPress本体の更新も別の話",
+        "name": "f4924ea3-3043-4172-a7f7-f647395d5261",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "WordPress本体の更新も別の話"
+            }
+          ]
+        }
+      },
+      {
+        "body": "見分けるポイント",
+        "name": "1c002da2-2ecc-431d-a996-ca2d3b3ee035",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "見分けるポイント"
+            }
+          ]
+        }
+      },
+      {
+        "body": "問い合わせフォームプラグインの対応状況",
+        "name": "2bf338c0-ddee-43e6-bdde-f03f8a94c108",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "問い合わせフォームプラグインの対応状況"
+            }
+          ]
+        }
+      },
+      {
+        "body": "PHPの脆弱性は、フォームプラグインでは防げない",
+        "name": "5b56993a-b0af-4157-a1b0-b6b80a4d33f8",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "PHPの脆弱性は、フォームプラグインでは防げない"
+            }
+          ]
+        }
+      },
+      {
+        "body": "ただし、フォームプラグイン自体の脆弱性は別にある",
+        "name": "fe689808-29a4-4fe1-a1d7-fbffe0914bb2",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "ただし、フォームプラグイン自体の脆弱性は別にある"
+            }
+          ]
+        }
+      },
+      {
+        "body": "Contact Form 7",
+        "name": "d937971c-e4c9-4368-82bb-b12f6cfa5baf",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "Contact Form 7"
+            }
+          ]
+        }
+      },
+      {
+        "body": "Forminator",
+        "name": "f61b9c75-583a-469d-86d3-a5de949b8751",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "Forminator"
+            }
+          ]
+        }
+      },
+      {
+        "body": "MW WP Form",
+        "name": "63442664-dbd6-4760-ba68-8ef9c7a0fbc2",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "MW WP Form"
+            }
+          ]
+        }
+      },
+      {
+        "body": "費用がかかり得るのは、こんなとき",
+        "name": "91466398-6f8d-4984-a8ff-32fee296d342",
+        "level": "h3",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "費用がかかり得るのは、こんなとき"
+            }
+          ]
+        }
+      },
+      {
+        "body": "本当に作業が必要？ 3分チェックリスト",
+        "name": "3c16326e-e9e1-4456-a385-3484fa9a9dca",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "本当に作業が必要？ 3分チェックリスト"
+            }
+          ]
+        }
+      },
+      {
+        "body": "まとめ",
+        "name": "b592eb67-71b7-4c46-92ae-a2ae0f9dd846",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "まとめ"
+            }
+          ]
+        }
+      },
+      {
+        "body": "おすすめ記事",
+        "name": "3c72c429-d9a1-4d28-95ca-1b1c913cc2cc",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "おすすめ記事"
+            }
+          ]
+        }
+      },
+      {
+        "body": "参考",
+        "name": "f0400326-2ded-4eed-8aa2-3ac6964d6c08",
+        "level": "h2",
+        "body_ast": {
+          "content": [
+            {
+              "type": "text",
+              "value": "参考"
+            }
+          ]
+        }
+      }
+    ],
+    "external_url": null,
+    "disable_comment": false,
+    "editable_scopes": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "non_editable_reason": null,
+    "capabilities": {
+      "amazonpay_campaign": true,
+      "amazonpay": true,
+      "guest_amazonpay": true,
+      "ruby_text": true,
+      "formula_text": true,
+      "duplication": true,
+      "note_comment": true
+    },
+    "created_at": "2026-11-14T10:12:58.000+09:00",
+    "comment_count": 0,
+    "user": {
+      "id": 7228382,
+      "key": "22dbcb41f66c9a19ec50306f865d31b4",
+      "urlname": "kida_lw",
+      "nickname": "木田貴之",
+      "active_flag": true,
+      "note_count": 239,
+      "created_at": "2023-02-28T13:02:31.000+09:00",
+      "user_profile_image_path": "https://assets.st-note.com/production/uploads/images/327785402/profile_28ea97d44a29ae189ecad5cf4c254448.jpg?fit=bounds&format=jpeg&quality=85&width=330",
+      "no_urlname_user": false,
+      "store_url": "",
+      "following_count": 7,
+      "follower_count": 84,
+      "profile": "小・中規模DXをサポートするLudyWorksで代表をしています。\nコツコツ投稿で年間10万PVを達成しました。\nお仕事の依頼はメールにお願いします。\n[redacted-email]\nnoteクリエイター向けChrome拡張機能「NoteBubble」無料公開中！",
+      "withdrawal": false,
+      "is_me": false,
+      "is_following": false,
+      "is_followed": false,
+      "is_admin": false,
+      "custom_domain": null,
+      "enable_serif": false,
+      "others_related_notes_enabled": true,
+      "is_creator_popular_sort_enabled": true,
+      "disable_support": null,
+      "twitter_nickname": null,
+      "socials": {},
+      "external_links": {
+        "InstagramLink": {
+          "url": "https://www.instagram.com/ludy_kida?xtok=bmM0cHk5cnI2ZXc="
+        }
+      },
+      "pro_user_id": null,
+      "purchase_appeal_text_note": null,
+      "purchase_appeal_text_magazine": null,
+      "purchase_appeal_text_support": null,
+      "follow_appeal_text": "フォローありがとうございます！",
+      "follow_appeal_image": "https://assets.st-note.com/production/uploads/images/237125547/51611c605359d4b21e3f3bb3e26dd704.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+      "like_appeal_text": "スキありがとうございます。",
+      "like_appeal_image": "https://assets.st-note.com/production/uploads/images/237125470/a67ad4bba8654251d89e3b959ca6f114.png?fit=bounds&format=jpeg&height=500&quality=85&width=500",
+      "share_appeal": {
+        "text": null,
+        "image": null
+      },
+      "magazine_add_appeal": {
+        "text": "やったー！",
+        "image": "https://assets.st-note.com/production/uploads/images/237125618/c129efaa0527a41d22e7dd5e0f6aac95.png?fit=bounds&format=jpeg&height=500&quality=85&width=500"
+      },
+      "blocks_you": false,
+      "is_blocked": false,
+      "disable_guest_purchase": false,
+      "support_box_appeal_text": null,
+      "custom_support_box": null
+    },
+    "audio": null,
+    "belonging_magazine_keys": [],
+    "can_comment": true,
+    "can_delete": false,
+    "can_member_edit": false,
+    "can_member_publish": false,
+    "can_member_read": false,
+    "can_member_write": false,
+    "can_multiple_limited_note": false,
+    "can_publish": false,
+    "can_read": true,
+    "can_sell_on_first_come_note": false,
+    "can_update": false,
+    "can_vote": true,
+    "categories": [],
+    "category": null,
+    "classify_categories": [
+      {
+        "id": 61
+      }
+    ],
+    "comment_viewable": true,
+    "custom_domain": null,
+    "embedded_contents": [
+      {
+        "key": "emb0be204d58a00",
+        "url": "https://note.com/kida_lw/n/n6e77a2044196",
+        "service": "note",
+        "identifier": "n6e77a2044196",
+        "embeddable_type": "Note",
+        "html_for_display": null,
+        "caption": null,
+        "created_at": "2026-11-14T12:15:47.000+09:00",
+        "html_for_embed": "<iframe class=\"note-embed\" height=\"210\" scrolling=\"no\" src=\"https://note.com/embed/notes/n6e77a2044196\" style=\"border: 0; display: block; max-width: 99%; width: 494px; padding: 0px; margin: 10px 0px; position: static; visibility: visible;\"></iframe>\n",
+        "is_custom_domain": true
+      },
+      {
+        "key": "embb0f64c533132",
+        "url": "https://note.com/kida_lw/n/n5a654a6bf5d3",
+        "service": "note",
+        "identifier": "n5a654a6bf5d3",
+        "embeddable_type": "Note",
+        "html_for_display": null,
+        "caption": null,
+        "created_at": "2026-11-14T12:16:01.000+09:00",
+        "html_for_embed": "<iframe class=\"note-embed\" height=\"210\" scrolling=\"no\" src=\"https://note.com/embed/notes/n5a654a6bf5d3\" style=\"border: 0; display: block; max-width: 99%; width: 494px; padding: 0px; margin: 10px 0px; position: static; visibility: visible;\"></iframe>\n",
+        "is_custom_domain": true
+      },
+      {
+        "key": "embd9cae9fe3480",
+        "url": "https://note.com/kida_lw/n/n61a13b0350ca",
+        "service": "note",
+        "identifier": "n61a13b0350ca",
+        "embeddable_type": "Note",
+        "html_for_display": null,
+        "caption": null,
+        "created_at": "2026-11-14T12:16:12.000+09:00",
+        "html_for_embed": "<iframe class=\"note-embed\" height=\"210\" scrolling=\"no\" src=\"https://note.com/embed/notes/n61a13b0350ca\" style=\"border: 0; display: block; max-width: 99%; width: 494px; padding: 0px; margin: 10px 0px; position: static; visibility: visible;\"></iframe>\n",
+        "is_custom_domain": true
+      }
+    ],
+    "eyecatch": null,
+    "eyecatch_alt": null,
+    "eyecatch_height": null,
+    "eyecatch_width": null,
+    "format": "4.1",
+    "has_coupon": false,
+    "has_draft": false,
+    "hashtag_notes": [
+      {
+        "id": 1378952237,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#wordpress"
+        }
+      },
+      {
+        "id": 1378952238,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#サーバー"
+        }
+      },
+      {
+        "id": 1378952239,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#PHP"
+        }
+      },
+      {
+        "id": 1378952240,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#脆弱性"
+        }
+      },
+      {
+        "id": 1378952241,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#バージョン"
+        }
+      },
+      {
+        "id": 1378952242,
+        "created_at": "2026-11-14T12:16:17.000+09:00",
+        "hashtag": {
+          "name": "#ぼったくり"
+        }
+      }
+    ],
+    "is_available": false,
+    "is_circle_description": false,
+    "is_draft": false,
+    "is_for_work": false,
+    "is_purchased_within_last_24_hours": false,
+    "is_liked": false,
+    "is_limited": false,
+    "is_magazine_purchased": false,
+    "is_member_edit": false,
+    "is_member_editing": false,
+    "is_my_note": false,
+    "is_pinned": false,
+    "is_profiled": false,
+    "is_published": true,
+    "is_purchased": false,
+    "is_r18": false,
+    "is_r18_confirmation_needed": false,
+    "is_refund": false,
+    "is_reserved": false,
+    "is_supported": false,
+    "is_temporary_frozen": false,
+    "is_trial": false,
+    "labels": [],
+    "like_count": 1,
+    "anonymous_like_count": 0,
+    "magazines_for_buy": [],
+    "magazines_for_subscribe": [],
+    "member_edit_locked_at": null,
+    "note_share_url": "https://note.com/intent/post?url=https://note.com/kida_lw/n/n739726ca45e7",
+    "related_contests": [],
+    "paywall": {
+      "is_simple_paid_note": true,
+      "is_simple_paid_note_test_a": false,
+      "same_month_cnt": 0,
+      "context": {
+        "is_show_limited_pay_note_paywall": false,
+        "is_membership_connected": false
+      }
+    },
+    "pictures": [],
+    "pinned_user_note_id": 755247,
+    "price": 0,
+    "prior_sale": null,
+    "publish_at": "2026-11-14T12:13:14.000+09:00",
+    "reading_uuid": "e5784bba-f367-425c-a4c0-ece62477d60b",
+    "remained_char_num": 0,
+    "remained_figure_num": 0,
+    "remained_image_num": 0,
+    "remained_file_num": 0,
+    "remained_sound_num": 0,
+    "reserved_publish_at": null,
+    "facebook_share_url": "https://www.facebook.com/share.php?u=https://note.com/kida_lw/n/n739726ca45e7&t=%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89",
+    "line_share_url": "https://line.naver.jp/R/msg/text/?%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B%EF%BD%9Cnote%EF%BC%88%E3%83%8E%E3%83%BC%E3%83%88%EF%BC%89%0Ahttps://note.com/kida_lw/n/n739726ca45e7",
+    "twitter_share_url": "https://twitter.com/intent/tweet?url=https://note.com/kida_lw/n/n739726ca45e7&text=%E3%80%90%E6%B3%A8%E6%84%8F%E5%96%9A%E8%B5%B7%E3%80%91%E3%80%8CPHP%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E5%AF%BE%E5%BF%9C%E3%80%8D%E3%82%92%E3%81%86%E3%81%9F%E3%81%86WordPress%E6%9B%B4%E6%96%B0%E4%BD%9C%E6%A5%AD%E3%81%AE%E9%AB%98%E9%A1%8D%E8%AB%8B%E6%B1%82%E3%81%AB%E6%B0%97%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%EF%BD%9C%E6%9C%A8%E7%94%B0%E8%B2%B4%E4%B9%8B&related=note_PR",
+    "note_url": "https://note.com/kida_lw/n/n739726ca45e7",
+    "twitter_related_accounts": "note_PR",
+    "tweet_text": "【注意喚起】「PHPの脆弱性対応」をうたうWordPress更新作業の高額請求に気をつけて｜木田貴之",
+    "circle_plans": [],
+    "is_public_membership_connected": false,
+    "is_board_disabled": false,
+    "discount_campaigns": [],
+    "lead_form": null,
+    "line_add_friend": null,
+    "line_add_friend_note_enable_feature": false,
+    "note_share_total_count": 0,
+    "note_share_provider_details": {},
+    "is_published_preview_note": false,
+    "is_ratable": false,
+    "content_rating_via": "",
+    "my_rating_exists": false,
+    "rater_count": 0,
+    "is_recently_purchased": false,
+    "requires_login_for_purchase": false,
+    "is_recently_tip": false,
+    "exclude_from_creator_top": false,
+    "exclude_ai_learning_reward": false,
+    "translation_setting": null,
+    "is_related_with_investment": false,
+    "related_stocks": [],
+    "translation": {
+      "available_languages": [
+        "en-US",
+        "ko-KR"
+      ]
+    }
+  }
+}
