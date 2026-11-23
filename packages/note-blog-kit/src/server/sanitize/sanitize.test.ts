@@ -131,11 +131,12 @@ describe('sanitizeNoteBody：境界', () => {
   });
 });
 
-const notes = ['n55256baa5425', 'n52a7f4fa0a2e'].map((key) => {
-  const json = JSON.parse(
-    readFileSync(new URL(`../../../../../fixtures/notes/${key}.json`, import.meta.url), 'utf8'),
-  ) as { data: { body: string; index: { name: string }[] } };
-  return [key, json.data] as const;
+// 2026-11-17/ は見出し画像のない記事（2026-11-23 に取得）
+const notes = ['notes/n55256baa5425', 'notes/n52a7f4fa0a2e', '2026-11-17/notes/n739726ca45e7'].map((path) => {
+  const json = JSON.parse(readFileSync(new URL(`../../../../../fixtures/${path}.json`, import.meta.url), 'utf8')) as {
+    data: { body: string; index: { name: string }[] };
+  };
+  return [path, json.data] as const;
 });
 
 function countTags(html: string, tag: string): number {

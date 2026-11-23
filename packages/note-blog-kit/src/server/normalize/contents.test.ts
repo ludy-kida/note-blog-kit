@@ -99,6 +99,16 @@ describe('normalizeContentsPage', () => {
     expect(first?.author.imageUrl).toBeNull();
   });
 
+  it('2026-11-23 取得の fixture（見出し画像のない記事を含む）を変換できる', () => {
+    const json: unknown = JSON.parse(
+      readFileSync(new URL('../../../../../fixtures/2026-11-17/contents/page-1.json', import.meta.url), 'utf8'),
+    );
+    const result = normalizeContentsPage(json, 1);
+    expect(result.articles).toHaveLength(6);
+    expect(result.articles.find((a) => a.key === 'n739726ca45e7')?.eyecatchUrl).toBeNull();
+    expect(result.articles.filter((a) => a.eyecatchUrl !== null)).toHaveLength(5);
+  });
+
   it('見出し画像のない記事（eyecatch: null。実データで確認）は eyecatchUrl: null', () => {
     const json = mutate(1, (draft) => {
       (draft.data.contents[1] as Record<string, unknown>).eyecatch = null;

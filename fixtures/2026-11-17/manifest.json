@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-11-23T09:31:04.198Z",
+  "user": "kida_lw",
+  "config": {
+    "maxPages": 1,
+    "noteKeys": [
+      "n739726ca45e7"
+    ],
+    "minIntervalMs": 1000
+  },
+  "entries": [
+    {
+      "kind": "contents",
+      "url": "https://note.com/api/v2/creators/kida_lw/contents?kind=note&page=1",
+      "file": "contents/page-1.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 215,
+      "removedKeys": [
+        "$.data.contents[0].user.emailConfirmedFlag",
+        "$.data.contents[0].likes",
+        "$.data.contents[1].user.emailConfirmedFlag",
+        "$.data.contents[1].likes",
+        "$.data.contents[2].user.emailConfirmedFlag",
+        "$.data.contents[2].likes",
+        "$.data.contents[3].user.emailConfirmedFlag",
+        "$.data.contents[3].likes",
+        "$.data.contents[4].user.emailConfirmedFlag",
+        "$.data.contents[4].likes",
+        "$.data.contents[5].user.emailConfirmedFlag",
+        "$.data.contents[5].likes"
+      ],
+      "redactedPaths": []
+    },
+    {
+      "kind": "note",
+      "url": "https://note.com/api/v3/notes/n739726ca45e7",
+      "file": "notes/n739726ca45e7.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 128,
+      "removedKeys": [
+        "$.data.user.email_confirmed_flag",
+        "$.data.content_raters"
+      ],
+      "redactedPaths": [
+        "$.data.user.profile"
+      ]
+    },
+    {
+      "kind": "rss",
+      "url": "https://note.com/kida_lw/rss",
+      "file": "rss/feed.xml",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/xml; charset=utf-8",
+      "accessControlAllowOrigin": null,
+      "location": null,
+      "durationMs": 150,
+      "removedKeys": [],
+      "redactedPaths": [
+        "(rss: 1件)"
+      ]
+    }
+  ]
+}

@@ -44,3 +44,11 @@ note.com の実レスポンスを保存する場所。テストとエージェ�
 | `notes/{key}.json` | `/api/v3/notes/{key}` |
 | `rss/feed.xml` | `/{user}/rss` |
 | `manifest.json` | 取得日時、各リクエストのステータス・Content-Type・`Access-Control-Allow-Origin`（CORS の記録）・削除したキー。非200のときは本文の先頭を `bodyPreview` に残す |
+
+## 追加で取得したもの
+
+既存のテストの期待値（件数・記事キー）が上の fixture に依存しているため、取り直したものは日付のディレクトリに分けて置く。
+
+| ディレクトリ | 取得日 | 目的 |
+| --- | --- | --- |
+| `2026-11-17/` | 2026-11-23 | 見出し画像のない記事（`eyecatch: null`）。一覧 1ページ目と、その記事の本文（`n739726ca45e7`）。`--max-pages 1 --notes n739726ca45e7 --out fixtures/2026-11-17` で取得 |

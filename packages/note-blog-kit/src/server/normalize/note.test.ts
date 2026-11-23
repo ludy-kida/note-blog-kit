@@ -155,6 +155,20 @@ describe('normalizeNote', () => {
     expect(() => normalizeNote(badUser)).toThrow(NoteSchemaError);
   });
 
+  it('見出し画像のない記事（2026-11-23 取得の fixture）は eyecatch・eyecatchUrl が null', () => {
+    const raw = JSON.parse(
+      readFileSync(new URL('../../../../../fixtures/2026-11-17/notes/n739726ca45e7.json', import.meta.url), 'utf8'),
+    ) as RawNote;
+    const article = normalizeNote(raw);
+    expect(article.key).toBe('n739726ca45e7');
+    expect(article.eyecatch).toBeNull();
+    expect(article.eyecatchUrl).toBeNull();
+    expect(article.isPartial).toBe(false);
+    expect(article.bodyHtml).toBe(sanitizeNoteBody(raw.data.body));
+    expect(article.toc.length).toBeGreaterThan(0);
+    for (const embed of article.embeds) expect(embed.url).toMatch(/^https:\/\//);
+  });
+
   it('必須のキーがない・型が違うときは NoteSchemaError', () => {
     const missing = fixture(FREE);
     delete missing.data.can_read;
