@@ -1,24 +1,32 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { run } from './run.js';
 
+function capture() {
+  const out: string[] = [];
+  const err: string[] = [];
+  return { out, err, deps: { stdout: (s: string) => out.push(s), stderr: (s: string) => err.push(s) } };
+}
+
 describe('cli run', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
+  it('コマンドなし・--help では使い方を表示して 0 を返す', async () => {
+    for (const argv of [[], ['--help'], ['-h']]) {
+      const { out, deps } = capture();
+      expect(await run(argv, deps)).toBe(0);
+      expect(out.join('\n')).toContain('sync');
+    }
   });
 
-  it('コマンドなしでは使い方を表示して 0 を返す', () => {
-    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    expect(run([])).toBe(0);
-    expect(log).toHaveBeenCalledWith(expect.stringContaining('sync'));
+  it('sync に必要な引数がなければ 2 を返し、取得しない', async () => {
+    const fetch = vi.fn();
+    const { err, deps } = capture();
+    expect(await run(['sync'], { ...deps, fetch })).toBe(2);
+    expect(err.join('\n')).toContain('--user');
+    expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('未実装の sync は 1 を返す', () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(run(['sync'])).toBe(1);
-  });
-
-  it('不明なコマンドは 2 を返す', () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(run(['unknown'])).toBe(2);
+  it('不明なコマンドは 2 を返す', async () => {
+    const { err, deps } = capture();
+    expect(await run(['unknown'], deps)).toBe(2);
+    expect(err.join('\n')).toContain('unknown');
   });
 });
