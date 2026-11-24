@@ -8,6 +8,7 @@
  * - Bash で上記ドメインの URL を含むコマンド
  * - Bash でネットワーク系コマンド（curl・wget など）と上記ドメインを同時に含むコマンド
  * - Bash で fixture 取得スクリプトを実行するコマンド（--dry-run を除く。実行は人だけが行う）
+ * - Bash で契約テストのスクリプト（scripts/contract-check.ts）を実行するコマンド（GitHub Actions だけが実行する）
  *
  * 入力: 標準入力に Claude Code の hook JSON（tool_name, tool_input）
  */
@@ -20,6 +21,8 @@ const NETWORK_TOOL_RE =
   /(?<![\w./-])(?:curl|wget|http|https|httpie|xh|aria2c|nc|ncat|telnet|openssl|lynx|w3m|links)(?![\w:-])|\bfetch\s*\(|\bhttps?\.(?:get|request)\s*\(|\brequests\.(?:get|post|head|request)\b|\burllib\b|\bInvoke-WebRequest\b/i;
 const RECORD_SCRIPT_RE = /record-fixtures|fixtures:record/i;
 const DRY_RUN_RE = /(?:^|\s)--dry-run(?:\s|$)/;
+/** 契約テストのスクリプトの実行（GitHub Actions だけが行う）。git add などのファイル操作は止めない */
+const CONTRACT_SCRIPT_RE = /\b(?:node|tsx|bun|deno|ts-node)\b[^;&|\n]*contract-check(?:\.ts)?\b/i;
 
 const NOTE_HOST_RE = /(?:^|\.)(?:note\.com|note\.mu|st-note\.com)$/i;
 
@@ -49,6 +52,9 @@ export function check(input) {
     const command = typeof toolInput.command === 'string' ? toolInput.command : '';
     if (RECORD_SCRIPT_RE.test(command) && !DRY_RUN_RE.test(command)) {
       return 'fixture 取得スクリプトは人が端末から実行します。エージェントは --dry-run での確認だけ行えます。';
+    }
+    if (CONTRACT_SCRIPT_RE.test(command)) {
+      return '契約テストは note.com にアクセスするため GitHub Actions だけで実行します。scripts/lib/contract.test.ts（モック）で確かめてください。';
     }
     if (NOTE_URL_RE.test(command)) {
       return 'note.com の URL を含むコマンドは実行できません。テストには fixtures/ の保存済みレスポンスを使ってください。';
