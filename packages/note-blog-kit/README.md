@@ -178,6 +178,22 @@ for await (const article of iterateArticles({ user: 'your_urlname' })) {
 - `listAllArticles` は途中のページで失敗すると、それまでに集めた記事を返さずにエラーを投げます。途中までの記事も使いたい場合は `iterateArticles` を使ってください
 - `for await` では打ち切りの有無を受け取れません。必要なら `listAllArticles` を使うか、`next()` を手で回して戻り値（`done: true` のときの `value`）を読んでください
 
+### RSS で取得する（API が使えないとき）
+
+`listArticles`・`iterateArticles`・`listAllArticles` は `source` で取得元を選べます（既定は `'api'`）。
+
+```ts
+// RSS から取得する（最新25件・1ページのみ）
+const { articles } = await listArticles({ user: 'your_urlname', source: 'rss' });
+
+// API で取得し、失敗したら RSS に切り替える
+const page = await listArticles({ user: 'your_urlname', source: 'auto' });
+```
+
+- `'rss'`：note の RSS から取得します。最新25件だけの1ページで（`isLastPage: true`、`totalCount: null`）、`hashtags` は空、`likeCount`・`price` は `null` です。`page` に 2 以上を渡すと `TypeError` になります
+- `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかは各記事の `source`（`'api'` / `'rss'`）で分かります
+- 記事本文（`getArticle`）は RSS に切り替わりません（RSS に本文はありません）
+
 ### 記事1件を取得する（サーバー側）
 
 ```ts

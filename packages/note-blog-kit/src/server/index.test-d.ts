@@ -59,6 +59,8 @@ describe('note-blog-kit/server の公開型', () => {
     expectTypeOf<ListArticlesOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
     expectTypeOf<ListArticlesOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<ListArticlesOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<ListArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
+    expectTypeOf<IterateArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
   });
 
   it('iterateArticles・listAllArticles の型', () => {

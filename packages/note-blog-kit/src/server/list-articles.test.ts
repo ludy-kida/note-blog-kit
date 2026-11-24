@@ -204,3 +204,87 @@ describe('listArticles', () => {
     expect(sentAt).toEqual([10_000, 11_000]);
   });
 });
+
+const rssFeed = readFileSync(new URL('../../../../fixtures/rss/feed.xml', import.meta.url), 'utf8');
+
+/** API は respondApi、RSS は fixture を返すモックの fetch */
+function routedFetch(respondApi: () => Response | Promise<Response>) {
+  return vi.fn(async (...[input]: FetchArgs) => {
+    const url = new URL(String(input));
+    return url.pathname === '/kida_lw/rss' ? new Response(rssFeed) : respondApi();
+  });
+}
+
+const urls = (fetch: ReturnType<typeof routedFetch>) =>
+  fetch.mock.calls.map(([input]) => new URL(String(input)).pathname);
+
+describe('listArticles の source', () => {
+  it("既定は 'api'", async () => {
+    const fetch = routedFetch(() => new Response(fixture(1)));
+    const result = await listArticles({ ...base, fetch });
+    expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents']);
+    expect(result.articles[0]?.source).toBe('api');
+  });
+
+  it("'rss' は RSS を取得し、1ページだけを返す", async () => {
+    const fetch = routedFetch(() => new Response(fixture(1)));
+    const result = await listArticles({ ...base, source: 'rss', fetch });
+    expect(urls(fetch)).toEqual(['/kida_lw/rss']);
+    expect(new Headers(fetch.mock.calls[0]?.[1]?.headers).get('accept')).toContain('application/rss+xml');
+    expect(result).toMatchObject({ page: 1, totalCount: null, isLastPage: true });
+    expect(result.articles).toHaveLength(25);
+    expect(result.articles.every((a) => a.source === 'rss')).toBe(true);
+  });
+
+  it("'rss' で page が 2 以上・不明な source は TypeError で、fetch しない", async () => {
+    const fetch = routedFetch(() => new Response(fixture(1)));
+    await expect(listArticles({ ...base, source: 'rss', page: 2, fetch })).rejects.toBeInstanceOf(TypeError);
+    await expect(listArticles({ ...base, source: 'xml' as unknown as 'rss', fetch })).rejects.toBeInstanceOf(TypeError);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("'auto' は API が 404・5xx・形の違いで失敗したら RSS に切り替える", async () => {
+    for (const respond of [
+      () => new Response('{"data":"not found"}', { status: 404 }),
+      () => new Response('oops', { status: 503 }),
+      () => new Response('{"data":{"contents":"x"}}'),
+      () => new Response('<html>maintenance</html>'),
+    ]) {
+      const fetch = routedFetch(respond);
+      const result = await listArticles({ ...base, source: 'auto', fetch });
+      expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents', '/kida_lw/rss']);
+      expect(result.articles[0]?.source).toBe('rss');
+      expect(result.isLastPage).toBe(true);
+    }
+  });
+
+  it("'auto' は API が成功すれば RSS を取得しない", async () => {
+    const fetch = routedFetch(() => new Response(fixture(1)));
+    const result = await listArticles({ ...base, source: 'auto', fetch });
+    expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents']);
+    expect(result.articles[0]?.source).toBe('api');
+  });
+
+  it("'auto' でも 4xx（404 以外）・タイムアウト・2ページ目の失敗では切り替えない", async () => {
+    const forbidden = routedFetch(() => new Response('no', { status: 403 }));
+    await expect(listArticles({ ...base, source: 'auto', fetch: forbidden })).rejects.toBeInstanceOf(NoteHttpError);
+    expect(urls(forbidden)).toEqual(['/api/v2/creators/kida_lw/contents']);
+
+    const hanging = vi.fn(
+      (...[, init]: FetchArgs) =>
+        new Promise<Response>((_, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason));
+        }),
+    );
+    await expect(listArticles({ ...base, source: 'auto', timeoutMs: 20, fetch: hanging })).rejects.toBeInstanceOf(
+      NoteTimeoutError,
+    );
+    expect(hanging).toHaveBeenCalledTimes(1);
+
+    const secondPage = routedFetch(() => new Response('oops', { status: 503 }));
+    await expect(listArticles({ ...base, source: 'auto', page: 2, fetch: secondPage })).rejects.toBeInstanceOf(
+      NoteHttpError,
+    );
+    expect(urls(secondPage)).toEqual(['/api/v2/creators/kida_lw/contents']);
+  });
+});
