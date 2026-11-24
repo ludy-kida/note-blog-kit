@@ -1,0 +1,77 @@
+name: Contract
+
+# note の API・RSS の形が変わっていないかを、実データで毎日1回確かめる（docs/contract-test.md）。
+# 取得するのは自分のアカウント（kida_lw）の公開情報だけ：一覧 API の1ページ目・記事本文1件・RSS の3リクエスト。
+# Cookie なし・1秒間隔・再試行なし。形が変わっていたら Issue を作る（修正は人が claude-fix ラベルを付けてから）。
+
+on:
+  schedule:
+    # 毎日 12:17（日本時間）
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contract
+  cancel-in-progress: false
+
+jobs:
+  contract:
+    name: note の契約テスト
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      - name: 実データで照合する（3リクエスト）
+        id: check
+        run: |
+          set +e
+          node scripts/contract-check.ts --user kida_lw --report contract-report.md
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: 形が変わっていたら Issue を作る（開いていればコメントを追記）
+        if: steps.check.outputs.exit_code == '1' && hashFiles('contract-report.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create contract-failure --color B60205 --description '契約テストが note の形の変化を検出した' 2>/dev/null || true
+          gh label create claude-fix --color 5319E7 --description '付けると Claude Code が fix-api-change で修正ブランチを作る' 2>/dev/null || true
+          {
+            cat contract-report.md
+            echo
+            echo "実行ログ: $RUN_URL"
+            echo
+            echo '### 次にすること'
+            echo
+            echo '1. 上の path を確かめ、必要なら fixture を取り直す（`pnpm fixtures:record --user kida_lw`。人が実行する）'
+            echo '2. この Issue に `claude-fix` ラベルを付けると、Claude Code が `fix-api-change` スキルで修正し、ブランチと PR 作成リンクを返す（PR の作成・マージは人）'
+          } > issue-body.md
+          number=$(gh issue list --label contract-failure --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file issue-body.md
+          else
+            gh issue create --title '契約テスト: note の API・RSS の形が変わった可能性' --label contract-failure --body-file issue-body.md
+          fi
+
+      - name: 結果をジョブの成否に反映する（2 は一時的な失敗、4 はスクリプト自体の失敗。どちらも Issue は作らない）
+        if: steps.check.outputs.exit_code != '0'
+        env:
+          EXIT_CODE: ${{ steps.check.outputs.exit_code }}
+        run: exit "${EXIT_CODE:-1}"

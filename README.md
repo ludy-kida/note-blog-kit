@@ -457,6 +457,10 @@ node packages/note-blog-kit/dist/cli/index.js sync --user your_urlname --out exa
 
 CI は `pnpm build:examples` で、fixture から JSON を作ってビルドし、ブラウザ向けのバンドルにサーバー専用のコード（zod・sanitize-html・note の API の URL）が入っていないことを確認しています。
 
+### 契約テスト（note の形の変化に気づく）
+
+GitHub Actions が毎日1回、自分のアカウントの公開情報を3リクエストだけ取得し、note の API・RSS の形が変わっていないか確かめます。変わっていたら Issue を作り、人が `claude-fix` ラベルを付けると Claude Code が修正します。詳しくは [docs/contract-test.md](docs/contract-test.md) を参照してください。
+
 ### README を変えたとき
 
 npm に載る `packages/note-blog-kit/README.md` は、このファイルから `pnpm readme:sync` で作ります（「開発」の節を除き、リンクを GitHub の URL にします）。食い違うとテストが失敗します。

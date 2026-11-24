@@ -52,6 +52,23 @@ describe('guard-note-access: Bash', () => {
     assert.equal(bash('node scripts/record-fixtures.ts --user kida --dry-run'), null);
   });
 
+  it('契約テストのスクリプトの実行をブロックし、ファイル操作・モックのテストは許可する', () => {
+    for (const command of [
+      'node scripts/contract-check.ts --user kida',
+      'pnpm build && node ./scripts/contract-check.ts --user kida',
+      'pnpm exec tsx scripts/contract-check --user kida',
+    ]) {
+      assert.notEqual(bash(command), null, command);
+    }
+    for (const command of [
+      'git add scripts/contract-check.ts',
+      'pnpm exec vitest run scripts/lib/contract',
+      'cat scripts/contract-check.ts',
+    ]) {
+      assert.equal(bash(command), null, command);
+    }
+  });
+
   it('通常のコマンドは許可する', () => {
     for (const command of [
       'pnpm test',

@@ -14,6 +14,8 @@
       "Bash(node scripts/record-fixtures.ts --user *)",
       "Bash(pnpm fixtures:record*)",
       "Bash(pnpm run fixtures:record*)",
+      "Bash(node scripts/contract-check.ts*)",
+      "Bash(gh workflow run contract*)",
       "Bash(npm publish*)",
       "Bash(pnpm publish*)",
       "Bash(yarn publish*)",
