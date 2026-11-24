@@ -60,7 +60,7 @@ export interface NoteArticle extends NoteArticleSummary {
 // @public
 export interface NoteArticlesHandlerOptions extends Omit<ListArticlesOptions, 'page'> {
     cacheSeconds?: number;
-    maxPage?: number;
+    maxPageNumber?: number;
 }
 
 // @public

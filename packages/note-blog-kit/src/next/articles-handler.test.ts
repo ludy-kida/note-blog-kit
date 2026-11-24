@@ -46,8 +46,26 @@ describe('createNoteArticlesHandler', () => {
 
   it('不正な page は 400 で、note に問い合わせない', async () => {
     const fetch = mockFetch();
-    const GET = createNoteArticlesHandler({ ...base, fetch, maxPage: 5 });
-    for (const query of ['?page=0', '?page=6', '?page=abc', '?page=1.5', '?page=-1', '?page=']) {
+    const GET = createNoteArticlesHandler({ ...base, fetch, maxPageNumber: 5 });
+    for (const query of [
+      '?page=0',
+      '?page=6',
+      '?page=abc',
+      '?page=1.5',
+      '?page=-1',
+      '?page=',
+      // 同じページを表す別の書き方（CDN のキャッシュを外させない）
+      '?page=01',
+      '?page=1.0',
+      '?page=1e0',
+      '?page=0x1',
+      '?page=+1',
+      '?page=%201',
+      // page 以外のクエリ・重複
+      '?page=1&_=123',
+      '?x=1',
+      '?page=1&page=2',
+    ]) {
       const response = await GET(request(query));
       expect(response.status, query).toBe(400);
       expect(response.headers.get('cache-control')).toBe('no-store');
@@ -74,6 +92,28 @@ describe('createNoteArticlesHandler', () => {
     }
   });
 
+  it("source: 'rss' は1ページだけ受け付ける（?page=2 は 400 で、500 にしない）", async () => {
+    const GET = createNoteArticlesHandler({ ...base, fetch: mockFetch(), source: 'rss' });
+    expect((await GET(request('?page=2'))).status).toBe(400);
+    expect((await GET(request())).status).toBe(200);
+  });
+
+  it('リクエストが中断されたら note への取得も中断する', async () => {
+    const fetch = vi.fn(
+      (...[, init]: FetchArgs) =>
+        new Promise<Response>((_, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason));
+        }),
+    );
+    const GET = createNoteArticlesHandler({ ...base, fetch });
+    const controller = new AbortController();
+    const promise = GET(new Request('https://example.com/api/note', { signal: controller.signal }));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    controller.abort(new Error('client went away'));
+    await expect(promise).rejects.toThrow('client went away');
+    expect(fetch.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
+
   it('source などのオプションは listArticles に渡す', async () => {
     const fetch = mockFetch();
     const GET = createNoteArticlesHandler({ ...base, fetch, source: 'rss' });
@@ -84,7 +124,10 @@ describe('createNoteArticlesHandler', () => {
 
   it('不正なオプションは作るときに TypeError', () => {
     expect(() => createNoteArticlesHandler({ user: '../x' })).toThrow(TypeError);
-    expect(() => createNoteArticlesHandler({ ...base, maxPage: 0 })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, maxPageNumber: 0 })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, cacheSeconds: -1 })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, source: 'rss', maxPageNumber: 2 })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, source: 'xml' as unknown as 'rss' })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, timeoutMs: 0 })).toThrow(TypeError);
   });
 });

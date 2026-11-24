@@ -27,6 +27,7 @@ describe('note-blog-kit/react の公開型', () => {
     expectTypeOf(useNoteArticles).parameter(0).toEqualTypeOf<UseNoteArticlesOptions>();
     expectTypeOf(useNoteArticles).returns.toEqualTypeOf<UseNoteArticlesResult>();
     expectTypeOf<{ url: string }>().toExtend<UseNoteArticlesOptions>();
+    expectTypeOf<UseNoteArticlesOptions['fetch']>().toEqualTypeOf<typeof globalThis.fetch | undefined>();
     expectTypeOf<UseNoteArticlesResult>().toEqualTypeOf<{
       articles: NoteArticleSummary[];
       page: NoteArticlePage | null;

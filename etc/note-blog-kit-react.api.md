@@ -217,9 +217,7 @@ export interface UseNoteArticlesOptions {
 // @public
 export interface UseNoteArticlesResult {
     articles: NoteArticleSummary[];
-    // (undocumented)
     error: Error | null;
-    // (undocumented)
     isLoading: boolean;
     page: NoteArticlePage | null;
 }

@@ -125,7 +125,16 @@ const viteProblems = [];
 if (!Array.isArray(synced.articles) || synced.articles.length !== 18)
   viteProblems.push('articles.json の記事が18件ではない');
 // ブラウザ向けのバンドルに、サーバー専用の依存や note の API の URL を入れない
-for (const text of ['sanitize-html', 'zod', 'api/v2/creators', 'api/v3/notes']) {
+// minify 後もパッケージ名が残らないことがあるため、エラーの名前・メッセージなど残りやすい文字列でも調べる
+for (const text of [
+  'sanitize-html',
+  'zod',
+  'ZodError',
+  'NoteSchemaError',
+  'NOTE_SCHEMA_ERROR',
+  'api/v2/creators',
+  'api/v3/notes',
+]) {
   if (bundle.includes(text)) viteProblems.push(`バンドルに「${text}」がある`);
 }
 if (viteProblems.length > 0) {

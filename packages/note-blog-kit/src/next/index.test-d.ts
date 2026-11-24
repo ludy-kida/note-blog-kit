@@ -16,7 +16,7 @@ describe('note-blog-kit/next の公開型', () => {
     expectTypeOf(createNoteArticlesHandler).parameter(0).toEqualTypeOf<NoteArticlesHandlerOptions>();
     expectTypeOf(createNoteArticlesHandler).returns.toEqualTypeOf<(request: Request) => Promise<Response>>();
     expectTypeOf<{ user: string }>().toExtend<NoteArticlesHandlerOptions>();
-    expectTypeOf<NoteArticlesHandlerOptions['maxPage']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<NoteArticlesHandlerOptions['maxPageNumber']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<NoteArticlesHandlerOptions['cacheSeconds']>().toEqualTypeOf<number | undefined>();
     // page はリクエストの ?page= で指定する（オプションにはない）
     expectTypeOf<NoteArticlesHandlerOptions>().not.toHaveProperty('page');

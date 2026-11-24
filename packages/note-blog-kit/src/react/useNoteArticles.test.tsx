@@ -60,6 +60,8 @@ describe('useNoteArticles', () => {
       'https://note.com/api/v2/creators/kida_lw/contents',
       'https://NOTE.COM/kida_lw/rss',
       'https://sub.note.com/x',
+      'https://note.com./api/v2/creators/kida_lw/contents',
+      'https://NOTE.COM../x',
       'javascript:alert(1)',
       'data:application/json,{}',
     ]) {
@@ -69,6 +71,30 @@ describe('useNoteArticles', () => {
       unmount();
     }
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('主な項目の型が違う記事は除く（描画で落ちないように）', async () => {
+    const broken = [{ title: {}, hashtags: null }, { ...articles[0], author: null }, 'x', null];
+    const fetch = jsonFetch({ ...page, articles: [...broken, articles[1]] });
+    const { result } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.articles).toEqual([articles[1]]);
+  });
+
+  it('描画ごとに新しい fetch を渡しても、取り直しを繰り返さない', async () => {
+    const calls: string[] = [];
+    const { result } = renderHook(() =>
+      useNoteArticles({
+        url: '/api/note',
+        fetch: async (input) => {
+          calls.push(String(input));
+          return new Response(JSON.stringify(page));
+        },
+      }),
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(calls).toHaveLength(1);
   });
 
   it('URL が変わったら取り直し、古い応答は捨てる', async () => {
