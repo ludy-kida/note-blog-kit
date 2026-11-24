@@ -8,10 +8,7 @@ import type { NoteArticle, NoteEmbed, NoteEyecatch, NoteTocItem } from '../../co
 import { NoteSchemaError } from '../errors.js';
 import { NOTE_KEY_RE, NOTE_USER_RE } from '../patterns.js';
 import { SAFE_VALUE, sanitizeNoteBody } from '../sanitize/sanitize.js';
-import { emptyToNull, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js';
-
-/** 抜粋の長さ（一覧 API の body と同じ 240 文字） */
-const EXCERPT_LENGTH = 240;
+import { emptyToNull, htmlToExcerpt, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js';
 
 const noteSchema = z.object({
   key: z.string().regex(NOTE_KEY_RE),
@@ -78,23 +75,6 @@ function toEyecatch(note: RawNote): NoteEyecatch | null {
   return { url, width: note.eyecatch_width, height: note.eyecatch_height, alt: note.eyecatch_alt ?? '' };
 }
 
-const BLOCK_END = /<br \/>|<\/(?:p|h2|h3|h4|li|blockquote|figcaption|pre|td|th|tr)>/g;
-
-/** サニタイズ済みの本文から、タグを除いたテキストの先頭を作る */
-function toExcerpt(bodyHtml: string): string {
-  const text = bodyHtml
-    .replace(BLOCK_END, ' ')
-    .replace(/<[^>]*>/g, '')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return Array.from(text).slice(0, EXCERPT_LENGTH).join('');
-}
-
 /**
  * 記事本文 API のレスポンス（パース済みの JSON）を検証し、`NoteArticle` に変換する。
  * @throws {NoteSchemaError} 使うキーが欠けている・型が違うとき
@@ -114,7 +94,7 @@ export function normalizeNote(json: unknown): NoteArticle {
     title: note.name,
     url: note.note_url,
     publishedAt: new Date(note.publish_at).toISOString(),
-    excerpt: toExcerpt(bodyHtml),
+    excerpt: htmlToExcerpt(bodyHtml),
     eyecatchUrl: eyecatch?.url ?? null,
     hashtags: note.hashtag_notes.map(({ hashtag }) => hashtag.name.replace(/^#/, '')),
     likeCount: note.like_count,

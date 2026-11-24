@@ -140,3 +140,15 @@ describe('listAllArticles', () => {
     expect(result).toMatchObject({ truncated: true, pages: 20 });
   });
 });
+
+describe("source: 'rss' の全件取得", () => {
+  it('RSS は1ページで終わる（1リクエスト・25件、truncated: false）', async () => {
+    const feed = readFileSync(new URL('../../../../fixtures/rss/feed.xml', import.meta.url), 'utf8');
+    const fetch = vi.fn(async () => new Response(feed));
+    const result = await listAllArticles({ user: 'kida_lw', source: 'rss', minIntervalMs: 0, fetch });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(result.articles).toHaveLength(25);
+    expect(result.truncated).toBe(false);
+    expect(result.articles.every((a) => a.source === 'rss')).toBe(true);
+  });
+});

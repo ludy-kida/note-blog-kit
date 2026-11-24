@@ -38,6 +38,7 @@ export interface IterateArticlesOptions extends Omit<ListArticlesOptions, 'page'
 // @public
 export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
+    source?: 'api' | 'rss' | 'auto';
     user: string;
 }
 

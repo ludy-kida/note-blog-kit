@@ -47,6 +47,7 @@ export function listArticles(options: ListArticlesOptions): Promise<NoteArticleP
 // @public
 export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
+    source?: 'api' | 'rss' | 'auto';
     user: string;
 }
 

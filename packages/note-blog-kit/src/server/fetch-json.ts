@@ -1,5 +1,5 @@
 /**
- * note への GET リクエストを送り、JSON を返す（内部用）。
+ * note への GET リクエストを送り、本文（テキスト・JSON）を返す（内部用）。
  * - 送信先は https://note.com に限る
  * - Cookie・認証情報を送らない。リダイレクトは追わない（別ホストへ誘導されないため）
  * - HTTP ステータス・通信失敗・タイムアウトを型付きエラーに変換する
@@ -8,13 +8,22 @@ import { NoteHttpError, NoteNetworkError, NoteNotFoundError, NoteSchemaError, No
 
 export const NOTE_ORIGIN = 'https://note.com';
 
+/** 応答の長さの上限（文字数）。一覧・本文・RSS のどれも通常は数百 KB まで */
+const MAX_BODY_LENGTH = 10_000_000;
+
 export interface FetchJsonOptions {
   fetch: typeof globalThis.fetch;
   timeoutMs: number;
   signal?: AbortSignal | undefined;
 }
 
-export async function fetchNoteJson(url: string, options: FetchJsonOptions): Promise<unknown> {
+export interface FetchTextOptions extends FetchJsonOptions {
+  /** Accept ヘッダー */
+  accept: string;
+}
+
+/** note から取得し、2xx の本文をテキストで返す */
+export async function fetchNoteText(url: string, options: FetchTextOptions): Promise<string> {
   if (new URL(url).origin !== NOTE_ORIGIN) {
     throw new TypeError(`Refusing to request a non-note.com URL: ${url}`);
   }
@@ -36,7 +45,7 @@ export async function fetchNoteJson(url: string, options: FetchJsonOptions): Pro
   try {
     response = await options.fetch(url, {
       method: 'GET',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: options.accept },
       credentials: 'omit',
       redirect: 'error',
       signal: controller.signal,
@@ -65,6 +74,18 @@ export async function fetchNoteJson(url: string, options: FetchJsonOptions): Pro
     throw new NoteHttpError(`note responded with HTTP ${response.status}: ${url}`, { status: response.status, url });
   }
 
+  // 想定より大きすぎる応答は、形が違うとみなす（解析に時間やメモリを使わせないため）
+  if (body.length > MAX_BODY_LENGTH) {
+    throw new NoteSchemaError('note returned a response that is too large', {
+      issues: [{ path: '', message: `Response is longer than ${MAX_BODY_LENGTH} characters` }],
+    });
+  }
+  return body;
+}
+
+/** note から取得し、2xx の本文を JSON として返す */
+export async function fetchNoteJson(url: string, options: FetchJsonOptions): Promise<unknown> {
+  const body = await fetchNoteText(url, { ...options, accept: 'application/json' });
   try {
     return JSON.parse(body) as unknown;
   } catch (error) {

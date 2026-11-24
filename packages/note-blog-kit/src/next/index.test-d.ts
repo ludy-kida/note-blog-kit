@@ -33,5 +33,6 @@ describe('note-blog-kit/next の公開型', () => {
     generateNoteStaticParams({});
     expectTypeOf<{ user: string }>().toExtend<GenerateNoteStaticParamsOptions>();
     expectTypeOf<GenerateNoteStaticParamsOptions['maxPages']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<GenerateNoteStaticParamsOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
   });
 });

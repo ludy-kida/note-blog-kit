@@ -59,6 +59,11 @@ describe('note-blog-kit/server の公開型', () => {
     expectTypeOf<ListArticlesOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
     expectTypeOf<ListArticlesOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<ListArticlesOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<ListArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
+    expectTypeOf<IterateArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
+    // @ts-expect-error 'api'・'rss'・'auto' 以外は渡せない
+    const invalid: ListArticlesOptions = { user: 'kida_lw', source: 'html' };
+    void invalid;
   });
 
   it('iterateArticles・listAllArticles の型', () => {

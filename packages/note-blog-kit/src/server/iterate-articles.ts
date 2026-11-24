@@ -3,13 +3,16 @@ import { type ListArticlesOptions, listArticles } from './list-articles.js';
 
 /** `iterateArticles`・`listAllArticles` のオプション（`note-blog-kit/next` からも参照するため @link は使わない）。`listArticles` のオプションから `page` を除いたもの */
 export interface IterateArticlesOptions extends Omit<ListArticlesOptions, 'page'> {
-  /** 取得する最大ページ数（1 以上の整数）。既定は 20（1ページ6件なので120件） */
+  /** 取得する最大ページ数（1 以上の整数）。既定は 20（1ページ6件なので120件）。RSS（`source: 'rss'`、`'auto'` で切り替わったとき）は1ページで終わる */
   maxPages?: number;
 }
 
 /** 全件取得の結果のうち、記事以外の情報 */
 export interface IterateArticlesResult {
-  /** maxPages に達して打ち切ったとき true（続きのページがある可能性がある） */
+  /**
+   * maxPages に達して打ち切ったとき true（続きのページがある可能性がある）。
+   * RSS で取得したときは常に false だが、RSS は最新25件だけなので、それより古い記事は含まれない（記事の `source` が `'rss'` かで判別する）
+   */
   truncated: boolean;
   /** 最後に取得したページの totalCount */
   totalCount: number | null;

@@ -13,6 +13,7 @@ const PARAM_RE = /^[A-Za-z0-9_-]{1,64}$/;
  * `listAllArticles` で記事を集めるため、1ページ（6件）ごとに1リクエストかかる。
  * `maxPages`（既定 20 ページ = 120件）で打ち切るので、それより古い記事はビルド時には生成しない。
  * `dynamicParams` を true（Next.js の既定）のままにしておけば、残りの記事も最初のアクセス時に表示できる。
+ * `source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになる。
  *
  * @example
  * ```ts
