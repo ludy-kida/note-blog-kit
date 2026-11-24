@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticle, NoteArticleSummary, NoteEmbed, NoteTocItem } from '../index.js';
+import type { NoteArticle, NoteArticlePage, NoteArticleSummary, NoteEmbed, NoteTocItem } from '../index.js';
 import {
   NoteArticleBody,
   type NoteArticleBodyProps,
@@ -17,9 +17,24 @@ import {
   type NoteLinkComponent,
   NotePagination,
   type NotePaginationProps,
+  type UseNoteArticlesOptions,
+  type UseNoteArticlesResult,
+  useNoteArticles,
 } from './index.js';
 
 describe('note-blog-kit/react の公開型', () => {
+  it('useNoteArticles は url だけが必須で、記事・ページ・状態を返す', () => {
+    expectTypeOf(useNoteArticles).parameter(0).toEqualTypeOf<UseNoteArticlesOptions>();
+    expectTypeOf(useNoteArticles).returns.toEqualTypeOf<UseNoteArticlesResult>();
+    expectTypeOf<{ url: string }>().toExtend<UseNoteArticlesOptions>();
+    expectTypeOf<UseNoteArticlesResult>().toEqualTypeOf<{
+      articles: NoteArticleSummary[];
+      page: NoteArticlePage | null;
+      isLoading: boolean;
+      error: Error | null;
+    }>();
+  });
+
   it('NoteArticleBody は article だけが必須で、components の props が決まっている', () => {
     expectTypeOf(NoteArticleBody).parameter(0).toEqualTypeOf<NoteArticleBodyProps>();
     expectTypeOf(NoteArticleBody).returns.toEqualTypeOf<ReactElement>();

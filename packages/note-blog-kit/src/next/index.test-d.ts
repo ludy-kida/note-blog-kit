@@ -1,15 +1,27 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import {
+  createNoteArticlesHandler,
   type GenerateNoteMetadataOptions,
   type GenerateNoteStaticParamsOptions,
   generateNoteMetadata,
   generateNoteStaticParams,
   type NoteArticle,
   type NoteArticleSummary,
+  type NoteArticlesHandlerOptions,
   type NoteMetadata,
 } from './index.js';
 
 describe('note-blog-kit/next の公開型', () => {
+  it('createNoteArticlesHandler は Route Handler（Request → Promise<Response>）を返す', () => {
+    expectTypeOf(createNoteArticlesHandler).parameter(0).toEqualTypeOf<NoteArticlesHandlerOptions>();
+    expectTypeOf(createNoteArticlesHandler).returns.toEqualTypeOf<(request: Request) => Promise<Response>>();
+    expectTypeOf<{ user: string }>().toExtend<NoteArticlesHandlerOptions>();
+    expectTypeOf<NoteArticlesHandlerOptions['maxPage']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<NoteArticlesHandlerOptions['cacheSeconds']>().toEqualTypeOf<number | undefined>();
+    // page はリクエストの ?page= で指定する（オプションにはない）
+    expectTypeOf<NoteArticlesHandlerOptions>().not.toHaveProperty('page');
+  });
+
   it('generateNoteMetadata は記事（詳細・一覧）を受け取り NoteMetadata を返す', () => {
     expectTypeOf(generateNoteMetadata).returns.toEqualTypeOf<NoteMetadata>();
     expectTypeOf<NoteArticle>().toExtend<Parameters<typeof generateNoteMetadata>[0]>();

@@ -316,6 +316,37 @@ export default async function Page({ params }: { params: Promise<{ key: string }
   - `nbk-embed`（`data-service` 属性）。埋め込みの中のリンクは `nbk-body__a` ではなく `nbk-embed__link` になります
 - **他人の記事**：`getArticle` は誰の記事でも返します。URL から受け取ったキーで表示する場合は、`article.author.urlname` を確かめてください
 
+### SPA で一覧を表示する（Vite など）
+
+ブラウザから note へは直接アクセスできません（note は CORS に対応していません）。SPA では、次のどちらかから取得します。
+
+1. **CLI `sync` が書き出した JSON**（サーバー不要）：ビルドの前に `note-blog-kit sync --user your_urlname --out public/note --no-body` を実行し、`/note/articles.json` を読みます
+2. **中継エンドポイント**（サーバーがある場合）：`note-blog-kit/next` の `createNoteArticlesHandler` で Route Handler を作ります
+
+```tsx
+import { NoteArticleList, useNoteArticles } from 'note-blog-kit/react';
+
+export function Blog() {
+  const { articles, isLoading, error } = useNoteArticles({ url: '/note/articles.json' }); // または '/api/note?page=1'
+  if (isLoading) return <p>読み込み中…</p>;
+  if (error) return <p>記事を読み込めませんでした</p>;
+  return <NoteArticleList articles={articles} />;
+}
+```
+
+```ts
+// app/api/note/route.ts（Next.js App Router の中継エンドポイント）
+import { createNoteArticlesHandler } from 'note-blog-kit/next';
+
+export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
+```
+
+- **`useNoteArticles`**：`url` から `{ articles, page, isLoading, error }` を返すクライアント用のフックです。中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います）のどちらも読めます。note.com の URL を渡すと取得せずに `error` を返します。`url` が変わると取り直し、古い応答は捨てます
+- **`createNoteArticlesHandler`**：`?page=N`（1〜`maxPage`、既定 100）の一覧を JSON で返します。成功した応答には `Cache-Control: public, s-maxage=3600, stale-while-revalidate=3600` を付けます（秒数は `cacheSeconds` で変更）。失敗したときは 404（記事・ユーザーがない）か 502 を `{ "error": "<コード>" }` で返し、キャッシュさせません。オプション（`source` など）は `listArticles` と同じです
+- `note-blog-kit/react` のほかのコンポーネントは、これまでどおり Server Component としても使えます。`useNoteArticles` だけは Client Component（`'use client'` のファイル）か SPA で使ってください
+
+動く例は [`examples/vite`](examples/vite) にあります。
+
 ### デフォルト CSS（任意）
 
 note の見た目に合わせた CSS を用意しています。読み込まなければ、コンポーネントは見た目を持ちません。
@@ -403,6 +434,21 @@ NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
 ```
 
 CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる・詳細ページに本文と canonical が出る・fixture にない記事が 404 になる）を確認しています。fixture にある記事本文は2件だけなので、自分の全記事が崩れず表示できるかは、実際の note から取得するモードで `/articles/{記事キー}` を開いて目で確かめてください。
+
+### examples/vite を動かす
+
+```bash
+# fixtures/ から public/note/articles.json を作る（note にアクセスしない）
+pnpm -C examples/vite sync:fixture
+pnpm -C examples/vite dev
+```
+
+```bash
+# 実際の note から書き出す場合（ルートで pnpm build をしてから）
+node packages/note-blog-kit/dist/cli/index.js sync --user your_urlname --out examples/vite/public/note --no-body
+```
+
+CI は `pnpm build:examples` で、fixture から JSON を作ってビルドし、ブラウザ向けのバンドルにサーバー専用のコード（zod・sanitize-html・note の API の URL）が入っていないことを確認しています。
 
 ### README を変えたとき
 
