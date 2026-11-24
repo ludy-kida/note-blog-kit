@@ -48,6 +48,9 @@ function shouldFallBack(error: unknown): boolean {
  * @throws {NoteNetworkError} 通信に失敗したとき
  * @throws {NoteTimeoutError} タイムアウトしたとき
  * @throws {NoteSchemaError} レスポンスの形が想定と違うとき
+ *
+ * `source: 'auto'` で RSS に切り替えたあと RSS も失敗した場合は、RSS 側のエラーを投げる。
+ * 返る記事の `source` は `'api'` か `'rss'`（`'auto'` にはならない）
  */
 export async function listArticles(options: ListArticlesOptions): Promise<NoteArticlePage> {
   const {

@@ -109,7 +109,7 @@ export default async function ArticlePage({ params }: Props) {
 
 - **キャッシュ**：`generateMetadata` とページで同じ記事を取得するので、`unstable_cache` などで結果をキャッシュしてください（[`examples/next`](https://github.com/ludy-kida/note-blog-kit/tree/main/examples/next) の詳細ページを参照）
 - **URL のキーは外部から自由に指定されます**：上の例のままだと、形式が正しいキーなら自分の記事でなくても note に問い合わせます。公開するサイトでは、自分の記事のキーの一覧（`generateNoteStaticParams` の結果をキャッシュしたもの）にあるときだけ `getArticle` を呼んでください（`examples/next` はそうしています）
-- **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`maxPages`（既定 20 ページ）を超える古い記事はビルド時には生成しませんが、`dynamicParams` を既定の true のままにしておけば最初のアクセス時に表示できます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます
+- **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`maxPages`（既定 20 ページ）を超える古い記事はビルド時には生成しませんが、`dynamicParams` を既定の true のままにしておけば最初のアクセス時に表示できます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます。`source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになります
 - **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 
 ### キャッシュの推奨
@@ -193,6 +193,7 @@ const page = await listArticles({ user: 'your_urlname', source: 'auto' });
 - `'rss'`：note の RSS から取得します。最新25件だけの1ページで（`isLastPage: true`、`totalCount: null`）、`hashtags` は空、`likeCount`・`price` は `null` です。`page` に 2 以上を渡すと `TypeError` になります
 - `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかは各記事の `source`（`'api'` / `'rss'`）で分かります
 - 記事本文（`getArticle`）は RSS に切り替わりません（RSS に本文はありません）
+- `listAllArticles`・`iterateArticles` を RSS で取得したときは1回で終わり、`truncated` は `false` になります。ただし RSS は最新25件だけなので、それより古い記事は含まれません（記事の `source` が `'rss'` かで判別してください）
 
 ### 記事1件を取得する（サーバー側）
 
