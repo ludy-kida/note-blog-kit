@@ -1,5 +1,13 @@
 # note-blog-kit
 
+## 0.3.0
+
+### Minor Changes
+
+- 7bd5548: CLI `note-blog-kit sync --user <urlname> --out <dir>` を追加しました。記事の一覧（`articles.json`）と本文（`articles/<key>.json`）を JSON に書き出します。`--max-pages`（既定 20）で一覧のページ数を、`--no-body` で一覧だけにできます。リクエストは1秒以上の間隔で1件ずつ送ります。
+- c47a6f5: `listArticles`・`iterateArticles`・`listAllArticles` に `source` オプション（`'api'` | `'rss'` | `'auto'`、既定 `'api'`）を追加しました。`'rss'` は note の RSS（最新25件・1ページ）から取得し、`'auto'` は API が 404・5xx・形の違いで失敗したときに RSS に切り替えます。RSS では `hashtags` が空、`likeCount`・`price`・`totalCount` が `null` になります。`note-blog-kit/next` の `generateNoteStaticParams` も `source` を受け付けます（RSS では最新25件だけ）。
+- 395cc0e: SPA（Vite など）向けに、クライアント用のフック `useNoteArticles`（`note-blog-kit/react`）と、中継エンドポイントを作る `createNoteArticlesHandler`（`note-blog-kit/next`）を追加しました。`useNoteArticles` は中継エンドポイントか `note-blog-kit sync` の `articles.json` から一覧を取得し、ブラウザから note へは直接アクセスしません。中継エンドポイントは成功した応答にキャッシュヘッダーを付けます。
+
 ## 0.2.0
 
 ### Minor Changes
