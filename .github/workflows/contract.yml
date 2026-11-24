@@ -45,7 +45,7 @@ jobs:
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
       - name: 形が変わっていたら Issue を作る（開いていればコメントを追記）
-        if: steps.check.outputs.exit_code == '1'
+        if: steps.check.outputs.exit_code == '1' && hashFiles('contract-report.md') != ''
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -70,7 +70,7 @@ jobs:
             gh issue create --title '契約テスト: note の API・RSS の形が変わった可能性' --label contract-failure --body-file issue-body.md
           fi
 
-      - name: 結果をジョブの成否に反映する（2 は一時的な失敗。Issue は作らず翌日また確かめる）
+      - name: 結果をジョブの成否に反映する（2 は一時的な失敗、4 はスクリプト自体の失敗。どちらも Issue は作らない）
         if: steps.check.outputs.exit_code != '0'
         env:
           EXIT_CODE: ${{ steps.check.outputs.exit_code }}

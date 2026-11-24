@@ -17,6 +17,8 @@
 # note.com へアクセスする唯一の入口と実レスポンス
 /scripts/record-fixtures.ts    @ludy-kida
 /scripts/lib/fixture-utils.ts  @ludy-kida
+/scripts/contract-check.ts     @ludy-kida
+/scripts/lib/contract.ts       @ludy-kida
 /fixtures/                     @ludy-kida
 
 # 依存・カバレッジ下限・サイズ上限

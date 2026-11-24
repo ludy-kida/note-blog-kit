@@ -20,11 +20,17 @@ concurrency:
 
 jobs:
   claude:
+    # ラベル：契約テスト（github-actions[bot]）が立てた contract-failure の Issue だけ
+    # コメント：Issue（PR を除く）で、オーナー・コラボレーターが @claude と書いたときだけ
     if: >-
-      (github.event_name == 'issues' && github.event.label.name == 'claude-fix') ||
+      (github.event_name == 'issues' &&
+        github.event.label.name == 'claude-fix' &&
+        github.event.issue.user.login == 'github-actions[bot]' &&
+        contains(github.event.issue.labels.*.name, 'contract-failure')) ||
       (github.event_name == 'issue_comment' &&
+        !github.event.issue.pull_request &&
         contains(github.event.comment.body, '@claude') &&
-        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+        contains(fromJSON('["OWNER","COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -36,6 +42,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
+          # push の認証は action が自分で設定する。書き込みできるトークンを .git/config に残さない
+          persist-credentials: false
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -51,7 +59,10 @@ jobs:
           # prompt を渡さない（タグモード）：Issue・コメントの内容を依頼として読み、ブランチに push して PR 作成リンクを返す
           label_trigger: claude-fix
           trigger_phrase: "@claude"
+          # 依頼として読むコメントを、オーナーと bot のものに限る（外部の人のコメントによるプロンプトインジェクションを防ぐ）
+          include_comments_by_actor: ludy-kida,github-actions[bot],claude[bot]
           claude_args: >-
+            --disallowedTools "WebFetch,WebSearch"
             --append-system-prompt "CLAUDE.md を守ること。
             契約テストの Issue（contract-failure ラベル）を扱うときは .claude/skills/fix-api-change/SKILL.md の手順に従う。
             note.com にアクセスしない（fixtures/ を使い、足りなければ取得したいものを Issue にコメントして止まる）。

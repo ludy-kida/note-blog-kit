@@ -7,7 +7,7 @@
  * 取得はビルド済みのライブラリで行う：Cookie なし・1秒間隔・再試行なし。
  *
  * 実行: pnpm build && node scripts/contract-check.ts --user <urlname> [--report <path>]
- * 終了コード: 0 問題なし／1 形の変化（Issue を作る）／2 一時的な失敗だけ／3 使い方の誤り
+ * 終了コード: 0 問題なし／1 形の変化（Issue を作る）／2 一時的な失敗だけ／3 使い方の誤り／4 スクリプト自体の失敗
  */
 import { appendFile, writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
@@ -51,4 +51,8 @@ async function main(): Promise<number> {
   return exitCodeOf(result);
 }
 
-process.exitCode = await main();
+// dist の読み込みの失敗などを、形の変化（1）と区別する
+process.exitCode = await main().catch((error: unknown) => {
+  console.error(error);
+  return 4;
+});

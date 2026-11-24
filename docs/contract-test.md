@@ -24,6 +24,7 @@ note の API は公式に公開されたものではなく、形が予告なく�
 | 0 | 問題なし | 成功 |
 | 1 | 形の変化（zod の検証エラー・404・404 以外の 4xx・想定外の例外） | `contract-failure` ラベルの Issue を作る（開いていればコメントを追記）。ジョブは失敗 |
 | 2 | 一時的な失敗だけ（5xx・429・通信の失敗・タイムアウト） | Issue は作らない。ジョブは失敗（翌日また確かめる） |
+| 4 | スクリプト自体の失敗（ビルド済みのライブラリが読めないなど） | Issue は作らない。ジョブは失敗（ログを見る） |
 
 結果の表は Actions の Summary と Issue に出ます。載せるのは確認の名前・エラーコード・HTTP ステータス・zod の `path` と `message` だけで、応答の中身（本文・URL）は載せません。
 `path` は note の応答のキー名を含みうるので、コードブロックの中に置いています。
@@ -37,7 +38,13 @@ note の API は公式に公開されたものではなく、形が予告なく�
 
 Claude Code は次のことをしません：note.com へのアクセス、公開型の変更（必要なら案をコメントして止まる）、新しい依存の追加、サニタイズの許可リスト・XSS テストの変更、PR のマージ、npm への公開。
 
-Issue や PR のコメントで、オーナー・メンバー・コラボレーターが `@claude` と書いたときも Claude Code が動きます（[`.github/workflows/claude.yml`](../.github/workflows/claude.yml)）。
+Claude Code が動くのは次のときだけです（[`.github/workflows/claude.yml`](../.github/workflows/claude.yml)）。
+
+- 契約テスト（`github-actions[bot]`）が立てた `contract-failure` の Issue に、`claude-fix` ラベルが付いたとき（ラベルを付けた人に書き込み権限があることは action が確かめる）
+- Issue（PR は除く）のコメントで、オーナー・コラボレーターが `@claude` と書いたとき
+
+外部の人のコメントで指示を差し込まれないよう、依頼として読むコメントはオーナーと bot のものに限っています（`include_comments_by_actor`）。WebFetch・WebSearch は使わせません。
+リポジトリの `.claude/settings.json` の禁止ルールと hook は Actions の中でも読み込まれるはずですが、hook はコマンドの文字列で判定する補助なので、完全な防御ではありません。Claude Code が作った変更は、note へのアクセスが増えていないかも含めて人がレビューしてください（`scripts/contract-check.ts`・`scripts/lib/contract.ts` は CODEOWNERS の対象です）。
 
 ## 人が行う設定
 
@@ -46,7 +53,8 @@ Issue や PR のコメントで、オーナー・メンバー・コラボレー�
    - `ANTHROPIC_API_KEY`：API キーを使う場合
 2. **Claude の GitHub App をリポジトリに入れる**（https://github.com/apps/claude）。手元の Claude Code で `/install-github-app` を実行しても設定できる
 3. **ラベル**：`contract-failure` と `claude-fix` は、契約テストが初めて Issue を作るときに自動で作られる。先に作っておいてもよい
-4. **初回の確認**：Actions の「Contract」を手動で実行し（Run workflow）、3つとも成功することを確かめる
+4. **ブランチ保護**：main で「Require a pull request before merging」と「Require review from Code Owners」を有効にする（Claude Code が main に直接 push できないように）
+5. **初回の確認**：Actions の「Contract」を手動で実行し（Run workflow）、3つとも成功することを確かめる
 
 ## 実データへのアクセスについて
 
