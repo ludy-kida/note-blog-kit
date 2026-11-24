@@ -7,9 +7,10 @@
  * - 一覧ページは動的ページのため `next build` では実行されない。ビルド後に `next start` で起動し、
  *   fixture の取得から描画までが動くこと（一覧が出る・範囲外が 404 になる）を HTTP で確かめる
  * - 詳細ページは fixture にある記事本文（無料・有料の2件）で、本文・canonical・「続きは note で」と 404 を確かめる
+ * - examples/vite は fixture から JSON を作ってビルドし、バンドルにサーバー専用のコードが入っていないことを確かめる
  */
 import { spawn, spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
@@ -107,4 +108,37 @@ try {
 } finally {
   stop();
 }
-process.exit(failed ? 1 : 0);
+if (failed) process.exit(1);
+
+// examples/vite：fixture から sync と同じ形の JSON を作ってビルドし、配布物を確かめる（ブラウザでの描画はテストで見ている）
+const viteDir = join(root, 'examples/vite');
+for (const script of ['sync:fixture', 'build']) {
+  const result = spawnSync('pnpm', ['-C', 'examples/vite', script], { cwd: root, stdio: 'inherit', env });
+  if (result.status !== 0) process.exit(result.status ?? 1);
+}
+const synced = JSON.parse(readFileSync(join(viteDir, 'dist/note/articles.json'), 'utf8'));
+const bundle = readdirSync(join(viteDir, 'dist/assets'))
+  .filter((name) => name.endsWith('.js'))
+  .map((name) => readFileSync(join(viteDir, 'dist/assets', name), 'utf8'))
+  .join('\n');
+const viteProblems = [];
+if (!Array.isArray(synced.articles) || synced.articles.length !== 18)
+  viteProblems.push('articles.json の記事が18件ではない');
+// ブラウザ向けのバンドルに、サーバー専用の依存や note の API の URL を入れない
+// minify 後もパッケージ名が残らないことがあるため、エラーの名前・メッセージなど残りやすい文字列でも調べる
+for (const text of [
+  'sanitize-html',
+  'zod',
+  'ZodError',
+  'NoteSchemaError',
+  'NOTE_SCHEMA_ERROR',
+  'api/v2/creators',
+  'api/v3/notes',
+]) {
+  if (bundle.includes(text)) viteProblems.push(`バンドルに「${text}」がある`);
+}
+if (viteProblems.length > 0) {
+  console.error(`NG examples/vite: ${viteProblems.join('、')}`);
+  process.exit(1);
+}
+console.log('OK examples/vite（articles.json 18件、バンドルにサーバー専用のコードなし）');

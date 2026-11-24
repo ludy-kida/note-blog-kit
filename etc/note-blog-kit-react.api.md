@@ -205,6 +205,23 @@ export interface NoteTocItem {
     text: string;
 }
 
+// @public
+export function useNoteArticles(options: UseNoteArticlesOptions): UseNoteArticlesResult;
+
+// @public
+export interface UseNoteArticlesOptions {
+    fetch?: typeof globalThis.fetch;
+    url: string;
+}
+
+// @public
+export interface UseNoteArticlesResult {
+    articles: NoteArticleSummary[];
+    error: Error | null;
+    isLoading: boolean;
+    page: NoteArticlePage | null;
+}
+
 // (No @packageDocumentation comment for this package)
 
 ```

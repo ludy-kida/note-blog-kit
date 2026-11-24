@@ -316,6 +316,44 @@ export default async function Page({ params }: { params: Promise<{ key: string }
   - `nbk-embed`（`data-service` 属性）。埋め込みの中のリンクは `nbk-body__a` ではなく `nbk-embed__link` になります
 - **他人の記事**：`getArticle` は誰の記事でも返します。URL から受け取ったキーで表示する場合は、`article.author.urlname` を確かめてください
 
+### SPA で一覧を表示する（Vite など）
+
+ブラウザから note へは直接アクセスできません（note は CORS に対応していません）。SPA では、次のどちらかから取得します。
+
+1. **CLI `sync` が書き出した JSON**（サーバー不要）：ビルドの前に `note-blog-kit sync --user your_urlname --out public/note --no-body` を実行し、`/note/articles.json` を読みます
+2. **中継エンドポイント**（サーバーがある場合）：`note-blog-kit/next` の `createNoteArticlesHandler` で Route Handler を作ります
+
+```tsx
+import { NoteArticleList, useNoteArticles } from 'note-blog-kit/react';
+
+export function Blog() {
+  const { articles, isLoading, error } = useNoteArticles({ url: '/note/articles.json' }); // または '/api/note?page=1'
+  if (isLoading) return <p>読み込み中…</p>;
+  if (error) return <p>記事を読み込めませんでした</p>;
+  return <NoteArticleList articles={articles} />;
+}
+```
+
+```ts
+// app/api/note/route.ts（Next.js App Router の中継エンドポイント）
+import { createNoteArticlesHandler } from 'note-blog-kit/next';
+
+export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
+```
+
+- **`useNoteArticles`**：`url` から `{ articles, page, isLoading, error }` を返すクライアント用のフックです。中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います）のどちらも読めます
+  - note.com の URL を渡すと取得せずに `error` を返します。`url` が変わると取り直し、古い応答は捨てます
+  - 応答の検証は最小限です（主な項目の型が合わない記事は除きます）。`url` には自分のサイトの中継エンドポイントか JSON を指定し、利用者の入力を使わないでください
+  - `fetch` を渡す場合は、描画ごとに作り直しても取り直しは起きません（`url` が変わったときだけ取り直します）
+- **`createNoteArticlesHandler`**：`?page=N` の一覧を JSON で返します
+  - `page` は 1〜`maxPageNumber`（既定 100、`source: 'rss'` では 1）の正規形の整数だけを受け付けます。`01`・`1.0` などの別の書き方や、`page` 以外のクエリは 400 です（CDN のキャッシュを外して note へのリクエストを増やされないように）
+  - 成功した応答には `Cache-Control: public, s-maxage=3600, stale-while-revalidate=3600` を付けます（秒数は `cacheSeconds` で変更）
+  - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`
+  - オプション（`source` など）は `listArticles` と同じです（`page` は指定できません）。リクエストが中断されると、note への取得も中断します
+- `note-blog-kit/react` のほかのコンポーネントは、これまでどおり Server Component としても使えます。`useNoteArticles` だけは Client Component（`'use client'` のファイル）か SPA で使ってください
+
+動く例は [`examples/vite`](https://github.com/ludy-kida/note-blog-kit/tree/main/examples/vite) にあります。
+
 ### デフォルト CSS（任意）
 
 note の見た目に合わせた CSS を用意しています。読み込まなければ、コンポーネントは見た目を持ちません。

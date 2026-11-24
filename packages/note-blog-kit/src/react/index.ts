@@ -1,6 +1,6 @@
 /**
  * note-blog-kit/react: 見た目を持たない React コンポーネント。データを受け取って描画するだけで、取得はしない。
- * すべてフックを使わないため、Server Component としても使える。
+ * `useNoteArticles`（Client Component・SPA 用のフック）以外はフックを使わないため、Server Component としても使える。
  *
  * @packageDocumentation
  */
@@ -29,3 +29,4 @@ export { NoteArticleCard, type NoteArticleCardProps } from './NoteArticleCard.js
 export { NoteArticleList, type NoteArticleListProps } from './NoteArticleList.js';
 export { NotePagination, type NotePaginationProps } from './NotePagination.js';
 export type { NoteHeadingLevel, NoteLinkComponent } from './types.js';
+export { type UseNoteArticlesOptions, type UseNoteArticlesResult, useNoteArticles } from './useNoteArticles.js';

@@ -5,6 +5,9 @@
 ```ts
 
 // @public
+export function createNoteArticlesHandler(options: NoteArticlesHandlerOptions): (request: Request) => Promise<Response>;
+
+// @public
 export function generateNoteMetadata(article: NoteArticle | NoteArticleSummary, options?: GenerateNoteMetadataOptions): NoteMetadata;
 
 // @public
@@ -52,6 +55,12 @@ export interface NoteArticle extends NoteArticleSummary {
     isPartial: boolean;
     // (undocumented)
     toc: NoteTocItem[];
+}
+
+// @public
+export interface NoteArticlesHandlerOptions extends Omit<ListArticlesOptions, 'page'> {
+    cacheSeconds?: number;
+    maxPageNumber?: number;
 }
 
 // @public
