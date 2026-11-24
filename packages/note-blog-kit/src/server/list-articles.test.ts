@@ -287,4 +287,9 @@ describe('listArticles の source', () => {
     );
     expect(urls(secondPage)).toEqual(['/api/v2/creators/kida_lw/contents']);
   });
+
+  it('大きすぎる応答は NoteSchemaError', async () => {
+    const fetch = routedFetch(() => new Response(' '.repeat(10_000_001)));
+    await expect(listArticles({ ...base, fetch })).rejects.toBeInstanceOf(NoteSchemaError);
+  });
 });

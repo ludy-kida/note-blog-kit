@@ -8,6 +8,9 @@ import { NoteHttpError, NoteNetworkError, NoteNotFoundError, NoteSchemaError, No
 
 export const NOTE_ORIGIN = 'https://note.com';
 
+/** 応答の長さの上限（文字数）。一覧・本文・RSS のどれも通常は数百 KB まで */
+const MAX_BODY_LENGTH = 10_000_000;
+
 export interface FetchJsonOptions {
   fetch: typeof globalThis.fetch;
   timeoutMs: number;
@@ -71,6 +74,12 @@ export async function fetchNoteText(url: string, options: FetchTextOptions): Pro
     throw new NoteHttpError(`note responded with HTTP ${response.status}: ${url}`, { status: response.status, url });
   }
 
+  // 想定より大きすぎる応答は、形が違うとみなす（解析に時間やメモリを使わせないため）
+  if (body.length > MAX_BODY_LENGTH) {
+    throw new NoteSchemaError('note returned a response that is too large', {
+      issues: [{ path: '', message: `Response is longer than ${MAX_BODY_LENGTH} characters` }],
+    });
+  }
   return body;
 }
 

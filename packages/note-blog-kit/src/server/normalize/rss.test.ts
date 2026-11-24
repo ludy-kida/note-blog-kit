@@ -109,6 +109,62 @@ describe('normalizeRss', () => {
     expect(normalizeRss(empty, 'kida_lw').articles).toEqual([]);
   });
 
+  it('description の CDATA の中にある偽の要素・偽の </item> を本物と取り違えない', () => {
+    const fake =
+      '<description><![CDATA[x</description><link>https://note.com/kida_lw/n/nevil</link><note:creatorImage>https://evil.example/t.gif</note:creatorImage></item><item><title>偽</title>]]></description>';
+    const xml = editFirstItem((item) => item.replace(/<description>[\s\S]*?\]\]><\/description>/, fake));
+    const page = normalizeRss(xml, 'kida_lw');
+    expect(page.articles).toHaveLength(25);
+    expect(page.articles[0]?.key).toBe('n55256baa5425');
+    expect(page.articles[0]?.author.imageUrl).not.toContain('evil.example');
+    expect(page.articles.some((a) => a.key === 'nevil' || a.title === '偽')).toBe(false);
+  });
+
+  it('閉じていない CDATA・属性付きの item・RFC 822 でない日時は NoteSchemaError', () => {
+    for (const xml of [
+      // 最後の item の CDATA を閉じない（後ろに ]]> がない）
+      `${feed.slice(0, feed.lastIndexOf(']]></description>'))}</description></item></channel></rss>`,
+      feed.replace('<item>', '<item id="1">'),
+      editFirstItem((item) => item.replace(/<pubDate>[^<]*<\/pubDate>/, '<pubDate>1</pubDate>')),
+    ]) {
+      expect(() => normalizeRss(xml, 'kida_lw')).toThrow(NoteSchemaError);
+    }
+  });
+
+  it('複数の CDATA 区間と、区間の外の実体参照をつないで読む', () => {
+    const xml = editFirstItem((item) =>
+      item.replace(/<title>[^<]*<\/title>/, '<title><![CDATA[A]]]]><![CDATA[>B]]> &amp; C</title>'),
+    );
+    expect(normalizeRss(xml, 'kida_lw').articles[0]?.title).toBe('A]]>B & C');
+  });
+
+  it('excerpt に script・style・コメントの中身を入れない', () => {
+    const xml = editFirstItem((item) =>
+      item.replace(
+        /<description>[\s\S]*?<\/description>/,
+        '<description><![CDATA[<p>前</p><script>alert(1)</script><style>p{}</style><!-- c --><p>後</p>]]></description>',
+      ),
+    );
+    expect(normalizeRss(xml, 'kida_lw').articles[0]?.excerpt).toBe('前 後');
+  });
+
+  it('閉じていない < が大量にある description でも、入力長にほぼ比例する時間で終わる', () => {
+    const start = performance.now();
+    for (const body of ['<a'.repeat(100000), '<'.repeat(100000), `${'<a href="x"'.repeat(20000)}>続きをみる</a>`]) {
+      const xml = editFirstItem((item) =>
+        item.replace(/<description>[\s\S]*?<\/description>/, `<description><![CDATA[${body}]]></description>`),
+      );
+      normalizeRss(xml, 'kida_lw');
+    }
+    expect(performance.now() - start).toBeLessThan(2000);
+  });
+
+  it('item が多すぎる RSS は NoteSchemaError', () => {
+    const item = feed.slice(feed.indexOf('<item>'), feed.indexOf('</item>') + '</item>'.length);
+    const xml = feed.replace(item, item.repeat(101));
+    expect(() => normalizeRss(xml, 'kida_lw')).toThrow(NoteSchemaError);
+  });
+
   it('閉じていない item が大量にあっても、入力長にほぼ比例する時間で終わる', () => {
     const start = performance.now();
     expect(() => normalizeRss(`<rss><channel>${'<item><title>'.repeat(50000)}`, 'kida_lw')).toThrow(NoteSchemaError);
