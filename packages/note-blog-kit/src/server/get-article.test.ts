@@ -65,7 +65,9 @@ describe('getArticle', () => {
 
   it('不正な user は TypeError で、fetch を呼ばない', async () => {
     const fetch = mockFetch();
-    for (const user of [[], '', '../x', 'a b', 42, null, ['kida_lw', 'a b'], ['kida_lw', 1], undefined]) {
+    // biome-ignore lint/suspicious/noSparseArray: 穴のある配列も拒否することを確かめる
+    const sparse = [, 'kida_lw'];
+    for (const user of [[], '', '../x', 'a b', 42, null, ['kida_lw', 'a b'], ['kida_lw', 1], undefined, sparse]) {
       await expect(
         getArticle({ ...base, user: user as unknown as string, fetch }),
         JSON.stringify(user),

@@ -24,7 +24,8 @@ export interface GetArticleOptions extends NoteRequestOptions {
 
 /** user を検証して配列にそろえる。空・不正な名前は TypeError */
 function toAllowedUsers(user: unknown): ReadonlySet<string> {
-  const users: unknown[] = typeof user === 'string' ? [user] : Array.isArray(user) ? user : [];
+  // Array.from で穴（[,]）を undefined にしてから検証する（every は穴を飛ばすため）
+  const users: unknown[] = typeof user === 'string' ? [user] : Array.isArray(user) ? Array.from(user) : [];
   if (users.length === 0 || !users.every((name) => typeof name === 'string' && NOTE_USER_RE.test(name))) {
     throw new TypeError(
       `user must be a note user name or a non-empty array of them: ${JSON.stringify(user) ?? typeof user}`,
@@ -45,7 +46,7 @@ function toAllowedUsers(user: unknown): ReadonlySet<string> {
  * ```ts
  * const article = await getArticle({ key: 'n55256baa5425', user: 'your_urlname' });
  * // 複数の著者で運用するサイト
- * const article2 = await getArticle({ key, user: ['alice', 'bob'] });
+ * const article2 = await getArticle({ key: 'n55256baa5425', user: ['alice', 'bob'] });
  * ```
  * @throws {TypeError} key・user やオプションが不正なとき
  * @throws {NoteNotFoundError} 記事が見つからないとき、または `user` にない著者の記事のとき

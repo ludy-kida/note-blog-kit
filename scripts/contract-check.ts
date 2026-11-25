@@ -18,7 +18,9 @@ const TIMEOUT_MS = 15_000;
 const MIN_INTERVAL_MS = 1_000;
 
 interface ServerModule {
-  listArticles: (options: Record<string, unknown>) => Promise<{ articles: { key: string; price: number | null }[] }>;
+  listArticles: (options: Record<string, unknown>) => Promise<{
+    articles: { key: string; price: number | null; author: { urlname: string } }[];
+  }>;
   getArticle: (options: Record<string, unknown>) => Promise<unknown>;
 }
 

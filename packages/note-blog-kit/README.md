@@ -79,13 +79,13 @@ const USER = 'your_urlname';
 type Props = { params: Promise<{ key: string }> };
 
 // 自分の記事のキー（新しい順に 20 ページ分 = 120件。maxPages で変更できる）を1時間キャッシュする
-const loadParams = unstable_cache(() => generateNoteStaticParams({ user: USER }), ['note-params'], {
+const loadParams = unstable_cache(() => generateNoteStaticParams({ user: USER }), ['note-params', USER], {
   revalidate: 3600,
 });
 
 // 記事を1時間キャッシュする（generateMetadata とページで同じ記事を2回取得しない）。
 // user にない著者の記事は NoteNotFoundError になるので、他人の記事は表示されない
-const loadArticle = unstable_cache((key: string) => getArticle({ key, user: USER }), ['note-article'], {
+const loadArticle = unstable_cache((key: string) => getArticle({ key, user: USER }), ['note-article', USER], {
   revalidate: 3600,
 });
 
@@ -121,7 +121,7 @@ export default async function ArticlePage({ params }: Props) {
 ```
 
 - **著者の指定（`user`）**：`getArticle` は `user` に指定した著者の記事だけを返します（ほかの著者の記事は `NOTE_NOT_FOUND`）。複数の著者で運用するサイトでは `user: ['alice', 'bob']` のように配列で指定します
-- **一覧にあるキーだけ取得する**：上の例は、自分の記事の一覧（`generateNoteStaticParams` の結果）にないキーを note に問い合わせずに 404 にします。そのため `maxPages`（既定 20 ページ）より古い記事も 404 になります。古い記事も表示したい場合は、`maxPages` を増やすか、一覧の確認を外してください。外した場合も `user` で他人の記事は表示されませんが、形式が正しい任意のキーで note に問い合わせが起きます
+- **一覧にあるキーだけ取得する**：上の例は、自分の記事の一覧（`generateNoteStaticParams` の結果）にないキーを note に問い合わせずに 404 にします。そのため `maxPages`（既定 20 ページ）より古い記事も 404 になります。古い記事も表示したい場合は、`maxPages` を増やすか、一覧の確認を外してください。外した場合も `user` で他人の記事は表示されませんが、形式が正しい任意のキーで note に問い合わせが起きます。また、形式の正しくないキー（`ABC` など）は `TypeError` になるので、`error instanceof TypeError` も 404 にしてください
 - **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます。`source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになります
 - **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 
@@ -162,7 +162,7 @@ try {
 | `signal` | — | 中断用の `AbortSignal` |
 | `fetch` | `globalThis.fetch` | fetch の差し替え（テスト・キャッシュ層用）。Cookie・認証ヘッダーは付けないでください |
 
-エラーは `code` で判別します：`NOTE_NOT_FOUND`（404）、`NOTE_HTTP_ERROR`（その他の HTTP エラー、`status` あり）、`NOTE_NETWORK_ERROR`、`NOTE_TIMEOUT`、`NOTE_SCHEMA_ERROR`（note のレスポンスの形が変わった）。
+エラーは `code` で判別します：`NOTE_NOT_FOUND`（404、または `getArticle` の `user` にない著者の記事）、`NOTE_HTTP_ERROR`（その他の HTTP エラー、`status` あり）、`NOTE_NETWORK_ERROR`、`NOTE_TIMEOUT`、`NOTE_SCHEMA_ERROR`（note のレスポンスの形が変わった）。
 
 結果は必ずキャッシュし、高頻度に呼び出さないでください（方法は上の「キャッシュの推奨」を参照）。
 
@@ -225,7 +225,7 @@ article.toc; // 目次（id は本文の見出しの id と同じ。有料記事
 article.embeds; // 本文中の埋め込み（本文の <figure data-nbk-embed-key> と key で対応）
 ```
 
-`user` は必須です。note の API は記事キーだけで誰の記事でも返すため、他人の記事を表示しないよう、指定した著者（大文字小文字も含めて一致）の記事だけを返します。`key` は `n` と英小文字・数字だけを受け付け、それ以外や不正な `user` は送信せずに `TypeError` を投げます（ページの URL から受け取った値なら 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
+`user` は必須です。note の API は記事キーだけで誰の記事でも返すため、他人の記事を表示しないよう、指定した著者（大文字小文字も含めて一致）の記事だけを返します。`key` は `n` と英小文字・数字だけを受け付け、それ以外や不正な `user` は送信せずに `TypeError` を投げます（`key` をページの URL から受け取った場合、`key` の `TypeError` は 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
 
 ### ビルド時に JSON に書き出す（CLI）
 

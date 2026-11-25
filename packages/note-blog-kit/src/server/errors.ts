@@ -44,7 +44,7 @@ export class NoteError extends Error {
   }
 }
 
-/** ユーザーや記事が見つからない（HTTP 404） */
+/** ユーザーや記事が見つからない（HTTP 404）、または `getArticle` の `user` にない著者の記事 */
 export class NoteNotFoundError extends NoteError {
   override name = 'NoteNotFoundError';
   override readonly code = 'NOTE_NOT_FOUND' as const;
