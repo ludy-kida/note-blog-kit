@@ -72,24 +72,37 @@ export default async function BlogPage({ searchParams }: Props) {
 import { generateNoteMetadata, generateNoteStaticParams } from 'note-blog-kit/next';
 import { NoteArticleBody } from 'note-blog-kit/react';
 import { getArticle, isNoteError } from 'note-blog-kit/server';
+import { unstable_cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 
 const USER = 'your_urlname';
 type Props = { params: Promise<{ key: string }> };
 
+// 自分の記事のキー（新しい順に 20 ページ分 = 120件。maxPages で変更できる）を1時間キャッシュする
+const loadParams = unstable_cache(() => generateNoteStaticParams({ user: USER }), ['note-params'], {
+  revalidate: 3600,
+});
+
+// 記事を1時間キャッシュする（generateMetadata とページで同じ記事を2回取得しない）。
+// user にない著者の記事は NoteNotFoundError になるので、他人の記事は表示されない
+const loadArticle = unstable_cache((key: string) => getArticle({ key, user: USER }), ['note-article'], {
+  revalidate: 3600,
+});
+
 async function findArticle(key: string) {
-  const article = await getArticle({ key }).catch((error: unknown) => {
-    // 不正なキー・見つからない記事だけ 404 にする（タイムアウトなどは 404 にしない）
-    if (error instanceof TypeError || (isNoteError(error) && error.code === 'NOTE_NOT_FOUND')) return null;
+  // URL のキーは外部から自由に指定されるので、自分の記事の一覧にないキーは note に問い合わせずに 404 にする
+  if (!(await loadParams()).some((params) => params.key === key)) notFound();
+  const article = await loadArticle(key).catch((error: unknown) => {
+    // 見つからない記事だけ 404 にする（タイムアウトなどは 404 にしない）
+    if (isNoteError(error) && error.code === 'NOTE_NOT_FOUND') return null;
     throw error;
   });
-  // getArticle は誰の記事でも返すので、自分の記事か確かめる
-  if (article === null || article.author.urlname !== USER) notFound();
+  if (article === null) notFound();
   return article;
 }
 
-// ビルド時に新しい記事から 20 ページ分（120件）を生成する（maxPages で変更できる）
-export const generateStaticParams = () => generateNoteStaticParams({ user: USER });
+// ビルド時に自分の記事を生成する
+export const generateStaticParams = loadParams;
 
 export async function generateMetadata({ params }: Props) {
   // canonical は既定で note の元 URL。自分のサイトを正にするなら { canonical: '...' } を渡す
@@ -107,9 +120,9 @@ export default async function ArticlePage({ params }: Props) {
 }
 ```
 
-- **キャッシュ**：`generateMetadata` とページで同じ記事を取得するので、`unstable_cache` などで結果をキャッシュしてください（[`examples/next`](examples/next) の詳細ページを参照）
-- **URL のキーは外部から自由に指定されます**：上の例のままだと、形式が正しいキーなら自分の記事でなくても note に問い合わせます。公開するサイトでは、自分の記事のキーの一覧（`generateNoteStaticParams` の結果をキャッシュしたもの）にあるときだけ `getArticle` を呼んでください（`examples/next` はそうしています）
-- **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`maxPages`（既定 20 ページ）を超える古い記事はビルド時には生成しませんが、`dynamicParams` を既定の true のままにしておけば最初のアクセス時に表示できます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます。`source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになります
+- **著者の指定（`user`）**：`getArticle` は `user` に指定した著者の記事だけを返します（ほかの著者の記事は `NOTE_NOT_FOUND`）。複数の著者で運用するサイトでは `user: ['alice', 'bob']` のように配列で指定します
+- **一覧にあるキーだけ取得する**：上の例は、自分の記事の一覧（`generateNoteStaticParams` の結果）にないキーを note に問い合わせずに 404 にします。そのため `maxPages`（既定 20 ページ）より古い記事も 404 になります。古い記事も表示したい場合は、`maxPages` を増やすか、一覧の確認を外してください。外した場合も `user` で他人の記事は表示されませんが、形式が正しい任意のキーで note に問い合わせが起きます
+- **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます。`source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになります
 - **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 
 ### キャッシュの推奨
@@ -200,12 +213,11 @@ const page = await listArticles({ user: 'your_urlname', source: 'auto' });
 ```ts
 import { getArticle } from 'note-blog-kit/server';
 
-const article = await getArticle({ key: 'n55256baa5425' }); // 記事 URL の /n/ の後ろ
+// key は記事 URL の /n/ の後ろ。user に指定した著者の記事だけを返す（ほかの著者の記事は NOTE_NOT_FOUND）
+const article = await getArticle({ key: 'n55256baa5425', user: 'your_urlname' });
 
-// note の API は記事キーだけで誰の記事でも返します。他人の記事を表示しないよう、著者を確かめてください
-if (article.author.urlname !== 'your_urlname') {
-  // 404 として扱う
-}
+// 複数の著者で運用するサイトでは配列で指定する
+const article2 = await getArticle({ key: 'n55256baa5425', user: ['alice', 'bob'] });
 
 article.bodyHtml; // サニタイズ済みの本文 HTML（サニタイズは外せません）
 article.isPartial; // 有料記事で本文が途中までのとき true（「続きは note で」を出す）
@@ -213,7 +225,7 @@ article.toc; // 目次（id は本文の見出しの id と同じ。有料記事
 article.embeds; // 本文中の埋め込み（本文の <figure data-nbk-embed-key> と key で対応）
 ```
 
-`key` は `n` と英小文字・数字だけを受け付け、それ以外は送信せずに `TypeError` を投げます（ページの URL から受け取った値なら 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
+`user` は必須です。note の API は記事キーだけで誰の記事でも返すため、他人の記事を表示しないよう、指定した著者（大文字小文字も含めて一致）の記事だけを返します。`key` は `n` と英小文字・数字だけを受け付け、それ以外や不正な `user` は送信せずに `TypeError` を投げます（ページの URL から受け取った値なら 404 として扱ってください）。オプション（`fetch`・`signal`・`timeoutMs`・`minIntervalMs`）とエラーは `listArticles` と同じです。結果は必ずキャッシュしてください。
 
 ### ビルド時に JSON に書き出す（CLI）
 
@@ -283,7 +295,8 @@ import { getArticle } from 'note-blog-kit/server';
 import { NoteArticleBody } from 'note-blog-kit/react';
 
 export default async function Page({ params }: { params: Promise<{ key: string }> }) {
-  const article = await getArticle({ key: (await params).key });
+  // 実際には上の「4. 詳細ページを作る」のように、キャッシュと 404 の扱いを加える
+  const article = await getArticle({ key: (await params).key, user: 'your_urlname' });
   return (
     <article>
       <h1>{article.title}</h1>
@@ -314,7 +327,7 @@ export default async function Page({ params }: { params: Promise<{ key: string }
   - 本文の要素：`nbk-body__p`・`__h2`・`__h3`・`__h4`・`__a`・`__ul`・`__ol`・`__blockquote`・`__figure`・`__figcaption`・`__img`・`__pre`・`__code`・`__hr`・`__table`・`__th`・`__td`。`li`・`strong`・`em` などにはクラスを付けません。`components` で置き換えた画像・見出しにも付きません
   - `nbk-toc`（`__title`・`__list`・`__item`・`__item--h2`/`--h3`・`__link`）
   - `nbk-embed`（`data-service` 属性）。埋め込みの中のリンクは `nbk-body__a` ではなく `nbk-embed__link` になります
-- **他人の記事**：`getArticle` は誰の記事でも返します。URL から受け取ったキーで表示する場合は、`article.author.urlname` を確かめてください
+- **他人の記事**：`getArticle` は `user` に指定した著者の記事だけを返すので、URL から受け取ったキーでも他人の記事は表示されません
 
 ### SPA で一覧を表示する（Vite など）
 

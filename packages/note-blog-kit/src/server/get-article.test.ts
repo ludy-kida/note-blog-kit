@@ -14,7 +14,7 @@ function mockFetch(respond: (url: string) => Response = () => new Response(fixtu
   return vi.fn(async (...[input]: FetchArgs) => respond(String(input)));
 }
 
-const base = { key: 'n55256baa5425', minIntervalMs: 0 } as const;
+const base = { key: 'n55256baa5425', user: 'kida_lw', minIntervalMs: 0 } as const;
 
 describe('getArticle', () => {
   afterEach(() => {
@@ -47,6 +47,33 @@ describe('getArticle', () => {
     expect(headers.has('authorization')).toBe(false);
   });
 
+  it('user は1人でも複数でも指定できる', async () => {
+    for (const user of ['kida_lw', ['someone', 'kida_lw']] as const) {
+      const article = await getArticle({ ...base, user, fetch: mockFetch() });
+      expect(article.author.urlname).toBe('kida_lw');
+    }
+  });
+
+  it('指定にない著者の記事は NoteNotFoundError（他人の記事を返さない）', async () => {
+    for (const user of ['someone_else', ['a', 'b'], 'KIDA_LW'] as const) {
+      const error = await getArticle({ ...base, user, fetch: mockFetch() }).catch((e: unknown) => e);
+      expect(error, String(user)).toBeInstanceOf(NoteNotFoundError);
+      expect((error as NoteNotFoundError).code).toBe('NOTE_NOT_FOUND');
+      expect((error as NoteNotFoundError).url).toBe('https://note.com/api/v3/notes/n55256baa5425');
+    }
+  });
+
+  it('不正な user は TypeError で、fetch を呼ばない', async () => {
+    const fetch = mockFetch();
+    for (const user of [[], '', '../x', 'a b', 42, null, ['kida_lw', 'a b'], ['kida_lw', 1], undefined]) {
+      await expect(
+        getArticle({ ...base, user: user as unknown as string, fetch }),
+        JSON.stringify(user),
+      ).rejects.toBeInstanceOf(TypeError);
+    }
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it('404 は NoteNotFoundError', async () => {
     const fetch = mockFetch(() => new Response('{"data":"not found"}', { status: 404 }));
     await expect(getArticle({ ...base, fetch })).rejects.toBeInstanceOf(NoteNotFoundError);
@@ -76,7 +103,9 @@ describe('getArticle', () => {
       { key: 'n55256baa5425', timeoutMs: 0 },
       { key: 'n55256baa5425', minIntervalMs: -1 },
     ]) {
-      await expect(getArticle({ minIntervalMs: 0, ...options, fetch })).rejects.toBeInstanceOf(TypeError);
+      await expect(getArticle({ minIntervalMs: 0, user: 'kida_lw', ...options, fetch })).rejects.toBeInstanceOf(
+        TypeError,
+      );
     }
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -91,7 +120,7 @@ describe('getArticle', () => {
       return new Response(url.includes('/v3/') ? fixture('notes/n55256baa5425') : fixture('contents/page-1'));
     });
     const first = listArticles({ user: 'kida_lw', fetch });
-    const second = getArticle({ key: 'n55256baa5425', fetch });
+    const second = getArticle({ key: 'n55256baa5425', user: 'kida_lw', fetch });
     await vi.advanceTimersByTimeAsync(1_000);
     await Promise.all([first, second]);
     expect(sentAt).toEqual([10_000, 11_000]);

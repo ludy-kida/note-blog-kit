@@ -34,11 +34,16 @@ describe('note-blog-kit/server の公開型', () => {
     }>();
   });
 
-  it('getArticle は key だけが必須で、NoteArticle を返す', () => {
+  it('getArticle は key と user（1人か複数）が必須で、NoteArticle を返す', () => {
     expectTypeOf(getArticle).parameter(0).toEqualTypeOf<GetArticleOptions>();
     expectTypeOf(getArticle).returns.toEqualTypeOf<Promise<NoteArticle>>();
-    expectTypeOf<{ key: string }>().toExtend<GetArticleOptions>();
+    expectTypeOf<{ key: string; user: string }>().toExtend<GetArticleOptions>();
+    expectTypeOf<{ key: string; user: readonly string[] }>().toExtend<GetArticleOptions>();
+    expectTypeOf<GetArticleOptions['user']>().toEqualTypeOf<string | readonly string[]>();
+    expectTypeOf<{ key: string }>().not.toExtend<GetArticleOptions>();
     expectTypeOf<{ user: string }>().not.toExtend<GetArticleOptions>();
+    // @ts-expect-error user は必須（他人の記事を表示しないため）
+    void (() => getArticle({ key: 'n1' }));
     expectTypeOf<{ fetch?: typeof fetch }>().not.toExtend<GetArticleOptions>();
     expectTypeOf<GetArticleOptions['key']>().toEqualTypeOf<string>();
     expectTypeOf<GetArticleOptions['fetch']>().toEqualTypeOf<typeof globalThis.fetch | undefined>();

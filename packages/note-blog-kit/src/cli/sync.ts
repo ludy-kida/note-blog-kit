@@ -192,12 +192,8 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
       continue;
     }
     try {
-      const article = await getArticle({ key, ...request });
-      if (article.author.urlname !== user) {
-        stderr(`${key}: 著者が ${user} ではないため書き出しません（${article.author.urlname}）`);
-        failures += 1;
-        continue;
-      }
+      // 著者が --user でない記事は NoteNotFoundError になり、書き出さない（メッセージに著者名が入る）
+      const article = await getArticle({ key, user, ...request });
       await writeJson(join(dir, `${key}.json`), article);
       written.add(key);
     } catch (error) {

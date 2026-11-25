@@ -84,8 +84,8 @@ function toImage(article: NoteArticle | NoteArticleSummary): NoteMetadataImage |
  * @example
  * ```ts
  * export async function generateMetadata({ params }) {
- *   // 実際には、自分の記事か（article.author.urlname）を確かめてから使う
- *   const article = await getArticle({ key: (await params).key });
+ *   // user にない著者の記事は NoteNotFoundError になる（実際にはキャッシュも使う）
+ *   const article = await getArticle({ key: (await params).key, user: 'your_urlname' });
  *   return generateNoteMetadata(article, { formatTitle: (title) => `${title} | ブログ` });
  * }
  * ```

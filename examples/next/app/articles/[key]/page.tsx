@@ -15,12 +15,9 @@ const loadParams = unstable_cache(
 );
 
 // 記事を1時間キャッシュする（generateMetadata とページで同じ記事を2回取得しないためにも使う）。
-// getArticle は誰の記事でも返すので、自分の記事でなければ null にする（他人の記事をキャッシュにも入れない）
+// user にない著者の記事は NoteNotFoundError になるので、他人の記事はキャッシュにも入らない
 const loadArticle = unstable_cache(
-  async (user: string, key: string) => {
-    const article = await getArticle({ key, fetch: noteFetch, ...noteInterval });
-    return article.author.urlname === user ? article : null;
-  },
+  (user: string, key: string) => getArticle({ key, user, fetch: noteFetch, ...noteInterval }),
   ['note-article', NOTE_MODE],
   { revalidate: 3600 },
 );
