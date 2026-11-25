@@ -3,7 +3,7 @@
  * 取得は /server の関数を使う。取得の間隔はライブラリの既定（1秒）のままで、短くする引数は作らない。
  */
 import { randomBytes } from 'node:crypto';
-import { mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { NoteArticleSummary } from '../core/types.js';
@@ -13,7 +13,7 @@ import { listAllArticles } from '../server/iterate-articles.js';
 import { NOTE_KEY_RE, NOTE_USER_RE } from '../server/patterns.js';
 import type { CliDeps } from './types.js';
 
-export const SYNC_USAGE = `使い方: note-blog-kit sync --user <urlname> --out <dir> [--max-pages N] [--no-body]
+export const SYNC_USAGE = `使い方: note-blog-kit sync --user <urlname> --out <dir> [--max-pages N] [--no-body] [--allow-empty]
 
 note の記事の一覧と本文を JSON に書き出します（ビルド時に実行してください）。
 
@@ -21,12 +21,14 @@ note の記事の一覧と本文を JSON に書き出します（ビルド時に
   --out        出力先ディレクトリ（なければ作ります）
   --max-pages  一覧の最大ページ数（1ページ6件）。既定 20
   --no-body    本文を取得しない（一覧だけを書き出す）
+  --allow-empty  前回は記事があったのに今回の一覧が空でも書き出す（既定では何も変えずに失敗する）
 
 出力:
   <dir>/articles.json        { user, syncedAt, truncated, articles }（記事の一覧）
   <dir>/articles/<key>.json  記事1件（サニタイズ済みの本文を含む）
 
-note への負荷を抑えるため、リクエストは1秒以上の間隔で1件ずつ送ります。`;
+note への負荷を抑えるため、リクエストは1秒以上の間隔で1件ずつ送ります。
+本文を一時的に取得できなかった記事（通信の失敗・5xx など）は、前回の本文を残します（終了コードは 1）。`;
 
 const DEFAULT_MAX_PAGES = 20;
 const MAX_PAGES_LIMIT = 1000;
@@ -38,6 +40,7 @@ interface SyncOptions {
   out: string;
   maxPages: number;
   body: boolean;
+  allowEmpty: boolean;
 }
 
 function parseSyncArgs(argv: string[]): SyncOptions | 'help' {
@@ -48,6 +51,7 @@ function parseSyncArgs(argv: string[]): SyncOptions | 'help' {
         out: { type: 'string' };
         'max-pages': { type: 'string' };
         'no-body': { type: 'boolean' };
+        'allow-empty': { type: 'boolean' };
         help: { type: 'boolean'; short: 'h' };
       };
     }>
@@ -62,6 +66,7 @@ function parseSyncArgs(argv: string[]): SyncOptions | 'help' {
         out: { type: 'string' },
         'max-pages': { type: 'string' },
         'no-body': { type: 'boolean' },
+        'allow-empty': { type: 'boolean' },
         help: { type: 'boolean', short: 'h' },
       },
     });
@@ -83,7 +88,7 @@ function parseSyncArgs(argv: string[]): SyncOptions | 'help' {
   if (!Number.isInteger(maxPages) || maxPages < 1 || maxPages > MAX_PAGES_LIMIT) {
     throw new UsageError(`--max-pages は 1〜${MAX_PAGES_LIMIT} の整数で指定してください`);
   }
-  return { user, out, maxPages, body: values['no-body'] !== true };
+  return { user, out, maxPages, body: values['no-body'] !== true, allowEmpty: values['allow-empty'] === true };
 }
 
 /** 一時ファイルに書いてから rename する（途中で止まっても、壊れた JSON を残さない） */
@@ -115,6 +120,30 @@ async function removeStaleArticles(dir: string, keep: Set<string>): Promise<stri
   return removed;
 }
 
+/** 前回の articles.json に記事が1件以上あるか（ない・読めない・壊れているなら false） */
+async function hadArticles(path: string): Promise<boolean> {
+  try {
+    const previous = JSON.parse(await readFile(path, 'utf8')) as { articles?: unknown };
+    return Array.isArray(previous.articles) && previous.articles.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+/** パスがシンボリックリンクか（存在しなければ false） */
+async function isSymlink(path: string): Promise<boolean> {
+  try {
+    return (await lstat(path)).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
+
+/** 記事がなくなったことを表すエラーか（それ以外は一時的な失敗として、前回の本文を残す） */
+function isGone(error: unknown): boolean {
+  return isNoteError(error) && error.code === 'NOTE_NOT_FOUND';
+}
+
 function describeError(error: unknown): string {
   if (isNoteError(error)) return `${error.code}: ${error.message}`;
   return error instanceof Error ? error.message : String(error);
@@ -137,7 +166,7 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
     return 0;
   }
 
-  const { user, out, maxPages, body } = options;
+  const { user, out, maxPages, body, allowEmpty } = options;
   // テストからだけ差し替える（CLI の引数では変えられない）
   const request = {
     ...(deps.fetch === undefined ? {} : { fetch: deps.fetch }),
@@ -161,6 +190,20 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
   }
   articles = articles.filter((article) => article.author.urlname === user);
 
+  // note の一時的な障害で空の一覧が返っても、前回の出力を消さない
+  if (articles.length === 0 && !allowEmpty && (await hadArticles(join(out, 'articles.json')))) {
+    stderr(
+      '一覧が空でした。前回は記事があったため、何も書き換えていません（空にしてよい場合は --allow-empty を付けてください）',
+    );
+    return 1;
+  }
+  // リンク先のファイルを消さないよう、本文の出力先がシンボリックリンクなら何も書き出さずに止める
+  const dir = join(out, 'articles');
+  if (body && (await isSymlink(dir))) {
+    stderr(`${dir} がシンボリックリンクのため、何も書き出していません`);
+    return 1;
+  }
+
   try {
     await mkdir(out, { recursive: true });
     await writeJson(join(out, 'articles.json'), { user, syncedAt: new Date().toISOString(), truncated, articles });
@@ -173,7 +216,6 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
   );
   if (!body) return others.length > 0 ? 1 : 0;
 
-  const dir = join(out, 'articles');
   try {
     await mkdir(dir, { recursive: true });
   } catch (error) {
@@ -183,6 +225,8 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
   stdout(`本文を取得しています（${articles.length} 件、約 ${articles.length} 秒）...`);
   let failures = others.length;
   const written = new Set<string>();
+  // 一時的に取得できなかった記事（前回の本文を残す）
+  const kept = new Set<string>();
   for (const summary of articles) {
     const { key } = summary;
     // 一覧の正規化で検証済みだが、ファイル名に使うので書き込む直前にも確かめる
@@ -197,14 +241,19 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
       await writeJson(join(dir, `${key}.json`), article);
       written.add(key);
     } catch (error) {
-      stderr(`${key}: 本文を書き出せませんでした: ${describeError(error)}`);
+      const gone = isGone(error);
+      if (!gone) kept.add(key);
+      stderr(
+        `${key}: 本文を書き出せませんでした${gone ? '' : '（前回の本文があれば残します）'}: ${describeError(error)}`,
+      );
       failures += 1;
     }
   }
-  // 書き出せなかった記事の古い本文も消す（有料化などで前回の全文が残らないように）
+  // 一覧にない記事と、なくなった記事（404・著者の違い）の古い本文を消す（削除・非公開にした記事を公開し続けないように）。
+  // 有料化した記事は isPartial の本文で上書きされるので、前回の全文は残らない
   let removed: string[];
   try {
-    removed = await removeStaleArticles(dir, written);
+    removed = await removeStaleArticles(dir, new Set([...written, ...kept]));
   } catch (error) {
     stderr(`${dir} の古いファイルを消せませんでした: ${describeError(error)}`);
     return 1;
