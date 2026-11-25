@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -174,7 +174,7 @@ describe('note-blog-kit sync', () => {
     expect(output.err.join('\n')).toContain('n55256baa5425');
   });
 
-  it('前回書き出した記事のうち、今回の一覧にない・書き出せなかった記事のファイルは消す', async () => {
+  it('前回書き出した記事のうち、今回の一覧にない記事のファイルは消し、一時的に取得できなかった記事は残す', async () => {
     await mkdir(join(dir, 'articles'), { recursive: true });
     await writeFile(join(dir, 'articles', 'n000000000000.json'), '{"old":true}');
     await writeFile(join(dir, 'articles', 'n55256baa5425.json'), '{"old":true}');
@@ -186,10 +186,126 @@ describe('note-blog-kit sync', () => {
     expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
     const files = await readdir(join(dir, 'articles'));
     expect(files).not.toContain('n000000000000.json');
-    expect(files).not.toContain('n55256baa5425.json');
+    // 503 は一時的な失敗なので、前回の本文を残す
+    expect(await readFile(join(dir, 'articles', 'n55256baa5425.json'), 'utf8')).toBe('{"old":true}');
     expect(files).toContain('README.md');
-    expect(files.filter((name) => name.endsWith('.json'))).toHaveLength(17);
+    expect(files.filter((name) => name.endsWith('.json'))).toHaveLength(18);
     expect(output.out.join('\n')).toContain('n000000000000.json');
+  });
+
+  describe('失敗に強くする（#46）', () => {
+    /** 一覧を空にして返すモック */
+    const emptyList = () =>
+      mockFetch((url) => {
+        if (!url.pathname.endsWith('/contents')) return undefined;
+        const json = JSON.parse(fixture('contents/page-1.json')) as {
+          data: { isLastPage: boolean; contents: unknown[] };
+        };
+        json.data.contents = [];
+        json.data.isLastPage = true;
+        return new Response(JSON.stringify(json));
+      });
+
+    const previous = { user: 'kida_lw', syncedAt: '2026-11-01T00:00:00.000Z', truncated: false, articles: [{}] };
+
+    async function writePrevious(): Promise<void> {
+      await mkdir(join(dir, 'articles'), { recursive: true });
+      await writeFile(join(dir, 'articles.json'), JSON.stringify(previous));
+      await writeFile(join(dir, 'articles', 'n55256baa5425.json'), '{"old":true}');
+    }
+
+    it('前回は記事があり今回の一覧が空なら、何も書き換えずに終了コード 1', async () => {
+      await writePrevious();
+      for (const extra of [[], ['--no-body']]) {
+        const { deps, output } = makeDeps(emptyList());
+        expect(await run(['sync', '--user', 'kida_lw', '--out', dir, ...extra], deps)).toBe(1);
+        expect(await readJson('articles.json')).toEqual(previous);
+        expect(await readdir(join(dir, 'articles'))).toEqual(['n55256baa5425.json']);
+        expect(output.err.join('\n')).toContain('--allow-empty');
+      }
+    });
+
+    it('--allow-empty なら空の一覧を書き出し、前回の本文を消して終了コード 0', async () => {
+      await writePrevious();
+      const { deps } = makeDeps(emptyList());
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir, '--allow-empty'], deps)).toBe(0);
+      expect((await readJson<{ articles: unknown[] }>('articles.json')).articles).toEqual([]);
+      expect(await readdir(join(dir, 'articles'))).toEqual([]);
+    });
+
+    it('前回の一覧がない・壊れている・空なら、空の一覧でも終了コード 0', async () => {
+      for (const content of [undefined, '{broken', JSON.stringify({ ...previous, articles: [] })]) {
+        await rm(join(dir, 'articles.json'), { force: true });
+        if (content !== undefined) await writeFile(join(dir, 'articles.json'), content);
+        const { deps } = makeDeps(emptyList());
+        expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps), String(content)).toBe(0);
+      }
+    });
+
+    it('通信の失敗・429 では前回の本文を残し、404・403・形の違いでは消す（終了コードは 1）', async () => {
+      await mkdir(join(dir, 'articles'), { recursive: true });
+      const page1 = JSON.parse(fixture('contents/page-1.json')) as { data: { contents: { key: string }[] } };
+      const [kNetwork, kRate, kSchema, kGone, kForbidden] = page1.data.contents.map((content) => content.key);
+      for (const key of [kNetwork, kRate, kSchema, kGone, kForbidden]) {
+        await writeFile(join(dir, 'articles', `${key}.json`), '{"old":true}');
+      }
+      const fetch = mockFetch((url) => {
+        if (url.pathname === `/api/v3/notes/${kNetwork}`) throw new TypeError('fetch failed');
+        if (url.pathname === `/api/v3/notes/${kRate}`) return new Response('', { status: 429 });
+        // 有料化して本文の形が変わった場合など。前回の全文を残さない
+        if (url.pathname === `/api/v3/notes/${kSchema}`) return new Response('{"data":{}}');
+        if (url.pathname === `/api/v3/notes/${kGone}`) return new Response('{}', { status: 404 });
+        if (url.pathname === `/api/v3/notes/${kForbidden}`) return new Response('', { status: 403 });
+        return undefined;
+      });
+      const { deps } = makeDeps(fetch);
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      const files = await readdir(join(dir, 'articles'));
+      expect(await readFile(join(dir, 'articles', `${kNetwork}.json`), 'utf8')).toBe('{"old":true}');
+      expect(await readFile(join(dir, 'articles', `${kRate}.json`), 'utf8')).toBe('{"old":true}');
+      for (const key of [kSchema, kGone, kForbidden]) expect(files, key).not.toContain(`${key}.json`);
+    });
+
+    it('前回の articles.json がなくても articles/ に本文があれば、空の一覧で消さない', async () => {
+      await mkdir(join(dir, 'articles'), { recursive: true });
+      await writeFile(join(dir, 'articles', 'n55256baa5425.json'), '{"old":true}');
+      const { deps } = makeDeps(emptyList());
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      expect(await readdir(join(dir, 'articles'))).toEqual(['n55256baa5425.json']);
+      expect(await readdir(dir)).not.toContain('articles.json');
+    });
+
+    it('取得の途中で articles がシンボリックリンクに差し替えられたら、書き出しと削除を止める', async () => {
+      const target = join(dir, 'elsewhere');
+      await mkdir(target);
+      await writeFile(join(target, 'n000000000000.json'), '{"keep":true}');
+      let swapped = false;
+      const fetch = mockFetch((url) => {
+        if (!swapped && url.pathname.startsWith('/api/v3/notes/')) {
+          swapped = true;
+          // 本文の取得中に差し替える（次の書き込みより前）
+          rmSync(join(dir, 'articles'), { recursive: true, force: true });
+          symlinkSync(target, join(dir, 'articles'));
+        }
+        return undefined;
+      });
+      const { deps, output } = makeDeps(fetch);
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      expect(await readdir(target)).toEqual(['n000000000000.json']);
+      expect(output.err.join('\n')).toContain('差し替え');
+    });
+
+    it('articles がシンボリックリンクなら終了コード 1 で、リンク先も articles.json も変えない', async () => {
+      const target = join(dir, 'elsewhere');
+      await mkdir(target);
+      await writeFile(join(target, 'n000000000000.json'), '{"keep":true}');
+      await symlink(target, join(dir, 'articles'));
+      const { deps, output } = makeDeps(mockFetch());
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      expect(await readdir(target)).toEqual(['n000000000000.json']);
+      expect(await readdir(dir)).not.toContain('articles.json');
+      expect(output.err.join('\n')).toContain('シンボリックリンク');
+    });
   });
 
   it('著者が --user と違う記事は一覧からも除く', async () => {
