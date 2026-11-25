@@ -58,6 +58,14 @@ export interface NoteArticle extends NoteArticleSummary {
 }
 
 // @public
+export interface NoteArticlesHandlerErrorBody {
+    error: NoteArticlesHandlerErrorCode;
+}
+
+// @public
+export type NoteArticlesHandlerErrorCode = 'INVALID_REQUEST' | 'INTERNAL_ERROR' | NoteErrorCode;
+
+// @public
 export interface NoteArticlesHandlerOptions extends Omit<ListArticlesOptions, 'page'> {
     cacheSeconds?: number;
     maxPageNumber?: number;
@@ -99,6 +107,9 @@ export interface NoteEmbed {
     // (undocumented)
     url: string;
 }
+
+// @public
+export type NoteErrorCode = 'NOTE_NOT_FOUND' | 'NOTE_HTTP_ERROR' | 'NOTE_RATE_LIMITED' | 'NOTE_NETWORK_ERROR' | 'NOTE_TIMEOUT' | 'NOTE_SCHEMA_ERROR';
 
 // @public
 export interface NoteEyecatch {

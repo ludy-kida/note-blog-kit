@@ -7,7 +7,8 @@ import type { NoteArticlePage, NoteArticleSummary } from '../core/types.js';
 export interface UseNoteArticlesOptions {
   /**
    * 取得する URL。中継エンドポイント（`createNoteArticlesHandler` の Route Handler）か、
-   * CLI `sync` が書き出した `articles.json`。同じオリジンの相対 URL か http(s) の URL。
+   * CLI `sync` が書き出した `articles.json`（形式のバージョン 1 か、`version` のない v0.3 までのもの。
+   * 知らない `version` は `error` になる）。同じオリジンの相対 URL か http(s) の URL。
    * note.com の URL は受け付けない（ブラウザから note へ直接アクセスしない）
    */
   url: string;
@@ -51,24 +52,20 @@ function checkUrl(url: string): Error | null {
 }
 
 function toPage(json: unknown): NoteArticlePage {
-  if (typeof json !== 'object' || json === null || !Array.isArray((json as { articles?: unknown }).articles)) {
-    throw new Error('Unexpected response: `articles` is not an array');
+  if (typeof json !== 'object' || json === null) throw new Error('Unexpected response: not an object');
+  const value = json as Partial<NoteArticlePage> & { articles?: unknown; version?: unknown };
+  const { page, isLastPage } = value;
+  const isPage = typeof page === 'number' && typeof isLastPage === 'boolean';
+  // CLI sync の articles.json（ページ情報がない）。形式のバージョン 1 か、version のない v0.3 までのものだけ読む
+  // （項目が足されただけなら version は 1 のまま。知らない version は形が変わっているので、ほかの項目より先に確かめる）
+  if (!isPage && value.version !== undefined && value.version !== 1) {
+    throw new Error(`Unsupported articles.json version: ${JSON.stringify(value.version)}`);
   }
-  const value = json as Partial<NoteArticlePage> & { articles: unknown[] };
+  if (!Array.isArray(value.articles)) throw new Error('Unexpected response: `articles` is not an array');
   // 描画で落ちないよう、主な項目の型が違う記事は除く（URL は各コンポーネントが検証する）
   const articles = value.articles.filter(isArticleLike);
-  if (typeof value.page === 'number' && typeof value.isLastPage === 'boolean') {
-    return {
-      articles,
-      page: value.page,
-      totalCount: typeof value.totalCount === 'number' ? value.totalCount : null,
-      isLastPage: value.isLastPage,
-    };
-  }
-  // CLI sync の articles.json（ページ情報がない）。形式のバージョン 1 か、version のない v0.3 までのものだけ読む
-  const { version } = json as { version?: unknown };
-  if (version !== undefined && version !== 1) {
-    throw new Error(`Unsupported articles.json version: ${JSON.stringify(version)}`);
+  if (typeof page === 'number' && typeof isLastPage === 'boolean') {
+    return { articles, page, totalCount: typeof value.totalCount === 'number' ? value.totalCount : null, isLastPage };
   }
   return { articles, page: 1, totalCount: null, isLastPage: true };
 }

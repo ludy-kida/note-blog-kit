@@ -82,7 +82,8 @@ export interface NoteArticlePage {
 }
 
 /**
- * note-blog-kit/server が投げるエラーの種類を表す安定した識別子（`note-blog-kit/server` からも同じ型を export する）。
+ * note からの取得の失敗を表す安定した識別子。`note-blog-kit/server` のエラーの `code` と、
+ * 中継エンドポイントの応答の `error` に使う（`note-blog-kit/server` からも同じ型を export する）。
  *
  * マイナーバージョンでコードが増えることがある。
  * `switch (error.code)` で分けるときは、知らないコードのために `default` を書くこと。
@@ -99,7 +100,9 @@ export type NoteErrorCode =
  * CLI `note-blog-kit sync` が書き出す `<out>/articles.json` の形（形式のバージョン 1）。
  * 記事1件ごとの `<out>/articles/<key>.json` は {@link NoteArticle} そのもの。
  *
- * 形を変えるときは `version` を上げる。v0.3 までの `articles.json` には `version` がない。
+ * `version` を上げるのは、既存の項目の意味・型を変える、または項目を消すときだけ。
+ * 項目を足すだけなら `version` は 1 のままにし、読み手は知らない項目を無視する。
+ * `useNoteArticles` は知らない `version` をエラーにする。v0.3 までの `articles.json` には `version` がない。
  */
 export interface NoteSyncedArticleList {
   /** 形式のバージョン */
@@ -116,7 +119,9 @@ export interface NoteSyncedArticleList {
 
 /**
  * 中継エンドポイント（`note-blog-kit/next` の `createNoteArticlesHandler`）が返すエラーコード。
- * `INVALID_REQUEST`（page・クエリが不正）、`INTERNAL_ERROR`（想定外の失敗）と、note からの取得の {@link NoteErrorCode}
+ * `INVALID_REQUEST`（page・クエリが不正）、`INTERNAL_ERROR`（想定外の失敗）と、note からの取得の {@link NoteErrorCode}。
+ *
+ * {@link NoteErrorCode} と同じく、マイナーバージョンでコードが増えることがある。`switch` には `default` を書くこと。
  */
 export type NoteArticlesHandlerErrorCode = 'INVALID_REQUEST' | 'INTERNAL_ERROR' | NoteErrorCode;
 
