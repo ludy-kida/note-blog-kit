@@ -20,10 +20,10 @@ export {
   isNoteError,
   NoteError,
   type NoteErrorCode,
-  type NoteErrorOptions,
   NoteHttpError,
   NoteNetworkError,
   NoteNotFoundError,
+  NoteRateLimitError,
   NoteSchemaError,
   type NoteSchemaIssue,
   NoteTimeoutError,
@@ -37,4 +37,5 @@ export {
   listAllArticles,
 } from './iterate-articles.js';
 export { type ListArticlesOptions, listArticles } from './list-articles.js';
+export { isNoteArticleKey } from './patterns.js';
 export type { NoteRequestOptions } from './request-options.js';

@@ -5,6 +5,7 @@ import {
   NoteHttpError,
   NoteNetworkError,
   NoteNotFoundError,
+  NoteRateLimitError,
   NoteSchemaError,
   NoteTimeoutError,
 } from './errors.js';
@@ -158,7 +159,9 @@ describe('listArticles', () => {
       Object.defineProperty(response, 'redirected', { value: true });
       return response;
     });
-    await expect(listArticles({ ...base, fetch })).rejects.toBeInstanceOf(NoteNetworkError);
+    const redirected = (await listArticles({ ...base, fetch }).catch((e: unknown) => e)) as NoteNetworkError;
+    expect(redirected).toBeInstanceOf(NoteNetworkError);
+    expect(redirected.url).toContain('/api/v2/creators/kida_lw/contents');
   });
 
   it('timeoutMs・minIntervalMs が範囲外なら TypeError', async () => {
@@ -286,6 +289,77 @@ describe('listArticles の source', () => {
       NoteHttpError,
     );
     expect(urls(secondPage)).toEqual(['/api/v2/creators/kida_lw/contents']);
+  });
+
+  it('429 は NoteRateLimitError で、Retry-After の秒数を持つ', async () => {
+    for (const [header, expected] of [
+      ['30', 30],
+      [null, null],
+      ['soon', null],
+      ['-5', null],
+      ['0', 0],
+      ['999999999', 86_400],
+    ] as const) {
+      const init = header === null ? { status: 429 } : { status: 429, headers: { 'retry-after': header } };
+      const fetch = routedFetch(() => new Response('', init));
+      const error = await listArticles({ ...base, fetch }).catch((e: unknown) => e);
+      expect(error, String(header)).toBeInstanceOf(NoteRateLimitError);
+      expect(isNoteError(error) && error.code).toBe('NOTE_RATE_LIMITED');
+      expect((error as NoteRateLimitError).retryAfterSeconds).toBe(expected);
+      expect((error as NoteRateLimitError).url).toContain('/api/v2/creators/kida_lw/contents');
+    }
+    // HTTP の日付の形でも秒数にする
+    const date = new Date(Date.now() + 60_000).toUTCString();
+    const fetch = routedFetch(() => new Response('', { status: 429, headers: { 'retry-after': date } }));
+    const error = (await listArticles({ ...base, fetch }).catch((e: unknown) => e)) as NoteRateLimitError;
+    expect(error.retryAfterSeconds).toBeGreaterThan(50);
+    expect(error.retryAfterSeconds).toBeLessThanOrEqual(60);
+    // 過去の日付は 0、遠い未来の日付は 1日（setTimeout の上限を超えないように）
+    for (const [when, expected] of [
+      [new Date(Date.now() - 60_000).toUTCString(), 0],
+      ['Sat, 13 Sep 275760 00:00:00 GMT', 86_400],
+    ] as const) {
+      const f = routedFetch(() => new Response('', { status: 429, headers: { 'retry-after': when } }));
+      const e = (await listArticles({ ...base, fetch: f }).catch((x: unknown) => x)) as NoteRateLimitError;
+      expect(e.retryAfterSeconds, when).toBe(expected);
+    }
+  });
+
+  it("'auto' でも 429 では RSS に切り替えない", async () => {
+    const fetch = routedFetch(() => new Response('', { status: 429 }));
+    await expect(listArticles({ ...base, source: 'auto', fetch })).rejects.toBeInstanceOf(NoteRateLimitError);
+    expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents']);
+  });
+
+  it('通信の失敗・タイムアウト・形の違いのエラーにも url が入る（API と RSS）', async () => {
+    const failing = vi.fn(async () => {
+      throw new TypeError('fetch failed');
+    });
+    const network = (await listArticles({ ...base, fetch: failing }).catch((e: unknown) => e)) as NoteNetworkError;
+    expect(network.url).toContain('/api/v2/creators/kida_lw/contents');
+
+    const hanging = vi.fn(
+      (...[, init]: FetchArgs) =>
+        new Promise<Response>((_, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason));
+        }),
+    );
+    const timeout = (await listArticles({ ...base, timeoutMs: 20, fetch: hanging }).catch(
+      (e: unknown) => e,
+    )) as NoteTimeoutError;
+    expect(timeout.url).toContain('/api/v2/creators/kida_lw/contents');
+
+    const shape = routedFetch(() => new Response('{"data":{"contents":"x"}}'));
+    const apiSchema = (await listArticles({ ...base, fetch: shape }).catch((e: unknown) => e)) as NoteSchemaError;
+    expect(apiSchema).toBeInstanceOf(NoteSchemaError);
+    expect(apiSchema.url).toContain('/api/v2/creators/kida_lw/contents');
+
+    const badRss = mockFetch(() => new Response('<rss><channel><item><title>x</title></item></channel></rss>'));
+    const rssSchema = (await listArticles({ ...base, source: 'rss', fetch: badRss }).catch(
+      (e: unknown) => e,
+    )) as NoteSchemaError;
+    expect(rssSchema).toBeInstanceOf(NoteSchemaError);
+    expect(rssSchema.url).toContain('/kida_lw/rss');
   });
 
   it('大きすぎる応答は NoteSchemaError', async () => {

@@ -5,8 +5,10 @@ import {
   NoteHttpError,
   NoteNetworkError,
   NoteNotFoundError,
+  NoteRateLimitError,
   NoteSchemaError,
   NoteTimeoutError,
+  withUrl,
 } from './errors.js';
 
 describe('errors', () => {
@@ -14,9 +16,14 @@ describe('errors', () => {
     const cases = [
       [new NoteNotFoundError('not found', { url: 'https://note.com/x' }), 'NoteNotFoundError', 'NOTE_NOT_FOUND'],
       [new NoteHttpError('bad', { status: 500, url: 'https://note.com/x' }), 'NoteHttpError', 'NOTE_HTTP_ERROR'],
-      [new NoteNetworkError('net'), 'NoteNetworkError', 'NOTE_NETWORK_ERROR'],
-      [new NoteTimeoutError('timeout'), 'NoteTimeoutError', 'NOTE_TIMEOUT'],
+      [new NoteNetworkError('net', { url: 'https://note.com/x' }), 'NoteNetworkError', 'NOTE_NETWORK_ERROR'],
+      [new NoteTimeoutError('timeout', { url: 'https://note.com/x' }), 'NoteTimeoutError', 'NOTE_TIMEOUT'],
       [new NoteSchemaError('schema', { issues: [] }), 'NoteSchemaError', 'NOTE_SCHEMA_ERROR'],
+      [
+        new NoteRateLimitError('rate', { url: 'https://note.com/x', retryAfterSeconds: 30 }),
+        'NoteRateLimitError',
+        'NOTE_RATE_LIMITED',
+      ],
     ] as const;
     for (const [error, name, code] of cases) {
       expect(error).toBeInstanceOf(NoteError);
@@ -39,7 +46,17 @@ describe('errors', () => {
 
   it('cause を保持する', () => {
     const cause = new TypeError('fetch failed');
-    expect(new NoteNetworkError('net', { cause }).cause).toBe(cause);
+    expect(new NoteNetworkError('net', { url: 'https://note.com/x', cause }).cause).toBe(cause);
+  });
+
+  it('どのエラーも url を持つ（NoteSchemaError は取得関数から投げられるときに入る）', () => {
+    expect(new NoteNetworkError('net', { url: 'https://note.com/x' }).url).toBe('https://note.com/x');
+    expect(new NoteTimeoutError('t', { url: 'https://note.com/x' }).url).toBe('https://note.com/x');
+    expect(new NoteSchemaError('s', { issues: [], url: 'https://note.com/x' }).url).toBe('https://note.com/x');
+    expect(new NoteSchemaError('s', { issues: [] }).url).toBeNull();
+    const rate = new NoteRateLimitError('r', { url: 'https://note.com/x', retryAfterSeconds: null });
+    expect(rate.url).toBe('https://note.com/x');
+    expect(rate.retryAfterSeconds).toBeNull();
   });
 
   it('NoteSchemaError は issues を持ち、メッセージにパスを含む', () => {
@@ -59,5 +76,16 @@ describe('errors', () => {
     expect(isNoteError({ name: 'NoteTimeoutError', message: 'x', code: 'NOTE_TIMEOUT' })).toBe(true);
     expect(isNoteError('NOTE_TIMEOUT')).toBe(false);
     expect(isNoteError(null)).toBe(false);
+  });
+
+  it('withUrl は url のない NoteSchemaError にだけ url を付け、既にある url は上書きしない', () => {
+    const missing = new NoteSchemaError('s', { issues: [] });
+    expect(withUrl(missing, 'https://note.com/a')).toBe(missing);
+    expect(missing.url).toBe('https://note.com/a');
+    const present = new NoteSchemaError('s', { issues: [], url: 'https://note.com/b' });
+    withUrl(present, 'https://note.com/c');
+    expect(present.url).toBe('https://note.com/b');
+    const other = new Error('x');
+    expect(withUrl(other, 'https://note.com/d')).toBe(other);
   });
 });

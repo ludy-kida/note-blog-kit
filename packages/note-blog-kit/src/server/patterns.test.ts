@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NOTE_KEY_RE, NOTE_USER_RE } from './patterns.js';
+import { isNoteArticleKey, NOTE_KEY_RE, NOTE_USER_RE } from './patterns.js';
 
 describe('patterns', () => {
   it('記事キー：n と英小文字・数字（1〜32文字）だけ', () => {
@@ -15,6 +15,22 @@ describe('patterns', () => {
       'n1/2',
     ]) {
       expect(NOTE_KEY_RE.test(ng), JSON.stringify(ng)).toBe(false);
+    }
+  });
+
+  it('isNoteArticleKey は記事キーの形か判定する（URL から受け取ったキーを 404 にするため）', () => {
+    for (const ok of ['n55256baa5425', 'n1', `n${'a'.repeat(32)}`]) expect(isNoteArticleKey(ok), ok).toBe(true);
+    for (const ng of [
+      '',
+      'N55256BAA5425',
+      '../x',
+      `n${'a'.repeat(33)}`,
+      42,
+      null,
+      undefined,
+      { toString: () => 'n1' },
+    ]) {
+      expect(isNoteArticleKey(ng), String(ng)).toBe(false);
     }
   });
 

@@ -1,5 +1,5 @@
 import type { NoteArticlePage } from '../core/types.js';
-import { isNoteError } from './errors.js';
+import { isNoteError, withUrl } from './errors.js';
 import { fetchNoteJson, fetchNoteText, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeContentsPage } from './normalize/contents.js';
 import { normalizeRss } from './normalize/rss.js';
@@ -44,6 +44,7 @@ function shouldFallBack(error: unknown): boolean {
  *
  * @throws {TypeError} user・page・source が不正なとき（`source: 'rss'` で page が 2 以上を含む）
  * @throws {NoteNotFoundError} ユーザーが見つからないとき
+ * @throws {NoteRateLimitError} リクエストが多すぎるとき（HTTP 429。`'auto'` でも RSS に切り替えない）
  * @throws {NoteHttpError} その他の 2xx でないステータス
  * @throws {NoteNetworkError} 通信に失敗したとき
  * @throws {NoteTimeoutError} タイムアウトしたとき
@@ -80,18 +81,25 @@ export async function listArticles(options: ListArticlesOptions): Promise<NoteAr
   const request = { fetch: options.fetch ?? globalThis.fetch, timeoutMs, signal };
   const fromRss = async (): Promise<NoteArticlePage> => {
     await getDefaultThrottle()(minIntervalMs, signal);
-    const xml = await fetchNoteText(`${NOTE_ORIGIN}/${encodeURIComponent(user)}/rss`, {
-      ...request,
-      accept: 'application/rss+xml, application/xml;q=0.9',
-    });
-    return normalizeRss(xml, user);
+    const rssUrl = `${NOTE_ORIGIN}/${encodeURIComponent(user)}/rss`;
+    const xml = await fetchNoteText(rssUrl, { ...request, accept: 'application/rss+xml, application/xml;q=0.9' });
+    try {
+      return normalizeRss(xml, user);
+    } catch (error) {
+      throw withUrl(error, rssUrl);
+    }
   };
   if (source === 'rss') return fromRss();
 
+  const url = `${NOTE_ORIGIN}/api/v2/creators/${encodeURIComponent(user)}/contents?kind=note&page=${page}`;
   try {
-    const url = `${NOTE_ORIGIN}/api/v2/creators/${encodeURIComponent(user)}/contents?kind=note&page=${page}`;
     await getDefaultThrottle()(minIntervalMs, signal);
-    return normalizeContentsPage(await fetchNoteJson(url, request), page);
+    const json = await fetchNoteJson(url, request);
+    try {
+      return normalizeContentsPage(json, page);
+    } catch (error) {
+      throw withUrl(error, url);
+    }
   } catch (error) {
     if (source === 'auto' && page === 1 && shouldFallBack(error)) return fromRss();
     throw error;

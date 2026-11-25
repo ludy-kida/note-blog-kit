@@ -75,11 +75,13 @@ function classify(name: string, error: unknown): ContractCheck {
       return { ...failed, kind: 'not-found', code, httpStatus: 404 };
     case 'NOTE_HTTP_ERROR': {
       const httpStatus = typeof status === 'number' ? status : undefined;
-      const transient = httpStatus === undefined || httpStatus >= 500 || httpStatus === 429;
+      // 429 は NOTE_RATE_LIMITED（下の一時的な失敗）になる
+      const transient = httpStatus === undefined || httpStatus >= 500;
       return { ...failed, kind: transient ? 'transient' : 'http', code, ...(httpStatus ? { httpStatus } : {}) };
     }
     case 'NOTE_NETWORK_ERROR':
     case 'NOTE_TIMEOUT':
+    case 'NOTE_RATE_LIMITED':
       return { ...failed, kind: 'transient', code };
     default:
       return { ...failed, kind: 'unexpected' };

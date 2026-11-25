@@ -161,8 +161,10 @@ async function isSymlink(path: string): Promise<boolean> {
  */
 function isTransient(error: unknown): boolean {
   if (!isNoteError(error)) return false;
-  if (error.code === 'NOTE_NETWORK_ERROR' || error.code === 'NOTE_TIMEOUT') return true;
-  return error.code === 'NOTE_HTTP_ERROR' && (error.status >= 500 || error.status === 429);
+  if (error.code === 'NOTE_NETWORK_ERROR' || error.code === 'NOTE_TIMEOUT' || error.code === 'NOTE_RATE_LIMITED') {
+    return true;
+  }
+  return error.code === 'NOTE_HTTP_ERROR' && error.status >= 500;
 }
 
 /** ディレクトリの実体（作ったときと同じディレクトリか、シンボリックリンクに差し替えられていないかを確かめる） */

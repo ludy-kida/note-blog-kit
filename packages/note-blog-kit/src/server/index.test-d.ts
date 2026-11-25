@@ -6,6 +6,7 @@ import {
   getArticle,
   type IterateArticlesOptions,
   type IterateArticlesResult,
+  isNoteArticleKey,
   isNoteError,
   iterateArticles,
   type ListAllArticlesResult,
@@ -16,10 +17,38 @@ import {
   type NoteErrorCode,
   type NoteHttpError,
   type NoteNotFoundError,
+  type NoteRateLimitError,
   type NoteRequestOptions,
   type NoteSchemaError,
   type NoteSchemaIssue,
 } from './index.js';
+
+describe('エラーモデル（#41）', () => {
+  it('NOTE_RATE_LIMITED が加わり、code で絞ると固有の項目が読める', () => {
+    expectTypeOf<'NOTE_RATE_LIMITED'>().toExtend<NoteErrorCode>();
+    const read = (error: AnyNoteError) => {
+      if (error.code === 'NOTE_RATE_LIMITED') expectTypeOf(error.retryAfterSeconds).toEqualTypeOf<number | null>();
+      if (error.code === 'NOTE_NETWORK_ERROR') expectTypeOf(error.url).toEqualTypeOf<string>();
+      if (error.code === 'NOTE_TIMEOUT') expectTypeOf(error.url).toEqualTypeOf<string>();
+      if (error.code === 'NOTE_SCHEMA_ERROR') expectTypeOf(error.url).toEqualTypeOf<string | null>();
+    };
+    void read;
+    expectTypeOf<NoteRateLimitError['code']>().toEqualTypeOf<'NOTE_RATE_LIMITED'>();
+  });
+
+  it('isNoteArticleKey は unknown を string に絞り、string を渡したときは false の分岐でも string のまま', () => {
+    const value: unknown = 'n1';
+    if (isNoteArticleKey(value)) expectTypeOf(value).toEqualTypeOf<string>();
+    const key: string = 'x';
+    if (!isNoteArticleKey(key)) expectTypeOf(key).toEqualTypeOf<string>();
+    expectTypeOf(isNoteArticleKey(key)).toEqualTypeOf<boolean>();
+  });
+
+  it('NoteErrorOptions は公開しない', () => {
+    // @ts-expect-error 内部用の型は export しない
+    type _ = import('./index.js').NoteErrorOptions;
+  });
+});
 
 describe('note-blog-kit/server の公開型', () => {
   it('取得関数のオプションは NoteRequestOptions を共有する', () => {
@@ -94,7 +123,12 @@ describe('note-blog-kit/server の公開型', () => {
   it('エラーの code はリテラルのユニオン', () => {
     expectTypeOf<NoteError['code']>().toEqualTypeOf<NoteErrorCode>();
     expectTypeOf<NoteErrorCode>().toEqualTypeOf<
-      'NOTE_NOT_FOUND' | 'NOTE_HTTP_ERROR' | 'NOTE_NETWORK_ERROR' | 'NOTE_TIMEOUT' | 'NOTE_SCHEMA_ERROR'
+      | 'NOTE_NOT_FOUND'
+      | 'NOTE_HTTP_ERROR'
+      | 'NOTE_RATE_LIMITED'
+      | 'NOTE_NETWORK_ERROR'
+      | 'NOTE_TIMEOUT'
+      | 'NOTE_SCHEMA_ERROR'
     >();
     expectTypeOf<NoteHttpError['code']>().toEqualTypeOf<'NOTE_HTTP_ERROR'>();
   });
