@@ -21,8 +21,11 @@ export interface NoteArticleListProps {
   headingLevel?: NoteHeadingLevel;
   /** 各記事の描画を丸ごと差し替える。既定は {@link NoteArticleCard} */
   renderItem?: (article: NoteArticleSummary) => ReactNode;
-  /** 記事が0件のときの表示。既定は「記事がありません」 */
-  empty?: ReactNode;
+  /**
+   * 表示する文言。`empty`：記事が0件のときの表示（既定「記事がありません」）、
+   * `paid`：各カードの有料記事のバッジ（既定「有料」。`renderItem` を渡したときは使わない）
+   */
+  labels?: { empty?: ReactNode; paid?: ReactNode };
   /** 既定のクラス名（`nbk-article-list`）に追加するクラス名。0件のときも同じ要素に付く */
   className?: string;
 }
@@ -39,13 +42,13 @@ export function NoteArticleList({
   formatDate,
   headingLevel,
   renderItem,
-  empty = '記事がありません',
+  labels,
   className,
 }: NoteArticleListProps): ReactElement {
   if (articles.length === 0) {
     return (
       <div className={classNames('nbk-article-list', 'nbk-article-list--empty', className)}>
-        <p className="nbk-article-list__empty">{empty}</p>
+        <p className="nbk-article-list__empty">{labels?.empty ?? '記事がありません'}</p>
       </div>
     );
   }
@@ -53,6 +56,7 @@ export function NoteArticleList({
     ...(linkComponent !== undefined && { linkComponent }),
     ...(formatDate !== undefined && { formatDate }),
     ...(headingLevel !== undefined && { headingLevel }),
+    ...(labels?.paid !== undefined && { labels: { paid: labels.paid } }),
   };
   return (
     <ul className={classNames('nbk-article-list', className)}>

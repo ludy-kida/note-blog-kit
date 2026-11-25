@@ -46,7 +46,7 @@ describe('createNoteArticlesHandler', () => {
 
   it('不正な page は 400 で、note に問い合わせない', async () => {
     const fetch = mockFetch();
-    const GET = createNoteArticlesHandler({ ...base, fetch, maxPageNumber: 5 });
+    const GET = createNoteArticlesHandler({ ...base, fetch, maxPage: 5 });
     for (const query of [
       '?page=0',
       '?page=6',
@@ -125,9 +125,11 @@ describe('createNoteArticlesHandler', () => {
 
   it('不正なオプションは作るときに TypeError', () => {
     expect(() => createNoteArticlesHandler({ user: '../x' })).toThrow(TypeError);
-    expect(() => createNoteArticlesHandler({ ...base, maxPageNumber: 0 })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, maxPage: 0 })).toThrow(TypeError);
+    // v0.3 までの名前は黙って無視せず TypeError にする
+    expect(() => createNoteArticlesHandler({ ...base, maxPageNumber: 5 } as never)).toThrow(/renamed to maxPage/);
     expect(() => createNoteArticlesHandler({ ...base, cacheSeconds: -1 })).toThrow(TypeError);
-    expect(() => createNoteArticlesHandler({ ...base, source: 'rss', maxPageNumber: 2 })).toThrow(TypeError);
+    expect(() => createNoteArticlesHandler({ ...base, source: 'rss', maxPage: 2 })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, source: 'xml' as unknown as 'rss' })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, timeoutMs: 0 })).toThrow(TypeError);
   });

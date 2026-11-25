@@ -24,10 +24,13 @@ export interface ListArticlesOptions extends NoteRequestOptions {
    * - `'auto'`：API で取得し、404・5xx・形の違い（NoteSchemaError）で失敗したら RSS に切り替える。
    *   切り替えるのは1ページ目だけ。タイムアウト・通信の失敗・中断では切り替えない
    */
-  source?: 'api' | 'rss' | 'auto';
+  source?: NoteSourceOption;
 }
 
-const SOURCES = new Set(['api', 'rss', 'auto']);
+/** 取得元の指定。`'api'`（一覧 API）・`'rss'`（RSS）・`'auto'`（API が使えなければ RSS） */
+export type NoteSourceOption = 'api' | 'rss' | 'auto';
+
+const SOURCES = new Set<string>(['api', 'rss', 'auto'] satisfies NoteSourceOption[]);
 
 /** 'auto' で RSS に切り替える失敗か（API の形が変わった・なくなった・落ちている） */
 function shouldFallBack(error: unknown): boolean {

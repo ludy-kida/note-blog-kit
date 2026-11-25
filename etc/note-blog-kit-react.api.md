@@ -60,10 +60,13 @@ export function NoteArticleList(input: NoteArticleListProps): ReactElement;
 export interface NoteArticleListProps {
     articles: readonly NoteArticleSummary[];
     className?: string;
-    empty?: ReactNode;
     formatDate?: (iso: string) => string;
     getHref?: (article: NoteArticleSummary) => string;
     headingLevel?: NoteHeadingLevel;
+    labels?: {
+        empty?: ReactNode;
+        paid?: ReactNode;
+    };
     linkComponent?: NoteLinkComponent;
     renderItem?: (article: NoteArticleSummary) => ReactNode;
 }
@@ -76,6 +79,7 @@ export interface NoteArticlePage {
     isLastPage: boolean;
     // (undocumented)
     page: number;
+    source: NoteSource;
     totalCount: number | null;
 }
 

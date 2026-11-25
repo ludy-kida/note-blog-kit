@@ -222,5 +222,5 @@ export function normalizeRss(xml: string, user: string): NoteArticlePage {
       source: 'rss',
     };
   });
-  return { articles, page: 1, totalCount: null, isLastPage: true };
+  return { articles, page: 1, totalCount: null, isLastPage: true, source: 'rss' };
 }

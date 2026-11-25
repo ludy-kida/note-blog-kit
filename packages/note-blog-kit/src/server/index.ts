@@ -36,6 +36,6 @@ export {
   type ListAllArticlesResult,
   listAllArticles,
 } from './iterate-articles.js';
-export { type ListArticlesOptions, listArticles } from './list-articles.js';
+export { type ListArticlesOptions, listArticles, type NoteSourceOption } from './list-articles.js';
 export { isNoteArticleKey } from './patterns.js';
 export type { NoteRequestOptions } from './request-options.js';

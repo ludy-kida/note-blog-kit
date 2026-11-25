@@ -8,7 +8,7 @@ import { useNoteArticles } from './useNoteArticles.js';
 afterEach(cleanup);
 
 const articles = loadArticles(1);
-const page: NoteArticlePage = { articles, page: 2, totalCount: 237, isLastPage: false };
+const page: NoteArticlePage = { articles, page: 2, totalCount: 237, isLastPage: false, source: 'api' };
 // version のない古い articles.json（v0.3 まで）
 const syncJson = { user: 'kida_lw', syncedAt: '2026-11-24T00:00:00.000Z', truncated: false, articles };
 
@@ -36,7 +36,8 @@ describe('useNoteArticles', () => {
     const { result } = renderHook(() => useNoteArticles({ url: '/note/articles.json', fetch }));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.articles).toHaveLength(6);
-    expect(result.current.data).toEqual({ articles, page: 1, totalCount: null, isLastPage: true });
+    // articles.json はページ情報を持たないので、取得元は記事の source で補う
+    expect(result.current.data).toEqual({ articles, page: 1, totalCount: null, isLastPage: true, source: 'api' });
   });
 
   it('形式のバージョン 1 の articles.json を読み、知らないバージョンは error', async () => {
@@ -225,5 +226,20 @@ describe('useNoteArticles', () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
     expect(result.current.data?.page).toBe(2);
     expect(fetch.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
+
+  it('ページの取得元：中継エンドポイントの source はそのまま、articles.json は先頭の記事、記事がなければ api', async () => {
+    const rss = articles.map((article) => ({ ...article, source: 'rss' as const }));
+    for (const [body, expected] of [
+      [{ ...page, source: 'rss' }, 'rss'],
+      [{ ...syncJson, articles: rss }, 'rss'],
+      [{ ...syncJson, articles: [] }, 'api'],
+    ] as const) {
+      const fetch = jsonFetch(body);
+      const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.data?.source).toBe(expected);
+      unmount();
+    }
   });
 });

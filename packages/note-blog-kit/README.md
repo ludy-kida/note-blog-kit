@@ -21,6 +21,8 @@ npm install note-blog-kit
 
 React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 22.12 以上で動きます。
 
+パッケージは ES Modules のみで配布しています。CommonJS からも、Node.js 22.12 以上なら `require('note-blog-kit/server')` のように読み込めます（require(esm)）。TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
+
 ### 2. デフォルト CSS を読み込む（任意）
 
 ```tsx
@@ -215,7 +217,7 @@ const page = await listArticles({ user: 'your_urlname', source: 'auto' });
 ```
 
 - `'rss'`：note の RSS から取得します。最新25件だけの1ページで（`isLastPage: true`、`totalCount: null`）、`hashtags` は空、`likeCount`・`price` は `null` です。`page` に 2 以上を渡すと `TypeError` になります
-- `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかは各記事の `source`（`'api'` / `'rss'`）で分かります
+- `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかはページの `source` と各記事の `source`（`'api'` / `'rss'`）で分かります
 - 記事本文（`getArticle`）は RSS に切り替わりません（RSS に本文はありません）
 - `listAllArticles`・`iterateArticles` を RSS で取得したときは1回で終わり、`truncated` は `false` になります。ただし RSS は最新25件だけなので、それより古い記事は含まれません（記事の `source` が `'rss'` かで判別してください）
 
@@ -294,7 +296,7 @@ export default async function BlogPage() {
 
 | コンポーネント | 主な props と既定値 |
 | --- | --- |
-| `NoteArticleList` | `articles`（必須）、`getHref`（既定は note の記事 URL）、`linkComponent`（既定 `'a'`）、`formatDate`（既定は日本時間の `YYYY/MM/DD`）、`headingLevel`（既定 `2`）、`renderItem`（各記事の描画を差し替え）、`empty`（既定「記事がありません」） |
+| `NoteArticleList` | `articles`（必須）、`getHref`（既定は note の記事 URL）、`linkComponent`（既定 `'a'`）、`formatDate`（既定は日本時間の `YYYY/MM/DD`）、`headingLevel`（既定 `2`）、`renderItem`（各記事の描画を差し替え）、`labels.empty`（0件のときの表示。既定「記事がありません」）、`labels.paid`（各カードの有料記事のバッジ。既定「有料」） |
 | `NoteArticleCard` | `article`（必須）、`href`（既定は note の記事 URL）、`linkComponent`、`formatDate`、`headingLevel`、`labels.paid`（既定「有料」） |
 | `NotePagination` | `page`・`isLastPage`・`getHref`（必須）、`totalCount`（あれば「3 / 40」と表示）、`perPage`（既定 `6`）、`linkComponent`、`labels`（既定「前へ」「次へ」、aria-label「ページ送り」） |
 
@@ -378,7 +380,7 @@ export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
   | 戻り値 | 内容 |
   | --- | --- |
   | `articles` | 取得した記事（`NoteArticleSummary[]`）。取得前・失敗時は空 |
-  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。取得前・失敗時は `null` |
+  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。`articles.json` のときの `data.source` は先頭の記事の `source`（記事がなければ `'api'`）。取得前・失敗時は `null` |
   | `isLoading` | 取得中か |
   | `error` | 失敗したとき `UseNoteArticlesError`（`Error` を継承。`status`：HTTP ステータスか `null`、`code`：中継エンドポイントのエラーコードか `null`）。成功・取得中は `null`。`code` が入るのは中継エンドポイントの応答のときだけで、`articles.json` などの静的ファイルでは常に `null` です。コードは増えることがあり、知らないコードもそのまま入ります |
 
@@ -387,7 +389,7 @@ export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
   - 応答の検証は最小限です（主な項目の型が合わない記事は除きます）。`url` には自分のサイトの中継エンドポイントか JSON を指定し、利用者の入力を使わないでください
   - `fetch` を渡す場合は、描画ごとに作り直しても取り直しは起きません（`url` が変わったときだけ取り直します）
 - **`createNoteArticlesHandler`**：`?page=N` の一覧を JSON で返します
-  - `page` は 1〜`maxPageNumber`（既定 100、`source: 'rss'` では 1）の正規形の整数だけを受け付けます。`01`・`1.0` などの別の書き方や、`page` 以外のクエリは 400 です（CDN のキャッシュを外して note へのリクエストを増やされないように）
+  - `page` は 1〜`maxPage`（既定 100、`source: 'rss'` では 1）の正規形の整数だけを受け付けます。`01`・`1.0` などの別の書き方や、`page` 以外のクエリは 400 です（CDN のキャッシュを外して note へのリクエストを増やされないように）
   - 成功した応答には `Cache-Control: public, s-maxage=3600, stale-while-revalidate=3600` を付けます（秒数は `cacheSeconds` で変更）
   - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`（本文の型は `NoteArticlesHandlerErrorBody`、コードの型は `NoteArticlesHandlerErrorCode`。`note-blog-kit` と `note-blog-kit/next` から import できます。コードの型は `note-blog-kit/react` からも import できます。コードはマイナーバージョンで増えることがあります）
   - オプション（`source` など）は `listArticles` と同じです（`page` は指定できません）。リクエストが中断されると、note への取得も中断します

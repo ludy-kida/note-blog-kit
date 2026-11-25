@@ -24,6 +24,7 @@ export interface NoteArticlePage {
     isLastPage: boolean;
     // (undocumented)
     page: number;
+    source: NoteSource;
     totalCount: number | null;
 }
 

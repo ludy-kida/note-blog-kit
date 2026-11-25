@@ -54,7 +54,7 @@ export function listArticles(options: ListArticlesOptions): Promise<NoteArticleP
 // @public
 export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
-    source?: 'api' | 'rss' | 'auto';
+    source?: NoteSourceOption;
     user: string;
 }
 
@@ -78,6 +78,7 @@ export interface NoteArticlePage {
     isLastPage: boolean;
     // (undocumented)
     page: number;
+    source: NoteSource;
     totalCount: number | null;
 }
 
@@ -237,6 +238,9 @@ export interface NoteSchemaIssue {
 
 // @public
 export type NoteSource = 'api' | 'rss';
+
+// @public
+export type NoteSourceOption = 'api' | 'rss' | 'auto';
 
 // @public
 export class NoteTimeoutError extends NoteError {

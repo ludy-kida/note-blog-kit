@@ -9,6 +9,7 @@ import {
   type NoteArticleSummary,
   type NoteArticlesHandlerOptions,
   type NoteMetadata,
+  type NoteSourceOption,
 } from './index.js';
 
 describe('note-blog-kit/next の公開型', () => {
@@ -16,7 +17,9 @@ describe('note-blog-kit/next の公開型', () => {
     expectTypeOf(createNoteArticlesHandler).parameter(0).toEqualTypeOf<NoteArticlesHandlerOptions>();
     expectTypeOf(createNoteArticlesHandler).returns.toEqualTypeOf<(request: Request) => Promise<Response>>();
     expectTypeOf<{ user: string }>().toExtend<NoteArticlesHandlerOptions>();
-    expectTypeOf<NoteArticlesHandlerOptions['maxPageNumber']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<NoteArticlesHandlerOptions['maxPage']>().toEqualTypeOf<number | undefined>();
+    // maxPages（取得するページ数）と紛らわしい旧名は使えない
+    expectTypeOf<NoteArticlesHandlerOptions>().not.toHaveProperty('maxPageNumber');
     expectTypeOf<NoteArticlesHandlerOptions['cacheSeconds']>().toEqualTypeOf<number | undefined>();
     // page はリクエストの ?page= で指定する（オプションにはない）
     expectTypeOf<NoteArticlesHandlerOptions>().not.toHaveProperty('page');
@@ -45,6 +48,7 @@ describe('note-blog-kit/next の公開型', () => {
     generateNoteStaticParams({});
     expectTypeOf<{ user: string }>().toExtend<GenerateNoteStaticParamsOptions>();
     expectTypeOf<GenerateNoteStaticParamsOptions['maxPages']>().toEqualTypeOf<number | undefined>();
-    expectTypeOf<GenerateNoteStaticParamsOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
+    expectTypeOf<GenerateNoteStaticParamsOptions['source']>().toEqualTypeOf<NoteSourceOption | undefined>();
+    expectTypeOf<NoteSourceOption>().toEqualTypeOf<'api' | 'rss' | 'auto'>();
   });
 });
