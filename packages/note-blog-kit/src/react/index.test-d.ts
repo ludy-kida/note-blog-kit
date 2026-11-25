@@ -30,6 +30,13 @@ import {
   useNoteArticles,
 } from './index.js';
 
+describe('NoteArticleList の labels（#43）', () => {
+  it('empty は labels.empty に移し、labels.paid も受け付ける', () => {
+    expectTypeOf<NoteArticleListProps['labels']>().toEqualTypeOf<{ empty?: ReactNode; paid?: ReactNode } | undefined>();
+    expectTypeOf<NoteArticleListProps>().not.toHaveProperty('empty');
+  });
+});
+
 describe('note-blog-kit/react の公開型', () => {
   it('useNoteArticles は url だけが必須で、記事・ページ・状態を返す', () => {
     expectTypeOf(useNoteArticles).parameter(0).toEqualTypeOf<UseNoteArticlesOptions>();

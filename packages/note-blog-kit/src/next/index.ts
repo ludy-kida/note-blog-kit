@@ -19,7 +19,7 @@ export type {
   NoteTocItem,
 } from '../core/types.js';
 export type { IterateArticlesOptions } from '../server/iterate-articles.js';
-export type { ListArticlesOptions } from '../server/list-articles.js';
+export type { ListArticlesOptions, NoteSourceOption } from '../server/list-articles.js';
 export type { NoteRequestOptions } from '../server/request-options.js';
 export { createNoteArticlesHandler, type NoteArticlesHandlerOptions } from './articles-handler.js';
 export {

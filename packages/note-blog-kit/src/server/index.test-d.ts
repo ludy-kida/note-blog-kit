@@ -21,6 +21,7 @@ import {
   type NoteRequestOptions,
   type NoteSchemaError,
   type NoteSchemaIssue,
+  type NoteSourceOption,
 } from './index.js';
 
 describe('エラーモデル（#41）', () => {
@@ -93,8 +94,9 @@ describe('note-blog-kit/server の公開型', () => {
     expectTypeOf<ListArticlesOptions['signal']>().toEqualTypeOf<AbortSignal | undefined>();
     expectTypeOf<ListArticlesOptions['timeoutMs']>().toEqualTypeOf<number | undefined>();
     expectTypeOf<ListArticlesOptions['minIntervalMs']>().toEqualTypeOf<number | undefined>();
-    expectTypeOf<ListArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
-    expectTypeOf<IterateArticlesOptions['source']>().toEqualTypeOf<'api' | 'rss' | 'auto' | undefined>();
+    expectTypeOf<NoteSourceOption>().toEqualTypeOf<'api' | 'rss' | 'auto'>();
+    expectTypeOf<ListArticlesOptions['source']>().toEqualTypeOf<NoteSourceOption | undefined>();
+    expectTypeOf<IterateArticlesOptions['source']>().toEqualTypeOf<NoteSourceOption | undefined>();
     // @ts-expect-error 'api'・'rss'・'auto' 以外は渡せない
     const invalid: ListArticlesOptions = { user: 'kida_lw', source: 'html' };
     void invalid;

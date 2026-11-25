@@ -15,7 +15,8 @@ export default defineConfig([
       'react/index': 'src/react/index.ts',
       'next/index': 'src/next/index.ts',
     },
-    format: ['esm', 'cjs'],
+    // ESM のみ（Node.js 22.12 以降は require() でも読める）
+    format: ['esm'],
     dts: true,
     clean: true,
     target: 'es2022',

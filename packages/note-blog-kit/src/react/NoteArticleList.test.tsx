@@ -39,6 +39,12 @@ describe('NoteArticleList', () => {
     );
   });
 
+  it('labels.paid を各カードの「有料」の文言に渡す', () => {
+    const articles = loadArticles(1).map((article, i) => (i === 0 ? { ...article, price: 300 } : article));
+    const { container } = render(<NoteArticleList articles={articles} labels={{ paid: 'メンバー限定' }} />);
+    expect([...container.querySelectorAll('.nbk-card__badge')].map((el) => el.textContent)).toEqual(['メンバー限定']);
+  });
+
   it('className を既定のクラスに追加する', () => {
     const { container } = render(<NoteArticleList articles={loadArticles(1)} className="my-list" />);
     expect(container.querySelector('ul')?.className).toBe('nbk-article-list my-list');
@@ -50,7 +56,7 @@ describe('NoteArticleList', () => {
     const root = container.querySelector('div.nbk-article-list.nbk-article-list--empty');
     expect(root?.className).toBe('nbk-article-list nbk-article-list--empty my-list');
     expect(root?.querySelector('p.nbk-article-list__empty')?.textContent).toBe('記事がありません');
-    rerender(<NoteArticleList articles={[]} empty="まだ記事がありません" />);
+    rerender(<NoteArticleList articles={[]} labels={{ empty: 'まだ記事がありません' }} />);
     expect(container.querySelector('p.nbk-article-list__empty')?.textContent).toBe('まだ記事がありません');
   });
 

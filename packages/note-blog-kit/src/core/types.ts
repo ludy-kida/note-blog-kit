@@ -79,6 +79,8 @@ export interface NoteArticlePage {
   /** RSS では null */
   totalCount: number | null;
   isLastPage: boolean;
+  /** 実際の取得元（`source: 'auto'` で RSS に切り替わったページは `'rss'`） */
+  source: NoteSource;
 }
 
 /**

@@ -75,5 +75,6 @@ export function normalizeContentsPage(json: unknown, page: number): NoteArticleP
     page,
     totalCount: data.totalCount,
     isLastPage: data.isLastPage,
+    source: 'api',
   };
 }

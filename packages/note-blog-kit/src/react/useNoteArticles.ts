@@ -112,10 +112,13 @@ function toPage(json: unknown): NoteArticlePage {
   if (!Array.isArray(value.articles)) throw new Error('Unexpected response: `articles` is not an array');
   // 描画で落ちないよう、主な項目の型が違う記事は除く（URL は各コンポーネントが検証する）
   const articles = value.articles.filter(isArticleLike);
+  // 取得元は応答の source を使い、ない（articles.json）なら先頭の記事の source で補う
+  const source = value.source === 'rss' || value.source === 'api' ? value.source : (articles[0]?.source ?? 'api');
   if (typeof page === 'number' && typeof isLastPage === 'boolean') {
-    return { articles, page, totalCount: typeof value.totalCount === 'number' ? value.totalCount : null, isLastPage };
+    const totalCount = typeof value.totalCount === 'number' ? value.totalCount : null;
+    return { articles, page, totalCount, isLastPage, source };
   }
-  return { articles, page: 1, totalCount: null, isLastPage: true };
+  return { articles, page: 1, totalCount: null, isLastPage: true, source };
 }
 
 /** 描画に使う主な項目の型が合っているか（コンポーネントが例外で落ちないための最小限の確認） */

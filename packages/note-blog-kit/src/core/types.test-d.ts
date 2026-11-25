@@ -19,6 +19,8 @@ describe('公開型', () => {
 
   it('取得元は api か rss', () => {
     expectTypeOf<NoteArticleSummary['source']>().toEqualTypeOf<'api' | 'rss'>();
+    // ページにも実際の取得元が入る（'auto' で RSS に切り替わったページは 'rss'）
+    expectTypeOf<NoteArticlePage['source']>().toEqualTypeOf<'api' | 'rss'>();
   });
 
   it('詳細は一覧の型を拡張する', () => {

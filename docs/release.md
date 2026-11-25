@@ -11,6 +11,14 @@ npm への公開は人が判断して行う（エージェントは公開しな�
 
 公開できるのは main だけにする。ワークフローは GitHub Environment「release」で動き、Environment を main に制限したうえで、npm の trusted publisher と GitHub App の秘密鍵をこの Environment に結びつける。作業ブランチでワークフローを書き換えて push しても、npm への公開も秘密鍵の取得もできない。
 
+## 配布の形式
+
+ES Modules のみで配布する（v0.4.0 から。2026-11-24 に人が決定）。
+
+- 理由：CJS のビルドをやめるのは 1.0 以降だと破壊的変更になる。ESM と CJS の両方を出すと、パッケージが二重に読み込まれたときに `instanceof` が一致しない問題がある
+- CommonJS の利用者も、Node.js 22.12 以上なら `require()` で読める（require(esm)）。`pnpm check:dist` の `scripts/check-require.cjs` で、各 subpath を `require()` できることを確かめている
+- `attw` は `--profile esm-only` で確かめる
+
 ## 初回だけ行う設定
 
 ### 1. GitHub Environment「release」を作る

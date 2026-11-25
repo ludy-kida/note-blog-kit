@@ -227,6 +227,7 @@ describe('listArticles の source', () => {
     const result = await listArticles({ ...base, fetch });
     expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents']);
     expect(result.articles[0]?.source).toBe('api');
+    expect(result.source).toBe('api');
   });
 
   it("'rss' は RSS を取得し、1ページだけを返す", async () => {
@@ -234,7 +235,7 @@ describe('listArticles の source', () => {
     const result = await listArticles({ ...base, source: 'rss', fetch });
     expect(urls(fetch)).toEqual(['/kida_lw/rss']);
     expect(new Headers(fetch.mock.calls[0]?.[1]?.headers).get('accept')).toContain('application/rss+xml');
-    expect(result).toMatchObject({ page: 1, totalCount: null, isLastPage: true });
+    expect(result).toMatchObject({ page: 1, totalCount: null, isLastPage: true, source: 'rss' });
     expect(result.articles).toHaveLength(25);
     expect(result.articles.every((a) => a.source === 'rss')).toBe(true);
   });
@@ -257,6 +258,7 @@ describe('listArticles の source', () => {
       const result = await listArticles({ ...base, source: 'auto', fetch });
       expect(urls(fetch)).toEqual(['/api/v2/creators/kida_lw/contents', '/kida_lw/rss']);
       expect(result.articles[0]?.source).toBe('rss');
+      expect(result.source).toBe('rss');
       expect(result.isLastPage).toBe(true);
     }
   });

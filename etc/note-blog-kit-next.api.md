@@ -41,7 +41,7 @@ export interface IterateArticlesOptions extends Omit<ListArticlesOptions, 'page'
 // @public
 export interface ListArticlesOptions extends NoteRequestOptions {
     page?: number;
-    source?: 'api' | 'rss' | 'auto';
+    source?: NoteSourceOption;
     user: string;
 }
 
@@ -68,7 +68,7 @@ export type NoteArticlesHandlerErrorCode = 'INVALID_REQUEST' | 'INTERNAL_ERROR' 
 // @public
 export interface NoteArticlesHandlerOptions extends Omit<ListArticlesOptions, 'page'> {
     cacheSeconds?: number;
-    maxPageNumber?: number;
+    maxPage?: number;
 }
 
 // @public
@@ -164,6 +164,9 @@ export interface NoteRequestOptions {
 
 // @public
 export type NoteSource = 'api' | 'rss';
+
+// @public
+export type NoteSourceOption = 'api' | 'rss' | 'auto';
 
 // @public
 export interface NoteTocItem {
