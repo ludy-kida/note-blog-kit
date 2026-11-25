@@ -81,6 +81,35 @@ describe('getArticle', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  /** fixture の本文を差し替えた応答（著者も変えられる） */
+  const withBody = (body: string, urlname = 'kida_lw') => {
+    const json = JSON.parse(fixture('notes/n55256baa5425')) as {
+      data: { body: string; user: { urlname: string } };
+    };
+    json.data.body = body;
+    json.data.user.urlname = urlname;
+    return () => new Response(JSON.stringify(json));
+  };
+
+  it('入れ子が深すぎる本文は、サニタイズせずに NoteSchemaError で、1 秒以内に終わる', async () => {
+    const start = performance.now();
+    const error = await getArticle({ ...base, fetch: mockFetch(withBody('<div>'.repeat(200_000))) }).catch(
+      (e: unknown) => e,
+    );
+    expect(error).toBeInstanceOf(NoteSchemaError);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
+  it('他人の記事は、本文の検証・サニタイズより前に NoteNotFoundError になる', async () => {
+    const start = performance.now();
+    const error = await getArticle({
+      ...base,
+      fetch: mockFetch(withBody('<div>'.repeat(200_000), 'someone_else')),
+    }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(NoteNotFoundError);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
   it('404 は NoteNotFoundError', async () => {
     const fetch = mockFetch(() => new Response('{"data":"not found"}', { status: 404 }));
     await expect(getArticle({ ...base, fetch })).rejects.toBeInstanceOf(NoteNotFoundError);

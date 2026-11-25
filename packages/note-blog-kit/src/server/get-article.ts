@@ -1,7 +1,7 @@
 import type { NoteArticle } from '../core/types.js';
 import { NoteNotFoundError, NoteSchemaError } from './errors.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
-import { normalizeNote } from './normalize/note.js';
+import { normalizeNote, readNoteIdentity } from './normalize/note.js';
 import { NOTE_KEY_RE, NOTE_USER_RE } from './patterns.js';
 import {
   assertMilliseconds,
@@ -68,17 +68,21 @@ export async function getArticle(options: GetArticleOptions): Promise<NoteArticl
   const url = `${NOTE_ORIGIN}/api/v3/notes/${key}`;
   await getDefaultThrottle()(minIntervalMs, signal);
   const json = await fetchNoteJson(url, { fetch: options.fetch ?? globalThis.fetch, timeoutMs, signal });
-  const article = normalizeNote(json);
-  // 利用者がリンクやキャッシュキーに使うため、要求したキーの記事が返ってきたことを確かめる
-  if (article.key !== key) {
-    throw new NoteSchemaError('note returned a different article than requested', {
-      issues: [{ path: 'data.key', message: `Expected ${key}` }],
-    });
+  // キーと著者は、本文の検証・サニタイズより前に確かめる（他人の細工した本文を処理しない）。
+  // 読めない形の応答は、下の normalizeNote が NoteSchemaError を投げる
+  const identity = readNoteIdentity(json);
+  if (identity !== null) {
+    // 利用者がリンクやキャッシュキーに使うため、要求したキーの記事が返ってきたことを確かめる
+    if (identity.key !== key) {
+      throw new NoteSchemaError('note returned a different article than requested', {
+        issues: [{ path: 'data.key', message: `Expected ${key}` }],
+      });
+    }
+    // 他人の記事を表示しないよう、指定した著者の記事だけを返す。
+    // 記事が存在しない場合と区別できないよう、文面は 404 と同じにし、実際の著者名は出さない
+    if (!allowedUsers.has(identity.urlname)) {
+      throw new NoteNotFoundError(`Not found on note: ${url}`, { url });
+    }
   }
-  // 他人の記事を表示しないよう、指定した著者の記事だけを返す。
-  // 記事が存在しない場合と区別できないよう、文面は 404 と同じにし、実際の著者名は出さない
-  if (!allowedUsers.has(article.author.urlname)) {
-    throw new NoteNotFoundError(`Not found on note: ${url}`, { url });
-  }
-  return article;
+  return normalizeNote(json);
 }
