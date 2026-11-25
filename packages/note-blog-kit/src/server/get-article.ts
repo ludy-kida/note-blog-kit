@@ -1,5 +1,5 @@
 import type { NoteArticle } from '../core/types.js';
-import { NoteNotFoundError, NoteSchemaError } from './errors.js';
+import { NoteNotFoundError, NoteSchemaError, withUrl } from './errors.js';
 import { fetchNoteJson, NOTE_ORIGIN } from './fetch-json.js';
 import { normalizeNote, readNoteIdentity } from './normalize/note.js';
 import { NOTE_KEY_RE, NOTE_USER_RE } from './patterns.js';
@@ -50,6 +50,7 @@ function toAllowedUsers(user: unknown): ReadonlySet<string> {
  * ```
  * @throws {TypeError} key・user やオプションが不正なとき
  * @throws {NoteNotFoundError} 記事が見つからないとき、または `user` にない著者の記事のとき
+ * @throws {NoteRateLimitError} リクエストが多すぎるとき（HTTP 429）
  * @throws {NoteHttpError} その他の 2xx でないステータス
  * @throws {NoteNetworkError} 通信に失敗したとき
  * @throws {NoteTimeoutError} タイムアウトしたとき
@@ -75,6 +76,7 @@ export async function getArticle(options: GetArticleOptions): Promise<NoteArticl
     // 利用者がリンクやキャッシュキーに使うため、要求したキーの記事が返ってきたことを確かめる
     if (identity.key !== key) {
       throw new NoteSchemaError('note returned a different article than requested', {
+        url,
         issues: [{ path: 'data.key', message: `Expected ${key}` }],
       });
     }
@@ -84,5 +86,9 @@ export async function getArticle(options: GetArticleOptions): Promise<NoteArticl
       throw new NoteNotFoundError(`Not found on note: ${url}`, { url });
     }
   }
-  return normalizeNote(json);
+  try {
+    return normalizeNote(json);
+  } catch (error) {
+    throw withUrl(error, url);
+  }
 }

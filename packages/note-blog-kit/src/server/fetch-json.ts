@@ -4,7 +4,14 @@
  * - Cookie・認証情報を送らない。リダイレクトは追わない（別ホストへ誘導されないため）
  * - HTTP ステータス・通信失敗・タイムアウトを型付きエラーに変換する
  */
-import { NoteHttpError, NoteNetworkError, NoteNotFoundError, NoteSchemaError, NoteTimeoutError } from './errors.js';
+import {
+  NoteHttpError,
+  NoteNetworkError,
+  NoteNotFoundError,
+  NoteRateLimitError,
+  NoteSchemaError,
+  NoteTimeoutError,
+} from './errors.js';
 
 export const NOTE_ORIGIN = 'https://note.com';
 
@@ -55,9 +62,12 @@ export async function fetchNoteText(url: string, options: FetchTextOptions): Pro
     // 利用者による中断は、その理由をそのまま投げる
     if (options.signal?.aborted) throw options.signal.reason;
     if (timedOut) {
-      throw new NoteTimeoutError(`Request to note timed out after ${options.timeoutMs}ms: ${url}`, { cause: error });
+      throw new NoteTimeoutError(`Request to note timed out after ${options.timeoutMs}ms: ${url}`, {
+        cause: error,
+        url,
+      });
     }
-    throw new NoteNetworkError(`Request to note failed: ${url}`, { cause: error });
+    throw new NoteNetworkError(`Request to note failed: ${url}`, { cause: error, url });
   } finally {
     clearTimeout(timer);
     options.signal?.removeEventListener('abort', onAbort);
@@ -65,10 +75,16 @@ export async function fetchNoteText(url: string, options: FetchTextOptions): Pro
 
   // 差し替えた fetch が redirect: 'error' を守らない場合に備え、応答元も確認する
   if (response.redirected || (response.url !== '' && new URL(response.url).origin !== NOTE_ORIGIN)) {
-    throw new NoteNetworkError(`note redirected the request, which is not allowed: ${url}`);
+    throw new NoteNetworkError(`note redirected the request, which is not allowed: ${url}`, { url });
   }
   if (response.status === 404) {
     throw new NoteNotFoundError(`Not found on note: ${url}`, { url });
+  }
+  if (response.status === 429) {
+    throw new NoteRateLimitError(`note responded with HTTP 429 (too many requests): ${url}`, {
+      url,
+      retryAfterSeconds: parseRetryAfter(response.headers.get('retry-after')),
+    });
   }
   if (!response.ok) {
     throw new NoteHttpError(`note responded with HTTP ${response.status}: ${url}`, { status: response.status, url });
@@ -77,10 +93,21 @@ export async function fetchNoteText(url: string, options: FetchTextOptions): Pro
   // 想定より大きすぎる応答は、形が違うとみなす（解析に時間やメモリを使わせないため）
   if (body.length > MAX_BODY_LENGTH) {
     throw new NoteSchemaError('note returned a response that is too large', {
+      url,
       issues: [{ path: '', message: `Response is longer than ${MAX_BODY_LENGTH} characters` }],
     });
   }
   return body;
+}
+
+/** Retry-After（秒数か HTTP の日付）を秒数にする。解釈できなければ null */
+function parseRetryAfter(value: string | null): number | null {
+  if (value === null) return null;
+  const trimmed = value.trim();
+  if (/^\d{1,9}$/.test(trimmed)) return Number(trimmed);
+  const date = Date.parse(trimmed);
+  if (Number.isNaN(date) || !/[A-Za-z]/.test(trimmed)) return null;
+  return Math.max(0, Math.ceil((date - Date.now()) / 1000));
 }
 
 /** note から取得し、2xx の本文を JSON として返す */
@@ -92,6 +119,7 @@ export async function fetchNoteJson(url: string, options: FetchJsonOptions): Pro
     throw new NoteSchemaError('note returned a response that is not valid JSON', {
       issues: [{ path: '', message: 'Invalid JSON' }],
       cause: error,
+      url,
     });
   }
 }

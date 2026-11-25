@@ -80,6 +80,7 @@ function classify(name: string, error: unknown): ContractCheck {
     }
     case 'NOTE_NETWORK_ERROR':
     case 'NOTE_TIMEOUT':
+    case 'NOTE_RATE_LIMITED':
       return { ...failed, kind: 'transient', code };
     default:
       return { ...failed, kind: 'unexpected' };

@@ -1,7 +1,13 @@
-/** エラーの種類を表す安定した識別子 */
+/**
+ * エラーの種類を表す安定した識別子。
+ *
+ * マイナーバージョンでコードが増えることがある（例：v0.4.0 で `NOTE_RATE_LIMITED` を追加）。
+ * `switch (error.code)` で分けるときは、知らないコードのために `default` を書くこと。
+ */
 export type NoteErrorCode =
   | 'NOTE_NOT_FOUND'
   | 'NOTE_HTTP_ERROR'
+  | 'NOTE_RATE_LIMITED'
   | 'NOTE_NETWORK_ERROR'
   | 'NOTE_TIMEOUT'
   | 'NOTE_SCHEMA_ERROR';
@@ -9,18 +15,13 @@ export type NoteErrorCode =
 const NOTE_ERROR_CODES: ReadonlySet<string> = new Set<NoteErrorCode>([
   'NOTE_NOT_FOUND',
   'NOTE_HTTP_ERROR',
+  'NOTE_RATE_LIMITED',
   'NOTE_NETWORK_ERROR',
   'NOTE_TIMEOUT',
   'NOTE_SCHEMA_ERROR',
 ]);
 
-/** エラーのコンストラクタに渡す共通のオプション（ライブラリ内部用） */
-export interface NoteErrorOptions {
-  /** 元になったエラー */
-  cause?: unknown;
-}
-
-function toErrorOptions(options: NoteErrorOptions | undefined): ErrorOptions | undefined {
+function toErrorOptions(options: { cause?: unknown } | undefined): ErrorOptions | undefined {
   return options !== undefined && 'cause' in options ? { cause: options.cause } : undefined;
 }
 
@@ -28,17 +29,19 @@ function toErrorOptions(options: NoteErrorOptions | undefined): ErrorOptions | u
  * note-blog-kit/server が投げるエラーの基底クラス。
  *
  * 判定は `instanceof` ではなく {@link isNoteError} と `code` で行うことを推奨する
- * （ESM と CJS が混在したり、パッケージが重複して読み込まれたりすると `instanceof` は一致しないことがある）。
+ * （パッケージが重複して読み込まれたり、別の realm 由来だったりすると `instanceof` は一致しないことがある）。
  * `isNoteError(error) && error.code === 'NOTE_HTTP_ERROR'` のように書くと `error.status` まで型が絞られる。
  *
- * コンストラクタはライブラリ内部で使うもので、利用者が作ることは想定していない。
+ * コンストラクタはライブラリ内部で使うもので、利用者が作ることは想定していない（引数は予告なく変わる）。
  */
 export class NoteError extends Error {
   // 利用者側のバンドラがクラス名を圧縮しても変わらないよう、name は文字列で持つ
   override name: string = 'NoteError';
+  /** エラーの種類 */
   readonly code: NoteErrorCode;
 
-  constructor(message: string, options: NoteErrorOptions & { code: NoteErrorCode }) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; code: NoteErrorCode }) {
     super(message, toErrorOptions(options));
     this.code = options.code;
   }
@@ -51,24 +54,44 @@ export class NoteNotFoundError extends NoteError {
   /** リクエストした URL */
   readonly url: string;
 
-  constructor(message: string, options: NoteErrorOptions & { url: string }) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; url: string }) {
     super(message, { ...options, code: 'NOTE_NOT_FOUND' });
     this.url = options.url;
   }
 }
 
-/** 404 以外の 2xx でない HTTP ステータス */
+/** 404・429 以外の 2xx でない HTTP ステータス */
 export class NoteHttpError extends NoteError {
   override name = 'NoteHttpError';
   override readonly code = 'NOTE_HTTP_ERROR' as const;
+  /** HTTP ステータス */
   readonly status: number;
   /** リクエストした URL */
   readonly url: string;
 
-  constructor(message: string, options: NoteErrorOptions & { status: number; url: string }) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; status: number; url: string }) {
     super(message, { ...options, code: 'NOTE_HTTP_ERROR' });
     this.status = options.status;
     this.url = options.url;
+  }
+}
+
+/** リクエストが多すぎる（HTTP 429）。時間を空けて再試行すること */
+export class NoteRateLimitError extends NoteError {
+  override name = 'NoteRateLimitError';
+  override readonly code = 'NOTE_RATE_LIMITED' as const;
+  /** リクエストした URL */
+  readonly url: string;
+  /** 応答の `Retry-After` から求めた、再試行まで待つ秒数。なければ・解釈できなければ null */
+  readonly retryAfterSeconds: number | null;
+
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; url: string; retryAfterSeconds: number | null }) {
+    super(message, { ...options, code: 'NOTE_RATE_LIMITED' });
+    this.url = options.url;
+    this.retryAfterSeconds = options.retryAfterSeconds;
   }
 }
 
@@ -76,9 +99,13 @@ export class NoteHttpError extends NoteError {
 export class NoteNetworkError extends NoteError {
   override name = 'NoteNetworkError';
   override readonly code = 'NOTE_NETWORK_ERROR' as const;
+  /** リクエストした URL */
+  readonly url: string;
 
-  constructor(message: string, options?: NoteErrorOptions) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; url: string }) {
     super(message, { ...options, code: 'NOTE_NETWORK_ERROR' });
+    this.url = options.url;
   }
 }
 
@@ -86,9 +113,13 @@ export class NoteNetworkError extends NoteError {
 export class NoteTimeoutError extends NoteError {
   override name = 'NoteTimeoutError';
   override readonly code = 'NOTE_TIMEOUT' as const;
+  /** リクエストした URL */
+  readonly url: string;
 
-  constructor(message: string, options?: NoteErrorOptions) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; url: string }) {
     super(message, { ...options, code: 'NOTE_TIMEOUT' });
+    this.url = options.url;
   }
 }
 
@@ -96,27 +127,53 @@ export class NoteTimeoutError extends NoteError {
 export interface NoteSchemaIssue {
   /** `data.contents.0.key` のようなドット区切りのパス */
   readonly path: string;
+  /** 何が違ったか */
   readonly message: string;
 }
 
-/** note のレスポンスの形が想定と違う（API の仕様変更など） */
+/** note のレスポンスの形が想定と違う（API の仕様変更など）、または本文が大きすぎる */
 export class NoteSchemaError extends NoteError {
   override name = 'NoteSchemaError';
   override readonly code = 'NOTE_SCHEMA_ERROR' as const;
+  /** 想定と違った箇所 */
   readonly issues: readonly NoteSchemaIssue[];
+  /** リクエストした URL。取得関数（`listArticles`・`getArticle` など）から投げられるときは必ず入る */
+  readonly url: string | undefined;
 
-  constructor(message: string, options: NoteErrorOptions & { issues: readonly NoteSchemaIssue[] }) {
+  /** @internal */
+  constructor(message: string, options: { cause?: unknown; issues: readonly NoteSchemaIssue[]; url?: string }) {
     const detail = options.issues
       .slice(0, 5)
       .map((issue) => `${issue.path || '(root)'}: ${issue.message}`)
       .join('; ');
     super(detail === '' ? message : `${message} (${detail})`, { ...options, code: 'NOTE_SCHEMA_ERROR' });
     this.issues = options.issues;
+    this.url = options.url;
   }
 }
 
-/** note-blog-kit/server が投げるエラーのいずれか。`code` で判別できる */
-export type AnyNoteError = NoteNotFoundError | NoteHttpError | NoteNetworkError | NoteTimeoutError | NoteSchemaError;
+/**
+ * 正規化で投げられた NoteSchemaError に、リクエストした URL を付ける（内部用）。
+ * 正規化の関数は URL を知らないため、取得関数がここで付け直す。
+ */
+export function withUrl(error: unknown, url: string): unknown {
+  if (error instanceof NoteSchemaError && error.url === undefined) {
+    (error as { url: string | undefined }).url = url;
+  }
+  return error;
+}
+
+/**
+ * note-blog-kit/server が投げるエラーのいずれか。`code` で判別できる。
+ * {@link NoteErrorCode} と同じく、マイナーバージョンで種類が増えることがある。
+ */
+export type AnyNoteError =
+  | NoteNotFoundError
+  | NoteHttpError
+  | NoteRateLimitError
+  | NoteNetworkError
+  | NoteTimeoutError
+  | NoteSchemaError;
 
 /**
  * note-blog-kit のエラーかどうかを `name`・`message`・`code` で判定する。

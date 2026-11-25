@@ -100,6 +100,16 @@ describe('getArticle', () => {
     expect(performance.now() - start).toBeLessThan(1000);
   });
 
+  it('本文の検証の失敗（形の違い・本文の上限）の NoteSchemaError にも url が入る', async () => {
+    for (const respond of [() => new Response('{"data":{"key":"n55256baa5425"}}'), withBody('<b>'.repeat(300))]) {
+      const error = (await getArticle({ ...base, fetch: mockFetch(respond) }).catch(
+        (e: unknown) => e,
+      )) as NoteSchemaError;
+      expect(error).toBeInstanceOf(NoteSchemaError);
+      expect(error.url).toBe('https://note.com/api/v3/notes/n55256baa5425');
+    }
+  });
+
   it('他人の記事は、本文の検証・サニタイズより前に NoteNotFoundError になる', async () => {
     const start = performance.now();
     const error = await getArticle({
