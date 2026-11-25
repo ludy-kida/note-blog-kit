@@ -22,11 +22,11 @@ describe('useNoteArticles', () => {
   it('中継エンドポイントの NoteArticlePage を取得する（取得中 → 成功）', async () => {
     const fetch = jsonFetch(page);
     const { result } = renderHook(() => useNoteArticles({ url: '/api/note?page=2', fetch }));
-    expect(result.current).toMatchObject({ articles: [], page: null, isLoading: true, error: null });
+    expect(result.current).toMatchObject({ articles: [], data: null, isLoading: true, error: null });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.error).toBeNull();
     expect(result.current.articles).toHaveLength(6);
-    expect(result.current.page).toEqual(page);
+    expect(result.current.data).toEqual(page);
     expect(String(fetch.mock.calls[0]?.[0])).toBe('/api/note?page=2');
     expect(fetch.mock.calls[0]?.[1]?.credentials).toBe('same-origin');
   });
@@ -36,7 +36,7 @@ describe('useNoteArticles', () => {
     const { result } = renderHook(() => useNoteArticles({ url: '/note/articles.json', fetch }));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.articles).toHaveLength(6);
-    expect(result.current.page).toEqual({ articles, page: 1, totalCount: null, isLastPage: true });
+    expect(result.current.data).toEqual({ articles, page: 1, totalCount: null, isLastPage: true });
   });
 
   it('形式のバージョン 1 の articles.json を読み、知らないバージョンは error', async () => {
@@ -61,6 +61,92 @@ describe('useNoteArticles', () => {
     }
   });
 
+  it('中継エンドポイントの失敗は error の status と code で分けられる', async () => {
+    for (const [status, code] of [
+      [404, 'NOTE_NOT_FOUND'],
+      [502, 'NOTE_RATE_LIMITED'],
+      [400, 'INVALID_REQUEST'],
+      [500, 'INTERNAL_ERROR'],
+    ] as const) {
+      const fetch = jsonFetch({ error: code }, status);
+      const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.error).toBeInstanceOf(Error);
+      expect(result.current.error?.status).toBe(status);
+      expect(result.current.error?.code).toBe(code);
+      expect(result.current.data).toBeNull();
+      unmount();
+    }
+  });
+
+  it('コードとして読めない失敗の本文は code が null（status は入る）', async () => {
+    const big = new Response(JSON.stringify({ error: 'NOTE_NOT_FOUND' }), {
+      status: 404,
+      headers: { 'content-length': String(16 * 1024 + 1) },
+    });
+    for (const [status, fetch] of [
+      [500, vi.fn(async () => new Response('<html>oops</html>', { status: 500 }))],
+      [502, jsonFetch({ error: 123 }, 502)],
+      [502, jsonFetch({ error: '<script>' }, 502)],
+      [502, jsonFetch({ error: `A${'B'.repeat(64)}` }, 502)],
+      [502, jsonFetch({ error: 'note_not_found' }, 502)],
+      [404, jsonFetch([{ error: 'NOTE_NOT_FOUND' }], 404)],
+      [404, vi.fn(async () => big)],
+    ] as const) {
+      const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.error?.status).toBe(status);
+      expect(result.current.error?.code).toBeNull();
+      unmount();
+    }
+    // ちょうど64文字のコードは入る
+    const fetch = jsonFetch({ error: `A${'B'.repeat(63)}` }, 502);
+    const { result } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.error?.code).toBe(`A${'B'.repeat(63)}`);
+  });
+
+  it('通信の失敗・取得できない URL・形の違う 200 の応答は status も code も null', async () => {
+    const cases: [string, typeof globalThis.fetch][] = [
+      [
+        '/api/note',
+        vi.fn(async () => {
+          throw new TypeError('Failed to fetch');
+        }),
+      ],
+      ['https://note.com/x', jsonFetch(page)],
+      ['/api/note', jsonFetch({ articles: 'x' })],
+    ];
+    for (const [url, fetch] of cases) {
+      const { result, unmount } = renderHook(() => useNoteArticles({ url, fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.error, url).toBeInstanceOf(Error);
+      expect(result.current.error?.status).toBeNull();
+      expect(result.current.error?.code).toBeNull();
+      unmount();
+    }
+  });
+
+  it('利用者の fetch が投げたエラーは書き換えずに包み直す（DOMException・status を持つエラーでも止まらない）', async () => {
+    const timeout = new DOMException('The operation timed out.', 'TimeoutError');
+    const custom = Object.assign(new Error('bad request'), { status: 'x', code: 'ERR_BAD_REQUEST' });
+    for (const thrown of [timeout, custom]) {
+      const fetch = vi.fn(async () => {
+        throw thrown;
+      });
+      const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.error).toBeInstanceOf(Error);
+      expect(result.current.error).not.toBe(thrown);
+      expect(result.current.error?.cause).toBe(thrown);
+      expect(result.current.error?.message).toBe(thrown.message);
+      expect(result.current.error?.status).toBeNull();
+      expect(result.current.error?.code).toBeNull();
+      unmount();
+    }
+    expect(custom.status).toBe('x');
+  });
+
   it('HTTP エラー・JSON でない応答・形が違う JSON は error', async () => {
     for (const fetch of [
       jsonFetch({ error: 'NOTE_NOT_FOUND' }, 404),
@@ -72,7 +158,7 @@ describe('useNoteArticles', () => {
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       expect(result.current.error).toBeInstanceOf(Error);
       expect(result.current.articles).toEqual([]);
-      expect(result.current.page).toBeNull();
+      expect(result.current.data).toBeNull();
       unmount();
     }
   });
@@ -133,11 +219,11 @@ describe('useNoteArticles', () => {
       initialProps: { url: '/api/note?page=1' },
     });
     rerender({ url: '/api/note?page=2' });
-    await waitFor(() => expect(result.current.page?.page).toBe(2));
+    await waitFor(() => expect(result.current.data?.page).toBe(2));
     // 遅れて届いた1ページ目の応答で上書きしない
     resolveFirst(new Response(JSON.stringify({ ...page, page: 1 })));
     await new Promise((resolve) => setTimeout(resolve, 10));
-    expect(result.current.page?.page).toBe(2);
+    expect(result.current.data?.page).toBe(2);
     expect(fetch.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
   });
 });

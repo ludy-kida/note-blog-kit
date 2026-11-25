@@ -359,6 +359,8 @@ import { NoteArticleList, useNoteArticles } from 'note-blog-kit/react';
 export function Blog() {
   const { articles, isLoading, error } = useNoteArticles({ url: '/note/articles.json' }); // または '/api/note?page=1'
   if (isLoading) return <p>読み込み中…</p>;
+  // error.status（HTTP ステータス）で分けられる。中継エンドポイントなら error.code（'NOTE_NOT_FOUND' など）でも分けられる
+  if (error?.status === 404) return <p>記事が見つかりません</p>;
   if (error) return <p>記事を読み込めませんでした</p>;
   return <NoteArticleList articles={articles} />;
 }
@@ -371,14 +373,23 @@ import { createNoteArticlesHandler } from 'note-blog-kit/next';
 export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
 ```
 
-- **`useNoteArticles`**：`url` から `{ articles, page, isLoading, error }` を返すクライアント用のフックです。中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います。知らない `version` は `error`）のどちらも読めます
+- **`useNoteArticles`**：`url` から `{ articles, data, isLoading, error }` を返すクライアント用のフックです。
+
+  | 戻り値 | 内容 |
+  | --- | --- |
+  | `articles` | 取得した記事（`NoteArticleSummary[]`）。取得前・失敗時は空 |
+  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。取得前・失敗時は `null` |
+  | `isLoading` | 取得中か |
+  | `error` | 失敗したとき `UseNoteArticlesError`（`Error` を継承。`status`：HTTP ステータスか `null`、`code`：中継エンドポイントのエラーコードか `null`）。成功・取得中は `null`。`code` が入るのは中継エンドポイントの応答のときだけで、`articles.json` などの静的ファイルでは常に `null` です。コードは増えることがあり、知らないコードもそのまま入ります |
+
+  中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います。知らない `version` は `error`）のどちらも読めます
   - note.com の URL を渡すと取得せずに `error` を返します。`url` が変わると取り直し、古い応答は捨てます
   - 応答の検証は最小限です（主な項目の型が合わない記事は除きます）。`url` には自分のサイトの中継エンドポイントか JSON を指定し、利用者の入力を使わないでください
   - `fetch` を渡す場合は、描画ごとに作り直しても取り直しは起きません（`url` が変わったときだけ取り直します）
 - **`createNoteArticlesHandler`**：`?page=N` の一覧を JSON で返します
   - `page` は 1〜`maxPageNumber`（既定 100、`source: 'rss'` では 1）の正規形の整数だけを受け付けます。`01`・`1.0` などの別の書き方や、`page` 以外のクエリは 400 です（CDN のキャッシュを外して note へのリクエストを増やされないように）
   - 成功した応答には `Cache-Control: public, s-maxage=3600, stale-while-revalidate=3600` を付けます（秒数は `cacheSeconds` で変更）
-  - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`（本文の型は `NoteArticlesHandlerErrorBody`、コードの型は `NoteArticlesHandlerErrorCode`。`note-blog-kit` と `note-blog-kit/next` から import できます。コードはマイナーバージョンで増えることがあります）
+  - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`（本文の型は `NoteArticlesHandlerErrorBody`、コードの型は `NoteArticlesHandlerErrorCode`。`note-blog-kit` と `note-blog-kit/next` から import できます。コードの型は `note-blog-kit/react` からも import できます。コードはマイナーバージョンで増えることがあります）
   - オプション（`source` など）は `listArticles` と同じです（`page` は指定できません）。リクエストが中断されると、note への取得も中断します
 - `note-blog-kit/react` のほかのコンポーネントは、これまでどおり Server Component としても使えます。`useNoteArticles` だけは Client Component（`'use client'` のファイル）か SPA で使ってください
 

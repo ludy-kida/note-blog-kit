@@ -1,7 +1,7 @@
 // フックは React 名前空間から呼ぶ（Server Component から /react を import したとき、
 // react-server の React にない useState などを名前付き import で解決させないため）
 import * as React from 'react';
-import type { NoteArticlePage, NoteArticleSummary } from '../core/types.js';
+import type { NoteArticlePage, NoteArticleSummary, NoteArticlesHandlerErrorCode } from '../core/types.js';
 
 /** {@link useNoteArticles} のオプション */
 export interface UseNoteArticlesOptions {
@@ -16,19 +16,67 @@ export interface UseNoteArticlesOptions {
   fetch?: typeof globalThis.fetch;
 }
 
+/** {@link useNoteArticles} の取得の失敗。`Error` を継承するので `message` も読める */
+export interface UseNoteArticlesError extends Error {
+  /** 応答の HTTP ステータス。応答がない（通信の失敗・取得できない URL）か、2xx で形が違う応答なら null */
+  readonly status: number | null;
+  /**
+   * 中継エンドポイントが返したエラーコード（`{ "error": "<コード>" }` の応答のとき）。
+   * コードの形（英大文字で始まる英大文字・数字・_ の64文字まで）でない、本文が大きすぎる（16 KB 超）、
+   * または `articles.json` などの静的ファイルの応答なら null。
+   * コードはマイナーバージョンで増えることがある（知らないコードもそのまま入る。`switch` には `default` を書くこと）
+   */
+  readonly code: NoteArticlesHandlerErrorCode | null;
+}
+
 /** {@link useNoteArticles} の戻り値 */
 export interface UseNoteArticlesResult {
   /** 取得した記事。取得前・失敗時は空 */
   articles: NoteArticleSummary[];
-  /** ページ情報。`articles.json`（ページ情報がない）なら `{ page: 1, totalCount: null, isLastPage: true }` として扱う。取得前・失敗時は null */
-  page: NoteArticlePage | null;
+  /**
+   * 取得したページ（ページの番号 `data.page`・`totalCount`・`isLastPage` を含む）。
+   * `articles.json`（ページ情報がない）なら `{ page: 1, totalCount: null, isLastPage: true }` として扱う。取得前・失敗時は null
+   */
+  data: NoteArticlePage | null;
   /** 取得中か（最初の取得中と、url が変わって取り直している間は true） */
   isLoading: boolean;
-  /** 取得に失敗したときのエラー（HTTP エラー・形の違う応答・取得できない URL）。成功・取得中は null */
-  error: Error | null;
+  /** 取得に失敗したときのエラー（HTTP エラー・通信の失敗・形の違う応答・取得できない URL）。成功・取得中は null */
+  error: UseNoteArticlesError | null;
 }
 
-const INITIAL: UseNoteArticlesResult = { articles: [], page: null, isLoading: true, error: null };
+const INITIAL: UseNoteArticlesResult = { articles: [], data: null, isLoading: true, error: null };
+
+/** 中継エンドポイントのエラーコードの形（英大文字・数字・_） */
+const ERROR_CODE_RE = /^[A-Z][A-Z0-9_]{0,63}$/;
+/** エラーコードを読む本文の最大の大きさ（バイト） */
+const MAX_ERROR_BODY_BYTES = 16 * 1024;
+/** このフックが作ったエラー（利用者の fetch が投げた、status を持つエラーと区別する） */
+const OWN_ERRORS = new WeakSet<Error>();
+
+/** 新しいエラーを作る（受け取ったエラーは書き換えず cause に入れる。DOMException などは書き換えられないため） */
+function toError(cause: unknown, status: number | null = null, code: string | null = null): UseNoteArticlesError {
+  const message = cause instanceof Error ? cause.message : String(cause);
+  const error = Object.assign(new Error(message, { cause }), {
+    status,
+    code: code as NoteArticlesHandlerErrorCode | null,
+  });
+  OWN_ERRORS.add(error);
+  return error;
+}
+
+/** 失敗した応答の本文から `{ error: <コード> }` のコードを読む（読めなければ null。大きすぎる本文は読まない） */
+async function readErrorCode(response: Response): Promise<string | null> {
+  const length = Number(response.headers.get('content-length'));
+  if (length > MAX_ERROR_BODY_BYTES) return null;
+  try {
+    const body = (await response.json()) as unknown;
+    const code =
+      typeof body === 'object' && body !== null && !Array.isArray(body) ? (body as { error?: unknown }).error : null;
+    return typeof code === 'string' && ERROR_CODE_RE.test(code) ? code : null;
+  } catch {
+    return null;
+  }
+}
 
 /** 取得してよい URL か確かめる（http(s) のみ、note.com とそのサブドメインは不可） */
 function checkUrl(url: string): Error | null {
@@ -112,7 +160,7 @@ export function useNoteArticles(options: UseNoteArticlesOptions): UseNoteArticle
   React.useEffect(() => {
     const invalid = checkUrl(url);
     if (invalid) {
-      setState({ articles: [], page: null, isLoading: false, error: invalid });
+      setState({ articles: [], data: null, isLoading: false, error: toError(invalid) });
       return;
     }
     const controller = new AbortController();
@@ -124,17 +172,18 @@ export function useNoteArticles(options: UseNoteArticlesOptions): UseNoteArticle
           credentials: 'same-origin',
           signal: controller.signal,
         });
-        if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}`);
-        const page = toPage((await response.json()) as unknown);
-        if (!controller.signal.aborted) setState({ articles: page.articles, page, isLoading: false, error: null });
+        if (!response.ok) {
+          const code = await readErrorCode(response);
+          throw toError(`Request failed with HTTP ${response.status}`, response.status, code);
+        }
+        const data = toPage((await response.json()) as unknown);
+        if (!controller.signal.aborted) setState({ articles: data.articles, data, isLoading: false, error: null });
       } catch (error) {
         if (controller.signal.aborted) return;
-        setState({
-          articles: [],
-          page: null,
-          isLoading: false,
-          error: error instanceof Error ? error : new Error(String(error)),
-        });
+        // このフックが作ったエラーだけをそのまま使う（利用者の fetch が投げたエラーは包み直す）
+        const known =
+          error instanceof Error && OWN_ERRORS.has(error) ? (error as UseNoteArticlesError) : toError(error);
+        setState({ articles: [], data: null, isLoading: false, error: known });
       }
     })();
     return () => controller.abort();
