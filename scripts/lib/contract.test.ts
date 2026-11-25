@@ -152,6 +152,22 @@ describe('runContractCheck', () => {
     assert.equal(requests.length, 2);
   });
 
+  it('本文は自分の無料記事から選ぶ（一覧に他人の記事があっても not-found にしない）', async () => {
+    const json = JSON.parse(fixture('contents/page-1.json')) as {
+      data: { contents: { key: string; price: number; user: { urlname: string } }[] };
+    };
+    const mine = json.data.contents.find((content) => content.price === 0);
+    assert.ok(mine);
+    // 先頭に他人の無料記事を置く
+    json.data.contents.unshift({ ...mine, key: 'n000000000001', user: { ...mine.user, urlname: 'someone_else' } });
+    const { deps, requests } = setup((url) =>
+      url.pathname.endsWith('/contents') ? new Response(JSON.stringify(json)) : undefined,
+    );
+    const result = await runContractCheck(deps);
+    assert.equal(result.ok, true, JSON.stringify(result.checks));
+    assert.ok(requests[1]?.url.pathname.endsWith(`/api/v3/notes/${mine.key}`));
+  });
+
   it('ライブラリ以外の例外は unexpected（形の変化として扱う）', async () => {
     const { deps } = setup();
     const result = await runContractCheck({

@@ -13,6 +13,7 @@ export function getArticle(options: GetArticleOptions): Promise<NoteArticle>;
 // @public
 export interface GetArticleOptions extends NoteRequestOptions {
     key: string;
+    user: string | readonly string[];
 }
 
 // @public

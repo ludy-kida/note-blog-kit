@@ -35,6 +35,7 @@ export interface ContractResult {
 interface ArticleLike {
   key: string;
   price: number | null;
+  author: { urlname: string };
 }
 
 /** 取得関数（ライブラリの listArticles・getArticle に取得オプションを束ねたもの） */
@@ -43,7 +44,7 @@ export interface ContractDeps {
   listArticles(options: { user: string; page?: number; source?: 'api' | 'rss' }): Promise<{
     articles: readonly ArticleLike[];
   }>;
-  getArticle(options: { key: string }): Promise<unknown>;
+  getArticle(options: { key: string; user: string }): Promise<unknown>;
 }
 
 export const CHECK_NAMES = {
@@ -97,7 +98,8 @@ export async function runContractCheck(deps: ContractDeps): Promise<ContractResu
   try {
     const page = await deps.listArticles({ user: deps.user, page: 1, source: 'api' });
     listOk = true;
-    freeKey = page.articles.find((article) => article.price === 0)?.key;
+    // 本文 API は user にない著者の記事を NOT_FOUND にするので、自分の記事から選ぶ
+    freeKey = page.articles.find((article) => article.price === 0 && article.author.urlname === deps.user)?.key;
     checks.push({ name: CHECK_NAMES.list, status: 'ok' });
   } catch (error) {
     checks.push(classify(CHECK_NAMES.list, error));
@@ -111,7 +113,7 @@ export async function runContractCheck(deps: ContractDeps): Promise<ContractResu
     });
   } else {
     try {
-      await deps.getArticle({ key: freeKey });
+      await deps.getArticle({ key: freeKey, user: deps.user });
       checks.push({ name: CHECK_NAMES.body, status: 'ok' });
     } catch (error) {
       checks.push(classify(CHECK_NAMES.body, error));
