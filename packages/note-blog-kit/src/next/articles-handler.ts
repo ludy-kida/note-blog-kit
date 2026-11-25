@@ -1,3 +1,4 @@
+import type { NoteArticlePage, NoteArticlesHandlerErrorBody } from '../core/types.js';
 import { isNoteError } from '../server/errors.js';
 import { type ListArticlesOptions, listArticles } from '../server/list-articles.js';
 import { NOTE_USER_RE } from '../server/patterns.js';
@@ -20,7 +21,7 @@ const DEFAULT_CACHE_SECONDS = 3600;
 const PAGE_RE = /^[1-9][0-9]{0,5}$/;
 const SOURCES = new Set(['api', 'rss', 'auto']);
 
-function json(body: unknown, status: number, cacheControl: string): Response {
+function json(body: NoteArticlePage | NoteArticlesHandlerErrorBody, status: number, cacheControl: string): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': cacheControl },
@@ -39,7 +40,7 @@ function assertInteger(name: string, value: number, min: number): void {
  *
  * - `?page=N`（1〜maxPageNumber、正規形の整数のみ。省略すると 1）でページを指定する。ほかのクエリは受け付けない
  * - 成功：200 で `NoteArticlePage` を返し、`Cache-Control: public, s-maxage=<cacheSeconds>, stale-while-revalidate=<cacheSeconds>` を付ける
- * - 失敗（どれもキャッシュさせない `no-store`。本文は `{ error: <コード> }` だけで詳細は出さない）：
+ * - 失敗（どれもキャッシュさせない `no-store`。本文は `NoteArticlesHandlerErrorBody`（`{ error: <コード> }`）だけで詳細は出さない）：
  *   400 `INVALID_REQUEST`（page・クエリが不正）／404 `NOTE_NOT_FOUND`／502 そのほかの `NoteErrorCode`／500 `INTERNAL_ERROR`
  * - リクエストが中断されたら（`request.signal`）、note への取得も中断する
  *

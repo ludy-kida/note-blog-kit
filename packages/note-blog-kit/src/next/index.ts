@@ -9,8 +9,11 @@
 export type {
   NoteArticle,
   NoteArticleSummary,
+  NoteArticlesHandlerErrorBody,
+  NoteArticlesHandlerErrorCode,
   NoteAuthor,
   NoteEmbed,
+  NoteErrorCode,
   NoteEyecatch,
   NoteSource,
   NoteTocItem,

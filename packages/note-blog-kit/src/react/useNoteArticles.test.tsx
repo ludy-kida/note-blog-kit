@@ -9,6 +9,7 @@ afterEach(cleanup);
 
 const articles = loadArticles(1);
 const page: NoteArticlePage = { articles, page: 2, totalCount: 237, isLastPage: false };
+// version のない古い articles.json（v0.3 まで）
 const syncJson = { user: 'kida_lw', syncedAt: '2026-11-24T00:00:00.000Z', truncated: false, articles };
 
 const jsonFetch = (body: unknown, status = 200) =>
@@ -36,6 +37,28 @@ describe('useNoteArticles', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.articles).toHaveLength(6);
     expect(result.current.page).toEqual({ articles, page: 1, totalCount: null, isLastPage: true });
+  });
+
+  it('形式のバージョン 1 の articles.json を読み、知らないバージョンは error', async () => {
+    const v1 = jsonFetch({ version: 1, ...syncJson });
+    const { result } = renderHook(() => useNoteArticles({ url: '/note/articles.json', fetch: v1 }));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.articles).toHaveLength(6);
+
+    for (const [version, body] of [
+      [2, { ...syncJson, version: 2 }],
+      ['1', { ...syncJson, version: '1' }],
+      [null, { ...syncJson, version: null }],
+      // 新しい形式で articles の形が変わっていても、version の誤りとして知らせる
+      [3, { version: 3, user: 'kida_lw', articles: { items: [] } }],
+    ] as const) {
+      const fetch = jsonFetch(body);
+      const { result: r, unmount } = renderHook(() => useNoteArticles({ url: '/note/articles.json', fetch }));
+      await waitFor(() => expect(r.current.isLoading).toBe(false));
+      expect(r.current.error?.message, String(version)).toMatch(/version/);
+      expect(r.current.articles).toEqual([]);
+      unmount();
+    }
   });
 
   it('HTTP エラー・JSON でない応答・形が違う JSON は error', async () => {

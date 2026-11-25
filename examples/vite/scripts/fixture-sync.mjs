@@ -27,6 +27,6 @@ const out = join(exampleDir, 'public', 'note');
 await mkdir(out, { recursive: true });
 await writeFile(
   join(out, 'articles.json'),
-  `${JSON.stringify({ user: USER, syncedAt: new Date().toISOString(), truncated, articles }, null, 2)}\n`,
+  `${JSON.stringify({ version: 1, user: USER, syncedAt: new Date().toISOString(), truncated, articles }, null, 2)}\n`,
 );
 console.log(`fixture の記事 ${articles.length} 件を ${join(out, 'articles.json')} に書き出しました`);

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
-import type { NoteArticlePage } from '../core/types.js';
+import type { NoteArticlePage, NoteArticlesHandlerErrorBody } from '../core/types.js';
 import { createNoteArticlesHandler } from './articles-handler.js';
 
 const fixture = (path: string): string =>
@@ -86,7 +86,8 @@ describe('createNoteArticlesHandler', () => {
       expect(response.status).toBe(status);
       expect(response.headers.get('cache-control')).toBe('no-store');
       const text = await response.text();
-      expect(JSON.parse(text)).toEqual({ error: code });
+      const body: NoteArticlesHandlerErrorBody = JSON.parse(text);
+      expect(body).toEqual({ error: code });
       expect(text).not.toContain('secret');
       expect(text).not.toContain('note.com');
     }
