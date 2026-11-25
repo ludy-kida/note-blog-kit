@@ -1,11 +1,20 @@
 /**
- * 本文 HTML のサニタイズ（許可リスト方式）。方針は docs/sanitize-policy.md。
+ * 本文 HTML のサニタイズ（許可リスト方式）。方針は docs/sanitize-policy.md、許可するタグは core/body-policy.ts。
  * この許可リストの変更は人の承認が必要（CLAUDE.md・CODEOWNERS）。
  *
  * 属性はまず transform で自前の規則に従って作り直し、そのうえで sanitize-html の
  * allowedTags・allowedAttributes・allowedSchemes でもう一度絞る（二重の関門）。
  */
 import sanitizeHtml from 'sanitize-html';
+import {
+  ALLOWED_TAGS,
+  DIGITS,
+  DISCARD_VOID,
+  DISCARD_WITH_CONTENT,
+  IMAGE_HOST,
+  IMAGE_PREFIX,
+  SAFE_VALUE,
+} from '../../core/body-policy.js';
 import { NoteSchemaError } from '../errors.js';
 
 /**
@@ -13,64 +22,6 @@ import { NoteSchemaError } from '../errors.js';
  * これを超えたら中断して NoteSchemaError にする。深さ 256 なら 30万字でも 0.1 秒程度
  */
 export const MAX_BODY_DEPTH = 256;
-
-/** 許可するタグ（div は目次の目印 `<div data-nbk-toc>` にだけ使う。本文の div はタグを消す） */
-const ALLOWED_TAGS = [
-  'p',
-  'br',
-  'h2',
-  'h3',
-  'h4',
-  'strong',
-  'em',
-  's',
-  'a',
-  'ul',
-  'ol',
-  'li',
-  'blockquote',
-  'figure',
-  'figcaption',
-  'img',
-  'pre',
-  'code',
-  'hr',
-  'table',
-  'thead',
-  'tbody',
-  'tr',
-  'th',
-  'td',
-  'div',
-];
-
-/** 中身ごと消す要素 */
-const DISCARD_WITH_CONTENT = [
-  'script',
-  'style',
-  'iframe',
-  'frame',
-  'frameset',
-  'object',
-  'embed',
-  'applet',
-  'form',
-  'input',
-  'button',
-  'textarea',
-  'select',
-  'option',
-  'svg',
-  'math',
-  'template',
-  'noscript',
-  'meta',
-  'link',
-  'base',
-  'title',
-  'xmp',
-  'plaintext',
-];
 
 const ALLOWED_ATTRIBUTES: Record<string, string[]> = {
   '*': ['id'],
@@ -83,11 +34,8 @@ const ALLOWED_ATTRIBUTES: Record<string, string[]> = {
 };
 
 const LINK_SCHEMES = new Set(['http:', 'https:', 'mailto:']);
-const IMAGE_PREFIX = 'https://assets.st-note.com/';
-const IMAGE_HOST = 'assets.st-note.com';
-/** id・data-nbk-embed-*（URL を除く）に使える文字 */
-export const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
-const DIGITS = /^\d+$/;
+
+export { SAFE_VALUE };
 
 const AMAZON_HOSTS = new Set(['amazon.co.jp', 'www.amazon.co.jp', 'amazon.com', 'www.amazon.com']);
 const AFFILIATE_HOSTS = new Set([
@@ -209,13 +157,13 @@ export function sanitizeNoteBody(html: string): string {
   // 要素を消すときは、許可するタグ名のまま返して exclusiveFilter で消す。
 
   return sanitizeHtml(html, {
-    allowedTags: ALLOWED_TAGS,
+    allowedTags: [...ALLOWED_TAGS],
     allowedAttributes: ALLOWED_ATTRIBUTES,
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: { img: ['https'] },
     allowProtocolRelative: false,
     disallowedTagsMode: 'discard',
-    nonTextTags: DISCARD_WITH_CONTENT,
+    nonTextTags: [...DISCARD_WITH_CONTENT, ...DISCARD_VOID],
     selfClosing: ['img', 'br', 'hr'],
     enforceHtmlBoundary: false,
     // 属性値の実体参照を解いた値で URL を判定し、出力時にエスケープする前提（既定値だが明示する）
@@ -241,6 +189,8 @@ export function sanitizeNoteBody(html: string): string {
       if (frame.tag === 'div') return 'excludeTag';
       // 許可しない読み込み元の画像（transform で src を付けなかったもの）
       if (frame.tag === 'img' && frame.attribs.src === undefined) return true;
+      // テキストも残る画像もないリンク（外部画像だけのリンクカードなど）はタグを消す（名前のないリンクを残さない）
+      if (frame.tag === 'a' && frame.text.trim() === '' && frame.mediaChildren.length === 0) return 'excludeTag';
       return false;
     },
     textFilter: (text) => (tocDepth > 0 ? '' : text),

@@ -4,6 +4,8 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 
 この方針と XSS テストケース（`packages/note-blog-kit/src/server/sanitize/cases.ts`）の変更は、人の承認が必要（CLAUDE.md・CODEOWNERS）。
 
+許可するタグ・中身ごと消す要素・画像の読み込み元・属性値に使える文字は、`packages/note-blog-kit/src/core/body-policy.ts` の1か所にまとめている（#47）。`/server` のサニタイズと、`/react` の描画（正規化を通らないデータのための保険の絞り込み）の両方がこの値を使う。一覧は `core/body-policy.test.ts` で固定しているので、変えるとテストにも差分が出る。
+
 ## 根拠にした実データ
 
 `fixtures/notes/*.json`（2026-11-12 取得、無料記事 `n55256baa5425`・有料記事 `n52a7f4fa0a2e`）の本文で使われていたもの：
@@ -39,7 +41,10 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 
 ## 2. 許可しない要素
 
-- **中身ごと消す**：`script` `style` `iframe` `frame` `frameset` `object` `embed` `applet` `form` `input` `button` `textarea` `select` `option` `svg` `math` `template` `noscript` `meta` `link` `base` `title` `xmp` `plaintext`
+- **中身ごと消す**：`script` `style` `iframe` `frame` `frameset` `object` `applet` `form` `button` `textarea` `select` `option` `svg` `math` `template` `noscript` `title` `xmp` `plaintext` `noembed` `noframes`
+  - `noembed` `noframes` は #47 で足した（それまで `/server` ではタグだけ消えて中のテキストが残っていた。`/react` ではすでに中身ごと消していた）
+- **消す（中身のない void 要素）**：`embed` `input` `meta` `link` `base`
+  - `/react` は中身ごと消す要素を閉じタグまで読み飛ばすので、閉じタグのない void 要素はこちらに分けている（#47。それまで `/react` では `<embed>` の後ろの本文がすべて消えていた）
 - **タグだけ消して中身のテキストを残す**：上記以外の、許可していない要素（`div` `span` `font` など）
 
 ## 3. 属性
@@ -59,6 +64,10 @@ note の記事本文（`/api/v3/notes/{key}` の `body`）は**信頼できな�
 | 埋め込みの `figure` | `embedded-content-key` | `data-nbk-embed-key` に名前を変えて残す |
 | 埋め込みの `figure` | `data-src` | スキームが `https:` のときだけ、`data-nbk-embed-url` に名前を変えて残す |
 | 埋め込みの `figure` | `data-identifier` | 消す |
+
+### 空のリンク（#47）
+
+テキスト（空白以外）も、残る画像（上の規則で残す `img`）もない `a` は、タグだけ消す（中の空白は残す）。外部記事のリンクカードには外部画像だけを包んだ `a` があり、画像を消すと名前のないリンクが残る（WCAG 2.4.4・4.1.2 に反する）ため。`/react` の描画でも同じ条件の `a` は描画しない。
 
 `id`・`data-nbk-embed-*` の値は、英数字と `-` `_` `.` `:` `/` 以外の文字を含む場合は消す（`data-nbk-embed-url` を除く）。
 

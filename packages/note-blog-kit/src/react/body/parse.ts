@@ -2,10 +2,12 @@
  * サニタイズ済みの本文 HTML を、描画用の小さな木に変える（内部用）。
  *
  * 本文は /server（sanitizeNoteBody）でサニタイズ済みだが、正規化を通らないデータを渡された場合の保険として、
- * ここでも #8 と同じ許可リストで絞る。許可しないタグは中身だけ残し（危険な要素は中身ごと捨て）、属性は描画側で絞る。
+ * ここでも /server と同じ許可リスト（core/body-policy.ts）で絞る。許可しないタグは中身だけ残し（危険な要素は中身ごと捨て）、属性は描画側で絞る。
  * 出力は React 要素にするだけで、HTML として挿入しない（テキストは React がエスケープする）。
  * どんな入力でも入力長にほぼ比例する時間で終わり、React が警告する入れ子を作らないようにする。
  */
+
+import { ALLOWED_TAGS, DISCARD_WITH_CONTENT } from '../../core/body-policy.js';
 
 export interface BodyElement {
   tag: string;
@@ -14,59 +16,9 @@ export interface BodyElement {
 }
 export type BodyNode = string | BodyElement;
 
-const ALLOWED_TAGS = new Set([
-  'p',
-  'br',
-  'h2',
-  'h3',
-  'h4',
-  'strong',
-  'em',
-  's',
-  'a',
-  'ul',
-  'ol',
-  'li',
-  'blockquote',
-  'figure',
-  'figcaption',
-  'img',
-  'pre',
-  'code',
-  'hr',
-  'table',
-  'thead',
-  'tbody',
-  'tr',
-  'th',
-  'td',
-  'div',
-]);
+const ALLOWED = new Set(ALLOWED_TAGS);
 /** 中身ごと捨てる要素（docs/sanitize-policy.md の 2.） */
-const DISCARD_TAGS = new Set([
-  'script',
-  'style',
-  'iframe',
-  'frame',
-  'frameset',
-  'object',
-  'embed',
-  'applet',
-  'form',
-  'button',
-  'textarea',
-  'select',
-  'option',
-  'svg',
-  'math',
-  'template',
-  'noscript',
-  'title',
-  'xmp',
-  'plaintext',
-  'noembed',
-  'noframes',
-]);
+const DISCARD_TAGS = new Set(DISCARD_WITH_CONTENT);
 const VOID_TAGS = new Set(['br', 'hr', 'img']);
 /** テキストを子に持てない要素（React が警告する） */
 const NO_TEXT_TAGS = new Set(['table', 'thead', 'tbody', 'tr']);
@@ -140,7 +92,7 @@ export function parseBody(html: string): BodyNode[] {
       }
       continue;
     }
-    if (!ALLOWED_TAGS.has(tag)) continue;
+    if (!ALLOWED.has(tag)) continue;
     if (closing) {
       closeTo(tag);
       continue;

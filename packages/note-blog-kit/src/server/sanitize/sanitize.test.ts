@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { IMAGE_PREFIX } from '../../core/body-policy.js';
 import { PRESERVE_CASES, type SanitizeCase, UNSAFE_CASES } from './cases.js';
 import { sanitizeNoteBody } from './sanitize.js';
 
@@ -143,6 +144,13 @@ function countTags(html: string, tag: string): number {
   return (html.match(new RegExp(`<${tag}[\\s>/]`, 'g')) ?? []).length;
 }
 
+/** テキストも note の CDN の画像もない a の数（サニタイズでタグを消すもの。#47） */
+function countEmptyLinks(html: string): number {
+  return [...html.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)].filter(
+    ([, inner = '']) => inner.replace(/<[^>]*>/g, '').trim() === '' && !inner.includes(`src="${IMAGE_PREFIX}`),
+  ).length;
+}
+
 function textOf(html: string): string {
   return html
     .replace(/<[^>]*>/g, '')
@@ -159,9 +167,12 @@ describe('sanitizeNoteBody：fixture の本文が崩れない', () => {
     const output = sanitizeNoteBody(note.body);
     expectWellFormed(output);
 
-    for (const tag of ['p', 'h2', 'h3', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'figure', 'img']) {
+    for (const tag of ['p', 'h2', 'h3', 'strong', 'em', 'ul', 'ol', 'li', 'blockquote', 'figure', 'img']) {
       expect(countTags(output, tag), tag).toBe(countTags(note.body, tag));
     }
+    // a はテキストも画像もないもの（外部画像だけのリンクカードなど）だけが消え、空のリンクは残らない（#47）
+    expect(countTags(output, 'a'), 'a').toBe(countTags(note.body, 'a') - countEmptyLinks(note.body));
+    expect(countEmptyLinks(output)).toBe(0);
     expect(countTags(output, 'table-of-contents')).toBe(0);
     expect((output.match(/<div data-nbk-toc><\/div>/g) ?? []).length).toBe(countTags(note.body, 'table-of-contents'));
 

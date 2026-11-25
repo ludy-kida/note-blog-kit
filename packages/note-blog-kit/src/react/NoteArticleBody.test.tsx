@@ -33,6 +33,35 @@ function MyLink({ href, className, children }: { href: string; className?: strin
   );
 }
 
+describe('NoteArticleBody：空のリンク（#47）', () => {
+  it('fixture の描画結果に、テキストも画像もない a がない。外部記事のリンクカードのテキストは残る', () => {
+    const { container } = render(<NoteArticleBody article={free} />);
+    const empty = [...container.querySelectorAll('a')].filter(
+      (a) => (a.textContent ?? '').trim() === '' && a.querySelector('img') === null,
+    );
+    expect(empty).toHaveLength(0);
+    const cards = [...container.querySelectorAll('figure[data-service="external-article"] a')];
+    expect(cards.length).toBeGreaterThan(0);
+    for (const a of cards) expect((a.textContent ?? '').trim()).not.toBe('');
+    expect(cards.some((a) => a.textContent?.includes('www.amazon.co.jp'))).toBe(true);
+  });
+
+  it('正規化を通らない本文に空のリンクがあっても描画しない（中身の文字は残す）', () => {
+    const body =
+      '<p><a href="https://example.com/"> </a>後</p><p><a href="https://example.com/"><img src="https://evil.example/x.png"></a></p><p><a href="https://example.com/"><em></em></a></p>';
+    const { container } = render(<NoteArticleBody article={withBody(body)} />);
+    expect(container.querySelectorAll('a')).toHaveLength(0);
+    expect(container.textContent).toContain('後');
+  });
+
+  it('許可する画像だけのリンクは描画する', () => {
+    const body =
+      '<p><a href="https://example.com/"><img src="https://assets.st-note.com/img/a.png" alt="説明"></a></p>';
+    const { container } = render(<NoteArticleBody article={withBody(body)} />);
+    expect(container.querySelector('a img')?.getAttribute('alt')).toBe('説明');
+  });
+});
+
 describe('NoteArticleBody：既定の描画', () => {
   it('nbk-body の中に本文を描画し、iframe を出さない', () => {
     const { container } = render(<NoteArticleBody article={free} className="extra" />);
@@ -289,7 +318,8 @@ describe('NoteArticleBody：本文の変換', () => {
       '<div class="nbk-body"><p class="nbk-body__p">a</p><p class="nbk-body__p">b</p></div>',
     );
     expect(html('<a href="https://a.example/"><a href="https://b.example/">x</a></a>')).toBe(
-      '<div class="nbk-body"><a class="nbk-body__a" href="https://a.example/"></a><a class="nbk-body__a" href="https://b.example/">x</a></div>',
+      // 外側の a は中身のないまま閉じるので、空のリンクとして描画しない（#47）
+      '<div class="nbk-body"><a class="nbk-body__a" href="https://b.example/">x</a></div>',
     );
   });
 
