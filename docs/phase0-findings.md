@@ -94,6 +94,7 @@ export interface NoteArticlePage {
   page: number;
   totalCount: number | null;   // RSS では null
   isLastPage: boolean;
+  source: NoteSource;          // 実際の取得元（#43 で人が承認して追加）
 }
 ```
 

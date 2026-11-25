@@ -23,7 +23,7 @@ export interface NoteArticleListProps {
   renderItem?: (article: NoteArticleSummary) => ReactNode;
   /**
    * 表示する文言。`empty`：記事が0件のときの表示（既定「記事がありません」）、
-   * `paid`：各カードの有料記事のバッジ（既定「有料」）
+   * `paid`：各カードの有料記事のバッジ（既定「有料」。`renderItem` を渡したときは使わない）
    */
   labels?: { empty?: ReactNode; paid?: ReactNode };
   /** 既定のクラス名（`nbk-article-list`）に追加するクラス名。0件のときも同じ要素に付く */

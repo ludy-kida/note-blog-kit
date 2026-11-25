@@ -126,6 +126,8 @@ describe('createNoteArticlesHandler', () => {
   it('不正なオプションは作るときに TypeError', () => {
     expect(() => createNoteArticlesHandler({ user: '../x' })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, maxPage: 0 })).toThrow(TypeError);
+    // v0.3 までの名前は黙って無視せず TypeError にする
+    expect(() => createNoteArticlesHandler({ ...base, maxPageNumber: 5 } as never)).toThrow(/renamed to maxPage/);
     expect(() => createNoteArticlesHandler({ ...base, cacheSeconds: -1 })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, source: 'rss', maxPage: 2 })).toThrow(TypeError);
     expect(() => createNoteArticlesHandler({ ...base, source: 'xml' as unknown as 'rss' })).toThrow(TypeError);

@@ -51,3 +51,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vitest run packages
+      # ESM のみの配布物を require() で読めるか（require(esm)）を最低バージョンで確かめる
+      - run: pnpm --filter note-blog-kit build
+      - run: node packages/note-blog-kit/scripts/check-require.cjs

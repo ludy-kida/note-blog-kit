@@ -35,7 +35,8 @@ export interface UseNoteArticlesResult {
   articles: NoteArticleSummary[];
   /**
    * 取得したページ（ページの番号 `data.page`・`totalCount`・`isLastPage` を含む）。
-   * `articles.json`（ページ情報がない）なら `{ page: 1, totalCount: null, isLastPage: true }` として扱う。取得前・失敗時は null
+   * `articles.json`（ページ情報がない）なら `{ page: 1, totalCount: null, isLastPage: true }` として扱う。
+   * `source` は応答の値を使い、ない（`articles.json`）なら先頭の記事の `source`（記事がなければ `'api'`）で補う。取得前・失敗時は null
    */
   data: NoteArticlePage | null;
   /** 取得中か（最初の取得中と、url が変わって取り直している間は true） */

@@ -21,7 +21,7 @@ npm install note-blog-kit
 
 React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 22.12 以上で動きます。
 
-パッケージは ES Modules のみで配布しています。CommonJS からも、Node.js 22.12 以上なら `require('note-blog-kit/server')` のように読み込めます（require(esm)）。
+パッケージは ES Modules のみで配布しています。CommonJS からも、Node.js 22.12 以上なら `require('note-blog-kit/server')` のように読み込めます（require(esm)）。TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
 
 ### 2. デフォルト CSS を読み込む（任意）
 
@@ -217,7 +217,7 @@ const page = await listArticles({ user: 'your_urlname', source: 'auto' });
 ```
 
 - `'rss'`：note の RSS から取得します。最新25件だけの1ページで（`isLastPage: true`、`totalCount: null`）、`hashtags` は空、`likeCount`・`price` は `null` です。`page` に 2 以上を渡すと `TypeError` になります
-- `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかは各記事の `source`（`'api'` / `'rss'`）で分かります
+- `'auto'`：API で取得し、404・5xx・レスポンスの形の違い（`NOTE_SCHEMA_ERROR`）で失敗したら RSS に切り替えます。切り替えるのは1ページ目だけで、タイムアウト・通信の失敗・中断では切り替えません。どちらで取れたかはページの `source` と各記事の `source`（`'api'` / `'rss'`）で分かります
 - 記事本文（`getArticle`）は RSS に切り替わりません（RSS に本文はありません）
 - `listAllArticles`・`iterateArticles` を RSS で取得したときは1回で終わり、`truncated` は `false` になります。ただし RSS は最新25件だけなので、それより古い記事は含まれません（記事の `source` が `'rss'` かで判別してください）
 
@@ -380,7 +380,7 @@ export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
   | 戻り値 | 内容 |
   | --- | --- |
   | `articles` | 取得した記事（`NoteArticleSummary[]`）。取得前・失敗時は空 |
-  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。取得前・失敗時は `null` |
+  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。`articles.json` のときの `data.source` は先頭の記事の `source`（記事がなければ `'api'`）。取得前・失敗時は `null` |
   | `isLoading` | 取得中か |
   | `error` | 失敗したとき `UseNoteArticlesError`（`Error` を継承。`status`：HTTP ステータスか `null`、`code`：中継エンドポイントのエラーコードか `null`）。成功・取得中は `null`。`code` が入るのは中継エンドポイントの応答のときだけで、`articles.json` などの静的ファイルでは常に `null` です。コードは増えることがあり、知らないコードもそのまま入ります |
 

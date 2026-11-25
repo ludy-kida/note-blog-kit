@@ -15,7 +15,7 @@ export interface NoteArticlesHandlerOptions extends Omit<ListArticlesOptions, 'p
   cacheSeconds?: number;
 }
 
-const DEFAULT_MAX_PAGE_NUMBER = 100;
+const DEFAULT_MAX_PAGE = 100;
 const DEFAULT_CACHE_SECONDS = 3600;
 /** 正規形のページ番号だけを受け付ける（01・1.0・1e0 などで CDN のキャッシュを外させない） */
 const PAGE_RE = /^[1-9][0-9]{0,5}$/;
@@ -54,6 +54,10 @@ function assertInteger(name: string, value: number, min: number): void {
 export function createNoteArticlesHandler(
   options: NoteArticlesHandlerOptions,
 ): (request: Request) => Promise<Response> {
+  // v0.3 までの名前を渡されたら、黙って無視せずに知らせる（0.4.0 で maxPage に改名）
+  if (typeof options === 'object' && options !== null && 'maxPageNumber' in options) {
+    throw new TypeError('maxPageNumber was renamed to maxPage in note-blog-kit 0.4.0');
+  }
   const { maxPage: rawMax, cacheSeconds = DEFAULT_CACHE_SECONDS, ...listOptions } = options;
   const { user, source = 'api', timeoutMs, minIntervalMs } = listOptions;
   if (typeof user !== 'string' || !NOTE_USER_RE.test(user)) {
@@ -64,7 +68,7 @@ export function createNoteArticlesHandler(
   }
   if (timeoutMs !== undefined) assertMilliseconds('timeoutMs', timeoutMs, 1);
   if (minIntervalMs !== undefined) assertMilliseconds('minIntervalMs', minIntervalMs, 0);
-  const maxPage = rawMax ?? (source === 'rss' ? 1 : DEFAULT_MAX_PAGE_NUMBER);
+  const maxPage = rawMax ?? (source === 'rss' ? 1 : DEFAULT_MAX_PAGE);
   assertInteger('maxPage', maxPage, 1);
   if (source === 'rss' && maxPage !== 1) {
     throw new TypeError(`The RSS has only one page, so maxPage must be 1: ${maxPage}`);
