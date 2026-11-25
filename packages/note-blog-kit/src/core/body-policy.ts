@@ -72,5 +72,7 @@ export const IMAGE_HOST = 'assets.st-note.com';
 export const IMAGE_PREFIX = `https://${IMAGE_HOST}/`;
 /** id・埋め込みの種類など、属性値に使える文字 */
 export const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
+/** 見える文字を含むか（空白とゼロ幅の文字だけのテキストは、リンクの名前にならない） */
+export const VISIBLE_TEXT = /[^\s\u200B-\u200D\u2060\uFEFF]/;
 /** 幅・高さ・colspan・rowspan に使える値 */
 export const DIGITS = /^\d+$/;

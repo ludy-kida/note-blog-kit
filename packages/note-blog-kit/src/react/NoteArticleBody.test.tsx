@@ -48,7 +48,7 @@ describe('NoteArticleBody：空のリンク（#47）', () => {
 
   it('正規化を通らない本文に空のリンクがあっても描画しない（中身の文字は残す）', () => {
     const body =
-      '<p><a href="https://example.com/"> </a>後</p><p><a href="https://example.com/"><img src="https://evil.example/x.png"></a></p><p><a href="https://example.com/"><em></em></a></p>';
+      '<p><a href="https://example.com/"> </a>後</p><p><a href="https://example.com/"><img src="https://evil.example/x.png"></a></p><p><a href="https://example.com/"><em></em></a></p><p><a href="https://example.com/">&#8203;</a></p>';
     const { container } = render(<NoteArticleBody article={withBody(body)} />);
     expect(container.querySelectorAll('a')).toHaveLength(0);
     expect(container.textContent).toContain('後');

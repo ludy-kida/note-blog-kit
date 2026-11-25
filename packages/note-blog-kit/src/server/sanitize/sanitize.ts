@@ -14,6 +14,7 @@ import {
   IMAGE_HOST,
   IMAGE_PREFIX,
   SAFE_VALUE,
+  VISIBLE_TEXT,
 } from '../../core/body-policy.js';
 import { NoteSchemaError } from '../errors.js';
 
@@ -150,6 +151,11 @@ export function sanitizeNoteBody(html: string): string {
   // 目次（table-of-contents）の中身は捨てる。開いている深さを数え（目次そのものが 1）、中のテキストと要素を消す。
   // onCloseTag は exclusiveFilter より先に呼ばれるので、閉じるときに 1 以上なら目次の中の要素
   let tocDepth = 0;
+  // 開いているリンクごとに、見える文字か残す画像を含むか（子孫まで。sanitize-html の frame.text・mediaChildren は
+  // 消した子のテキストや孫の画像を含まないため、自分で数える）。閉じたリンクの結果を exclusiveFilter で使う
+  const openLinks: boolean[] = [];
+  let closedLinkHasContent = false;
+  const markLinks = () => openLinks.fill(true);
 
   // 注意：transformTags で「許可しないタグ名」に置き換えてはいけない。sanitize-html は置き換えた名前を
   // 深さごとに記録し、許可しないタグを閉じるときにその記録を消さないため、同じ深さで次に閉じる許可タグの
@@ -168,7 +174,7 @@ export function sanitizeNoteBody(html: string): string {
     enforceHtmlBoundary: false,
     // 属性値の実体参照を解いた値で URL を判定し、出力時にエスケープする前提（既定値だが明示する）
     parser: { decodeEntities: true },
-    onOpenTag: (name) => {
+    onOpenTag: (name, attribs) => {
       // パーサー自身の開閉で深さを数え、深すぎたら中断する（処理時間が深さの2乗で増えるため）
       if (++depth > MAX_BODY_DEPTH) {
         throw new NoteSchemaError('The article body is too large', {
@@ -176,10 +182,13 @@ export function sanitizeNoteBody(html: string): string {
         });
       }
       if (tocDepth > 0 || name === 'table-of-contents') tocDepth++;
+      if (name === 'a') openLinks.push(false);
+      else if (name === 'img' && tocDepth === 0 && transformImage(attribs) !== undefined) markLinks();
     },
-    onCloseTag: () => {
+    onCloseTag: (name) => {
       depth--;
       if (tocDepth > 0) tocDepth--;
+      if (name === 'a') closedLinkHasContent = openLinks.pop() ?? false;
     },
     transformTags: { '*': transform },
     exclusiveFilter: (frame) => {
@@ -190,9 +199,13 @@ export function sanitizeNoteBody(html: string): string {
       // 許可しない読み込み元の画像（transform で src を付けなかったもの）
       if (frame.tag === 'img' && frame.attribs.src === undefined) return true;
       // テキストも残る画像もないリンク（外部画像だけのリンクカードなど）はタグを消す（名前のないリンクを残さない）
-      if (frame.tag === 'a' && frame.text.trim() === '' && frame.mediaChildren.length === 0) return 'excludeTag';
+      if (frame.tag === 'a' && !closedLinkHasContent) return 'excludeTag';
       return false;
     },
-    textFilter: (text) => (tocDepth > 0 ? '' : text),
+    textFilter: (text) => {
+      if (tocDepth > 0) return '';
+      if (VISIBLE_TEXT.test(text)) markLinks();
+      return text;
+    },
   });
 }

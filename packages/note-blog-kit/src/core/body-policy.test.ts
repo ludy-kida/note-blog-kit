@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   ALLOWED_TAGS,
@@ -6,6 +7,7 @@ import {
   IMAGE_HOST,
   IMAGE_PREFIX,
   SAFE_VALUE,
+  VISIBLE_TEXT,
 } from './body-policy.js';
 
 // 本文の許可リスト（/server の sanitize と /react の描画が共有する）。
@@ -89,6 +91,17 @@ describe('本文の許可リスト（#47）', () => {
 
   it('許可するタグと消す要素は重ならない', () => {
     expect([...DISCARD_WITH_CONTENT, ...DISCARD_VOID].filter((tag) => ALLOWED_TAGS.includes(tag))).toEqual([]);
+  });
+
+  it('依存を持たない（/react の配布物に入るため）', () => {
+    const code = readFileSync(new URL('./body-policy.ts', import.meta.url), 'utf8');
+    expect(code).not.toMatch(/\bimport\b|\brequire\s*\(/);
+  });
+
+  it('見える文字の判定（空白とゼロ幅の文字だけならリンクの名前にならない）', () => {
+    expect(VISIBLE_TEXT.test('a')).toBe(true);
+    expect(VISIBLE_TEXT.test(' \n\t\u00a0')).toBe(false);
+    expect(VISIBLE_TEXT.test('\u200b\u200c\u200d\u2060\ufeff')).toBe(false);
   });
 
   it('画像の読み込み元と、属性値に使える文字', () => {

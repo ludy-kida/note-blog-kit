@@ -19,6 +19,7 @@
 /packages/note-blog-kit/src/react/safe-url.ts  @ludy-kida
 /packages/note-blog-kit/src/react/NoteArticleBody.tsx  @ludy-kida
 /packages/note-blog-kit/src/react/NoteArticleBody.test.tsx  @ludy-kida
+/packages/note-blog-kit/src/react/react.test.tsx  @ludy-kida
 /docs/sanitize-policy.md       @ludy-kida
 
 # note.com へアクセスする唯一の入口と実レスポンス

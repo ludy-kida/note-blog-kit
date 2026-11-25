@@ -232,8 +232,8 @@ export const UNSAFE_CASES: SanitizeCase[] = [
   {
     name: '外部画像だけのリンクはタグごと消し、空のリンクを残さない（#47）',
     input:
-      '<figure embedded-service="external-article" embedded-content-key="emb8df5db980187" data-src="https://www.amazon.co.jp/dp/B0GCQWRYBG"><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank"><strong>商品名</strong></a><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank">\n<img src="https://m.media-amazon.com/images/I/x.jpg">\n</a><a href="https://example.com/"> </a></figure>',
-    mustNotContain: ['media-amazon', '"></a>', '">\n\n</a>', '"> </a>'],
+      '<figure embedded-service="external-article" embedded-content-key="emb8df5db980187" data-src="https://www.amazon.co.jp/dp/B0GCQWRYBG"><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank"><strong>商品名</strong></a><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank">\n<img src="https://m.media-amazon.com/images/I/x.jpg">\n</a><a href="https://example.com/"> </a><a href="https://example.com/z">&#8203;</a></figure>',
+    mustNotContain: ['media-amazon', '"></a>', '">\n\n</a>', '"> </a>', 'example.com/z'],
     mustContain: ['<strong>商品名</strong></a>'],
   },
   {
@@ -412,6 +412,17 @@ export const PRESERVE_CASES: SanitizeCase[] = [
     input: '<p><span>文字</span><font color="red">赤</font></p>',
     mustNotContain: ['<span', '<font', 'color='],
     mustContain: ['<p>文字赤</p>'],
+  },
+  {
+    name: '入れ子の中の画像や、消える要素の中の文字があるリンクは残す（#47）',
+    input:
+      '<p><a href="https://a.example/"><strong><img src="https://assets.st-note.com/img/a.png" alt="説明"></strong></a></p><a href="https://b.example/"><div>リンク</div></a><p><a href="https://c.example/"><span>文字</span></a></p>',
+    mustNotContain: ['<div', '<span'],
+    mustContain: [
+      '<a href="https://a.example/"><strong><img src="https://assets.st-note.com/img/a.png"',
+      '<a href="https://b.example/">リンク</a>',
+      '<a href="https://c.example/">文字</a>',
+    ],
   },
   {
     name: '許可する画像だけのリンクは残す（#47）',

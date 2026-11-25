@@ -1,5 +1,5 @@
 import type { ComponentType, ReactElement, ReactNode } from 'react';
-import { DIGITS, IMAGE_PREFIX, SAFE_VALUE } from '../core/body-policy.js';
+import { DIGITS, IMAGE_PREFIX, SAFE_VALUE, VISIBLE_TEXT } from '../core/body-policy.js';
 import type { NoteArticle, NoteEmbed, NoteTocItem } from '../core/types.js';
 import { type BodyElement, type BodyNode, parseBody } from './body/parse.js';
 import { classNames } from './class-names.js';
@@ -143,7 +143,7 @@ function safeImageUrl(value: string | undefined): string | null {
 function hasContent(nodes: BodyNode[]): boolean {
   return nodes.some((node) =>
     typeof node === 'string'
-      ? node.trim() !== ''
+      ? VISIBLE_TEXT.test(node)
       : node.tag === 'img'
         ? safeImageUrl(node.attrs.src) !== null
         : hasContent(node.children),
