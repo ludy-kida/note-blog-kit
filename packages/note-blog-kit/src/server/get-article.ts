@@ -75,9 +75,10 @@ export async function getArticle(options: GetArticleOptions): Promise<NoteArticl
       issues: [{ path: 'data.key', message: `Expected ${key}` }],
     });
   }
-  // 他人の記事を表示しないよう、指定した著者の記事だけを返す
+  // 他人の記事を表示しないよう、指定した著者の記事だけを返す。
+  // 記事が存在しない場合と区別できないよう、文面は 404 と同じにし、実際の著者名は出さない
   if (!allowedUsers.has(article.author.urlname)) {
-    throw new NoteNotFoundError(`Article ${key} is not by an allowed user (${article.author.urlname})`, { url });
+    throw new NoteNotFoundError(`Not found on note: ${url}`, { url });
   }
   return article;
 }

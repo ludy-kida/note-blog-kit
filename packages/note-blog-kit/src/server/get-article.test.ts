@@ -60,6 +60,11 @@ describe('getArticle', () => {
       expect(error, String(user)).toBeInstanceOf(NoteNotFoundError);
       expect((error as NoteNotFoundError).code).toBe('NOTE_NOT_FOUND');
       expect((error as NoteNotFoundError).url).toBe('https://note.com/api/v3/notes/n55256baa5425');
+      // 記事が存在しない場合と同じ文面で、実際の著者名を出さない
+      expect((error as NoteNotFoundError).message).toBe(
+        'Not found on note: https://note.com/api/v3/notes/n55256baa5425',
+      );
+      expect((error as NoteNotFoundError).message).not.toContain('kida_lw');
     }
   });
 

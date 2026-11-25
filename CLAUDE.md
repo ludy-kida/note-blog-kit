@@ -4,7 +4,7 @@
 
 ## 目的
 
-自分の note 記事を、React + TypeScript のサイトに数十行でブログとして載せられる npm ライブラリ「note-blog-kit」（仮称）を作る。
+自分（または運営者が許可した著者）の note 記事を、React + TypeScript のサイトに数十行でブログとして載せられる npm ライブラリ「note-blog-kit」（仮称）を作る。
 対象は Next.js App Router と Vite + React SPA。v1.0 は 2027-01-24 公開予定。
 
 実装・テスト・ドキュメントはエージェントが書き、人は仕様・レビュー・判断を担う。
