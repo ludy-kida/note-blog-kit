@@ -33,22 +33,25 @@ note の API は公式に公開されたものではなく、形が予告なく�
 
 1. Issue の `path` を見て、消えたキー・型が変わったキーを確かめる（例：`data.contents.0.eyecatch: Invalid input: expected string, received null`）
 2. 新しい応答が必要なら、fixture を取り直す（人が端末で実行する。手順は [fixtures/README.md](../fixtures/README.md)）
-3. Issue に `claude-fix` ラベルを付ける。Claude Code が [`fix-api-change`](../.claude/skills/fix-api-change/SKILL.md) スキルの手順で修正し、ブランチに push して PR 作成リンクを Issue にコメントする
-4. PR を作り、レビューしてマージする。note 側への追従は patch リリース
+3. Issue に `claude-fix` ラベルを付ける。Claude Code が [`fix-api-change`](../.claude/skills/fix-api-change/SKILL.md) スキルの手順で修正し、ブランチに push して PR 作成リンクを Issue にコメントする。Claude Code はテストを実行できない（下記）ので、テストは PR の CI で確かめる
+4. PR を作り、CI が通ることを確かめ、レビューしてマージする。note 側への追従は patch リリース
 
 Claude Code は次のことをしません：note.com へのアクセス、公開型の変更（必要なら案をコメントして止まる）、新しい依存の追加、サニタイズの許可リスト・XSS テストの変更、PR のマージ、npm への公開。
 
 Claude Code が動くのは次のときだけです（[`.github/workflows/claude.yml`](../.github/workflows/claude.yml)）。
 
 - 契約テスト（`github-actions[bot]`）が立てた `contract-failure` の Issue に、`claude-fix` ラベルが付いたとき（ラベルを付けた人に書き込み権限があることは action が確かめる）
-- オーナーか `github-actions[bot]` が立てた Issue（PR は除く）で、オーナーが `@claude` とコメントしたとき
+- オーナーが立てた Issue か、契約テストの Issue（PR は除く）で、オーナーが `@claude` とコメントしたとき
 
 外部の人が書いた本文やコメントで指示を差し込まれないよう、次のようにしています。
 
 - Issue の作成者とコメントの作者の両方を確かめる。外部の人が立てた Issue では、オーナーが `@claude` と書いても動かない
 - 依頼として読むコメントは、オーナーと bot のものだけ（`include_comments_by_actor`）
-- 使えるツールは、ファイルの読み書き・検索と、決めたコマンド（`pnpm check`・`test`・`lint` など、`git` の commit・push など）だけ。`--permission-mode acceptEdits` にしているので、許可リストにないコマンドは拒否される（action の既定の auto モードは、審査を通れば許可リストの外のコマンドも実行するため使わない）
-- WebFetch・WebSearch・`curl`・`wget`・`node`・`npx`・`pnpm dlx` は明示的に禁止する
+- 使えるのは、ワークスペース内のファイルの読み書き・検索、`git status`・`diff`・`log`、action が用意する commit・push（push 先はこの Issue 用のブランチに固定）だけ。`--permission-mode acceptEdits` にしているので、許可リストにないコマンドは拒否される（action の既定の auto モードは、審査を通れば許可リストの外のコマンドも実行するため使わない）
+- **テスト・ビルド（`pnpm` など）は実行させない**。Claude Code はファイルを書けるので、テストの実行を許すと、自分で書いたテストの中で任意のコードを実行し、外部に通信できてしまうため。テストは人が PR を作ったあとの CI で確かめる
+- WebFetch・WebSearch・`curl`・`wget`・`node`・`npx`・`pnpm`・`npm` と、`/proc` や `.git/config` の読み取りは明示的に禁止する
+- 書き込みに使うのは、job の権限の範囲で job が終わると失効する `GITHUB_TOKEN`。`id-token` の権限は付けず、子プロセスの環境変数から API キーなどの秘密の値を消す（`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`）
+
 リポジトリの `.claude/settings.json` の禁止ルールと hook は Actions の中でも読み込まれるはずですが、hook はコマンドの文字列で判定する補助なので、完全な防御ではありません。Claude Code が作った変更は、note へのアクセスが増えていないかも含めて人がレビューしてください（`scripts/contract-check.ts`・`scripts/lib/contract.ts` は CODEOWNERS の対象です）。
 
 ## 人が行う設定
@@ -56,7 +59,7 @@ Claude Code が動くのは次のときだけです（[`.github/workflows/claude
 1. **Claude Code の認証情報を Secrets に登録する**（Settings → Secrets and variables → Actions）。どちらか一方でよい
    - `CLAUDE_CODE_OAUTH_TOKEN`：Claude のサブスクリプションを使う場合。手元で `claude setup-token` を実行して作る
    - `ANTHROPIC_API_KEY`：API キーを使う場合
-2. **Claude の GitHub App をリポジトリに入れる**（https://github.com/apps/claude）。手元の Claude Code で `/install-github-app` を実行しても設定できる
+2. **Claude の GitHub App は不要**：書き込みには `GITHUB_TOKEN` を使う（コメントは github-actions の名前で付く）。以前に入れた App は、ほかに使っていなければ外してよい
 3. **ラベル**：`contract-failure` と `claude-fix` は、契約テストが初めて Issue を作るときに自動で作られる。先に作っておいてもよい
 4. **ブランチ保護**：main で「Require a pull request before merging」と「Require review from Code Owners」を有効にする（Claude Code が main に直接 push できないように）
 5. **初回の確認**：Actions の「Contract」を手動で実行し（Run workflow）、3つとも成功することを確かめる

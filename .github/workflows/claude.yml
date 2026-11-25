@@ -3,10 +3,11 @@ name: Claude
 # 人が依頼したときだけ Claude Code を動かす（docs/contract-test.md）。
 # - 契約テスト（github-actions[bot]）が立てた contract-failure の Issue に claude-fix ラベルを付けた
 #   （fix-api-change スキルで修正し、ブランチと PR 作成リンクを返す）
-# - オーナーか github-actions[bot] が立てた Issue（PR は除く）で、オーナーが @claude とコメントした
+# - オーナーが立てた Issue か契約テストの Issue（PR は除く）で、オーナーが @claude とコメントした
 # 外部の人が書いた本文・コメントを依頼として読ませないため、Issue の作成者とコメントの作者の両方を確かめる。
-# 使えるツールは allowedTools に書いたものだけ（acceptEdits モード。auto モードの審査には任せない）。
-# Claude Code はブランチへの push まで。PR の作成・マージ・公開は人が行う。
+# 使えるツールは、ワークスペース内のファイルの読み書きと allowedTools に書いた git の読み取りだけ（acceptEdits モード）。
+# テスト・ビルドは実行させない（ファイルを書けるので、実行を許すと任意のコードを実行できるため）。CI で確かめる。
+# Claude Code はこの Issue 用のブランチへの push まで（action のラッパーが push 先を固定）。PR の作成・マージ・公開は人が行う。
 
 on:
   issues:
@@ -24,7 +25,7 @@ concurrency:
 jobs:
   claude:
     # ラベル：契約テスト（github-actions[bot]）が立てた contract-failure の Issue だけ
-    # コメント：オーナーか github-actions[bot] が立てた Issue（PR を除く）で、オーナーが @claude と書いたときだけ
+    # コメント：オーナーが立てた Issue か契約テストの Issue（PR を除く）で、オーナーが @claude と書いたときだけ
     #  （依頼として読むコメントの作者 include_comments_by_actor とそろえる）
     if: >-
       (github.event_name == 'issues' &&
@@ -33,46 +34,52 @@ jobs:
         contains(github.event.issue.labels.*.name, 'contract-failure')) ||
       (github.event_name == 'issue_comment' &&
         !github.event.issue.pull_request &&
-        (github.event.issue.author_association == 'OWNER' || github.event.issue.user.login == 'github-actions[bot]') &&
+        (github.event.issue.author_association == 'OWNER' ||
+          (github.event.issue.user.login == 'github-actions[bot]' && contains(github.event.issue.labels.*.name, 'contract-failure'))) &&
         contains(github.event.comment.body, '@claude') &&
         github.event.comment.author_association == 'OWNER')
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # id-token は付けない（GitHub App のトークンを新しく作らせない）。書き込みは job の中だけで有効な GITHUB_TOKEN で行う
     permissions:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
           # push の認証は action が自分で設定する。書き込みできるトークンを .git/config に残さない
           persist-credentials: false
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
 
+      # pnpm・Node.js は用意しない（テスト・ビルドは実行させない。人が PR を作ったあとの CI で確かめる）
       - uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
+        env:
+          # 子プロセス（Bash など）の環境変数から API キーなどの秘密の値を消す
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"
         with:
           # どちらか一方を Secrets に登録する（docs/contract-test.md）
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # job の権限の範囲で、job が終わると失効するトークン（取り出されても長くは使えない）
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # prompt を渡さない（タグモード）：Issue・コメントの内容を依頼として読み、ブランチに push して PR 作成リンクを返す
           label_trigger: claude-fix
           trigger_phrase: "@claude"
           # 依頼として読むコメントを、オーナーと bot のものに限る（外部の人のコメントによるプロンプトインジェクションを防ぐ）
           include_comments_by_actor: ludy-kida,github-actions[bot],claude[bot]
-          # acceptEdits：allowedTools にないコマンドは承認待ちになり、無人の実行では拒否される（auto モードの審査で通さない）
+          # - acceptEdits：allowedTools にないコマンドは承認待ちになり、無人の実行では拒否される（auto モードの審査で通さない）
+          # - コードを実行できるコマンド（pnpm・node など）は許さない。ファイルを書けるので、テストの実行はコードの実行と同じになるため
+          # - git の add・commit・push は action のラッパー（push 先をこのブランチに固定）が使う。生の git push・Edit・Write は
+          #   許可リストに書かない（--receive-pack での任意のコード実行や、runner 全体への書き込みを許してしまうため）
+          # - Bash(git push:*) を disallowedTools に書くとラッパーまで止まるので書かない
           claude_args: >-
             --permission-mode acceptEdits
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(pnpm check),Bash(pnpm test:*),Bash(pnpm lint),Bash(pnpm format),Bash(pnpm typecheck),Bash(pnpm build),Bash(pnpm api),Bash(pnpm exec vitest:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(git checkout:*),Bash(git branch:*)"
-            --disallowedTools "WebFetch,WebSearch,Bash(curl:*),Bash(wget:*),Bash(node:*),Bash(npx:*),Bash(pnpm dlx:*)"
+            --allowedTools "Bash(git status),Bash(git diff),Bash(git log)"
+            --disallowedTools "WebFetch,WebSearch,Bash(curl:*),Bash(wget:*),Bash(node:*),Bash(npx:*),Bash(pnpm:*),Bash(npm:*),Read(//proc/**),Read(./.git/config)"
             --append-system-prompt "CLAUDE.md を守ること。
             契約テストの Issue（contract-failure ラベル）を扱うときは .claude/skills/fix-api-change/SKILL.md の手順に従う。
+            この環境ではテスト・ビルド（pnpm check など）は実行できない。テストを先に書き、確認は PR の CI で行う旨を Issue のコメントに書く。
             note.com にアクセスしない（fixtures/ を使い、足りなければ取得したいものを Issue にコメントして止まる）。
             公開型を変えないと直せないときは実装せず、案を Issue にコメントして人の判断を待つ。
             新しい依存の追加、サニタイズの許可リスト・XSS テストの変更、PR のマージ、publish はしない。
