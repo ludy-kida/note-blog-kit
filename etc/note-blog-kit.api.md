@@ -28,6 +28,14 @@ export interface NoteArticlePage {
 }
 
 // @public
+export interface NoteArticlesHandlerErrorBody {
+    error: NoteArticlesHandlerErrorCode;
+}
+
+// @public
+export type NoteArticlesHandlerErrorCode = 'INVALID_REQUEST' | 'INTERNAL_ERROR' | NoteErrorCode;
+
+// @public
 export interface NoteArticleSummary {
     // (undocumented)
     author: NoteAuthor;
@@ -65,6 +73,9 @@ export interface NoteEmbed {
 }
 
 // @public
+export type NoteErrorCode = 'NOTE_NOT_FOUND' | 'NOTE_HTTP_ERROR' | 'NOTE_RATE_LIMITED' | 'NOTE_NETWORK_ERROR' | 'NOTE_TIMEOUT' | 'NOTE_SCHEMA_ERROR';
+
+// @public
 export interface NoteEyecatch {
     // (undocumented)
     alt: string;
@@ -78,6 +89,15 @@ export interface NoteEyecatch {
 
 // @public
 export type NoteSource = 'api' | 'rss';
+
+// @public
+export interface NoteSyncedArticleList {
+    articles: NoteArticleSummary[];
+    syncedAt: string;
+    truncated: boolean;
+    user: string;
+    version: 1;
+}
 
 // @public
 export interface NoteTocItem {

@@ -256,8 +256,10 @@ npx note-blog-kit sync --user your_urlname --out public/note
 
 出力されるファイル：
 
-- `<out>/articles.json`：`{ user, syncedAt, truncated, articles }`（`articles` は `NoteArticleSummary[]`、`truncated` は `--max-pages` で打ち切ったとき `true`）
+- `<out>/articles.json`：`{ version: 1, user, syncedAt, truncated, articles }`（型は `NoteSyncedArticleList`。`articles` は `NoteArticleSummary[]`、`truncated` は `--max-pages` で打ち切ったとき `true`）。`version` は形式のバージョンで、形を変えるときに上げます（v0.3 までの `articles.json` には `version` がなく、`useNoteArticles` はどちらも読めます）
 - `<out>/articles/<key>.json`：記事1件の `NoteArticle`（本文はサニタイズ済み）
+
+型は `note-blog-kit` から import できます：`import type { NoteSyncedArticleList, NoteArticle } from 'note-blog-kit'`
 
 注意：
 
@@ -376,7 +378,7 @@ export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
 - **`createNoteArticlesHandler`**：`?page=N` の一覧を JSON で返します
   - `page` は 1〜`maxPageNumber`（既定 100、`source: 'rss'` では 1）の正規形の整数だけを受け付けます。`01`・`1.0` などの別の書き方や、`page` 以外のクエリは 400 です（CDN のキャッシュを外して note へのリクエストを増やされないように）
   - 成功した応答には `Cache-Control: public, s-maxage=3600, stale-while-revalidate=3600` を付けます（秒数は `cacheSeconds` で変更）
-  - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`
+  - 失敗したときは `{ "error": "<コード>" }` を返し、キャッシュさせません：400 `INVALID_REQUEST`／404 `NOTE_NOT_FOUND`／502（そのほかの note のエラー）／500 `INTERNAL_ERROR`（本文の型は `note-blog-kit` の `NoteArticlesHandlerErrorBody`、コードの型は `NoteArticlesHandlerErrorCode`）
   - オプション（`source` など）は `listArticles` と同じです（`page` は指定できません）。リクエストが中断されると、note への取得も中断します
 - `note-blog-kit/react` のほかのコンポーネントは、これまでどおり Server Component としても使えます。`useNoteArticles` だけは Client Component（`'use client'` のファイル）か SPA で使ってください
 

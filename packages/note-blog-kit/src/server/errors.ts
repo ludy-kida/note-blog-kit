@@ -1,16 +1,6 @@
-/**
- * エラーの種類を表す安定した識別子。
- *
- * マイナーバージョンでコードが増えることがある。
- * `switch (error.code)` で分けるときは、知らないコードのために `default` を書くこと。
- */
-export type NoteErrorCode =
-  | 'NOTE_NOT_FOUND'
-  | 'NOTE_HTTP_ERROR'
-  | 'NOTE_RATE_LIMITED'
-  | 'NOTE_NETWORK_ERROR'
-  | 'NOTE_TIMEOUT'
-  | 'NOTE_SCHEMA_ERROR';
+import type { NoteErrorCode } from '../core/types.js';
+
+export type { NoteErrorCode };
 
 const NOTE_ERROR_CODES: ReadonlySet<string> = new Set<NoteErrorCode>([
   'NOTE_NOT_FOUND',

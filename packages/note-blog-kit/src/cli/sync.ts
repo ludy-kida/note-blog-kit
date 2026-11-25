@@ -6,7 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
-import type { NoteArticleSummary } from '../core/types.js';
+import type { NoteArticleSummary, NoteSyncedArticleList } from '../core/types.js';
 import { isNoteError } from '../server/errors.js';
 import { getArticle } from '../server/get-article.js';
 import { listAllArticles } from '../server/iterate-articles.js';
@@ -24,7 +24,7 @@ note の記事の一覧と本文を JSON に書き出します（ビルド時に
   --allow-empty  前回は記事があったのに今回の一覧が空でも書き出す（既定では何も変えずに失敗する）
 
 出力:
-  <dir>/articles.json        { user, syncedAt, truncated, articles }（記事の一覧）
+  <dir>/articles.json        { version: 1, user, syncedAt, truncated, articles }（記事の一覧）
   <dir>/articles/<key>.json  記事1件（サニタイズ済みの本文を含む）
 
 note への負荷を抑えるため、リクエストは1秒以上の間隔で1件ずつ送ります。
@@ -235,7 +235,8 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
 
   try {
     await mkdir(out, { recursive: true });
-    await writeJson(join(out, 'articles.json'), { user, syncedAt: new Date().toISOString(), truncated, articles });
+    const list: NoteSyncedArticleList = { version: 1, user, syncedAt: new Date().toISOString(), truncated, articles };
+    await writeJson(join(out, 'articles.json'), list);
   } catch (error) {
     stderr(`${join(out, 'articles.json')} に書き出せませんでした: ${describeError(error)}`);
     return 1;

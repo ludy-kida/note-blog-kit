@@ -65,7 +65,11 @@ function toPage(json: unknown): NoteArticlePage {
       isLastPage: value.isLastPage,
     };
   }
-  // CLI sync の articles.json（ページ情報がない）
+  // CLI sync の articles.json（ページ情報がない）。形式のバージョン 1 か、version のない v0.3 までのものだけ読む
+  const { version } = json as { version?: unknown };
+  if (version !== undefined && version !== 1) {
+    throw new Error(`Unsupported articles.json version: ${JSON.stringify(version)}`);
+  }
   return { articles, page: 1, totalCount: null, isLastPage: true };
 }
 

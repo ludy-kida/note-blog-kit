@@ -1,5 +1,14 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticle, NoteArticlePage, NoteArticleSummary } from '../index.js';
+import type {
+  NoteArticle,
+  NoteArticlePage,
+  NoteArticleSummary,
+  NoteArticlesHandlerErrorBody,
+  NoteArticlesHandlerErrorCode,
+  NoteErrorCode,
+  NoteSyncedArticleList,
+} from '../index.js';
+import type { NoteErrorCode as ServerNoteErrorCode } from '../server/index.js';
 
 describe('公開型', () => {
   it('RSS で取れない項目は null を許す', () => {
@@ -15,5 +24,24 @@ describe('公開型', () => {
   it('詳細は一覧の型を拡張する', () => {
     expectTypeOf<NoteArticle>().toExtend<NoteArticleSummary>();
     expectTypeOf<NoteArticle['isPartial']>().toEqualTypeOf<boolean>();
+  });
+
+  it('CLI sync の articles.json の形（形式のバージョン 1）', () => {
+    expectTypeOf<NoteSyncedArticleList>().toEqualTypeOf<{
+      version: 1;
+      user: string;
+      syncedAt: string;
+      truncated: boolean;
+      articles: NoteArticleSummary[];
+    }>();
+  });
+
+  it('中継エンドポイントのエラーコードは、独自の2つと NoteErrorCode', () => {
+    expectTypeOf<NoteArticlesHandlerErrorCode>().toEqualTypeOf<'INVALID_REQUEST' | 'INTERNAL_ERROR' | NoteErrorCode>();
+    expectTypeOf<NoteArticlesHandlerErrorBody>().toEqualTypeOf<{ error: NoteArticlesHandlerErrorCode }>();
+  });
+
+  it('core と /server の NoteErrorCode は同じ型', () => {
+    expectTypeOf<NoteErrorCode>().toEqualTypeOf<ServerNoteErrorCode>();
   });
 });

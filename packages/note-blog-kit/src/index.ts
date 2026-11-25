@@ -7,9 +7,13 @@ export type {
   NoteArticle,
   NoteArticlePage,
   NoteArticleSummary,
+  NoteArticlesHandlerErrorBody,
+  NoteArticlesHandlerErrorCode,
   NoteAuthor,
   NoteEmbed,
+  NoteErrorCode,
   NoteEyecatch,
   NoteSource,
+  NoteSyncedArticleList,
   NoteTocItem,
 } from './core/types.js';

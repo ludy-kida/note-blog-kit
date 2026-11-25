@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { NoteArticle, NoteArticleSummary } from '../core/types.js';
+import type { NoteArticle, NoteArticleSummary, NoteSyncedArticleList } from '../core/types.js';
 import { run } from './run.js';
 
 const fixture = (path: string): string =>
@@ -75,12 +75,10 @@ describe('note-blog-kit sync', () => {
     const { deps } = makeDeps(fetch);
     expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(0);
 
-    const index = await readJson<{
-      user: string;
-      syncedAt: string;
-      truncated: boolean;
-      articles: NoteArticleSummary[];
-    }>('articles.json');
+    const index = await readJson<NoteSyncedArticleList>('articles.json');
+    // 形式のバージョンを先頭に入れる
+    expect(Object.keys(index)[0]).toBe('version');
+    expect(index.version).toBe(1);
     expect(index.user).toBe('kida_lw');
     expect(Number.isNaN(Date.parse(index.syncedAt))).toBe(false);
     expect(index.truncated).toBe(false);
