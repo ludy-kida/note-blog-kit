@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, rmSync, symlinkSync } from 'node:fs';
 import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -242,25 +242,57 @@ describe('note-blog-kit sync', () => {
       }
     });
 
-    it('通信の失敗・形の違いでは前回の本文を残し、404 の記事は消す（終了コードは 1）', async () => {
+    it('通信の失敗・429 では前回の本文を残し、404・403・形の違いでは消す（終了コードは 1）', async () => {
       await mkdir(join(dir, 'articles'), { recursive: true });
       const page1 = JSON.parse(fixture('contents/page-1.json')) as { data: { contents: { key: string }[] } };
-      const [kNetwork, kSchema, kGone] = page1.data.contents.map((content) => content.key);
-      for (const key of [kNetwork, kSchema, kGone]) {
+      const [kNetwork, kRate, kSchema, kGone, kForbidden] = page1.data.contents.map((content) => content.key);
+      for (const key of [kNetwork, kRate, kSchema, kGone, kForbidden]) {
         await writeFile(join(dir, 'articles', `${key}.json`), '{"old":true}');
       }
       const fetch = mockFetch((url) => {
         if (url.pathname === `/api/v3/notes/${kNetwork}`) throw new TypeError('fetch failed');
+        if (url.pathname === `/api/v3/notes/${kRate}`) return new Response('', { status: 429 });
+        // 有料化して本文の形が変わった場合など。前回の全文を残さない
         if (url.pathname === `/api/v3/notes/${kSchema}`) return new Response('{"data":{}}');
         if (url.pathname === `/api/v3/notes/${kGone}`) return new Response('{}', { status: 404 });
+        if (url.pathname === `/api/v3/notes/${kForbidden}`) return new Response('', { status: 403 });
         return undefined;
       });
       const { deps } = makeDeps(fetch);
       expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
       const files = await readdir(join(dir, 'articles'));
       expect(await readFile(join(dir, 'articles', `${kNetwork}.json`), 'utf8')).toBe('{"old":true}');
-      expect(await readFile(join(dir, 'articles', `${kSchema}.json`), 'utf8')).toBe('{"old":true}');
-      expect(files).not.toContain(`${kGone}.json`);
+      expect(await readFile(join(dir, 'articles', `${kRate}.json`), 'utf8')).toBe('{"old":true}');
+      for (const key of [kSchema, kGone, kForbidden]) expect(files, key).not.toContain(`${key}.json`);
+    });
+
+    it('前回の articles.json がなくても articles/ に本文があれば、空の一覧で消さない', async () => {
+      await mkdir(join(dir, 'articles'), { recursive: true });
+      await writeFile(join(dir, 'articles', 'n55256baa5425.json'), '{"old":true}');
+      const { deps } = makeDeps(emptyList());
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      expect(await readdir(join(dir, 'articles'))).toEqual(['n55256baa5425.json']);
+      expect(await readdir(dir)).not.toContain('articles.json');
+    });
+
+    it('取得の途中で articles がシンボリックリンクに差し替えられたら、書き出しと削除を止める', async () => {
+      const target = join(dir, 'elsewhere');
+      await mkdir(target);
+      await writeFile(join(target, 'n000000000000.json'), '{"keep":true}');
+      let swapped = false;
+      const fetch = mockFetch((url) => {
+        if (!swapped && url.pathname.startsWith('/api/v3/notes/')) {
+          swapped = true;
+          // 本文の取得中に差し替える（次の書き込みより前）
+          rmSync(join(dir, 'articles'), { recursive: true, force: true });
+          symlinkSync(target, join(dir, 'articles'));
+        }
+        return undefined;
+      });
+      const { deps, output } = makeDeps(fetch);
+      expect(await run(['sync', '--user', 'kida_lw', '--out', dir], deps)).toBe(1);
+      expect(await readdir(target)).toEqual(['n000000000000.json']);
+      expect(output.err.join('\n')).toContain('差し替え');
     });
 
     it('articles がシンボリックリンクなら終了コード 1 で、リンク先も articles.json も変えない', async () => {

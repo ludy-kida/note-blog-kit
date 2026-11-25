@@ -28,7 +28,7 @@ note の記事の一覧と本文を JSON に書き出します（ビルド時に
   <dir>/articles/<key>.json  記事1件（サニタイズ済みの本文を含む）
 
 note への負荷を抑えるため、リクエストは1秒以上の間隔で1件ずつ送ります。
-本文を一時的に取得できなかった記事（通信の失敗・5xx など）は、前回の本文を残します（終了コードは 1）。`;
+本文を一時的に取得できなかった記事（通信の失敗・タイムアウト・5xx・429）は、前回の本文を残します（終了コードは 1）。`;
 
 const DEFAULT_MAX_PAGES = 20;
 const MAX_PAGES_LIMIT = 1000;
@@ -120,14 +120,29 @@ async function removeStaleArticles(dir: string, keep: Set<string>): Promise<stri
   return removed;
 }
 
-/** 前回の articles.json に記事が1件以上あるか（ない・読めない・壊れているなら false） */
-async function hadArticles(path: string): Promise<boolean> {
+/** 前回の articles.json として読む最大の大きさ（バイト） */
+const MAX_PREVIOUS_LIST_BYTES = 10 * 1024 * 1024;
+
+/**
+ * 前回の出力に記事があったか。articles.json に記事が1件以上あるか、articles/ に記事のファイルがあれば true。
+ * articles.json は通常のファイル（シンボリックリンクでない）で、大きすぎないときだけ読む
+ */
+async function hadArticles(listPath: string, dir: string): Promise<boolean> {
   try {
-    const previous = JSON.parse(await readFile(path, 'utf8')) as { articles?: unknown };
-    return Array.isArray(previous.articles) && previous.articles.length > 0;
+    const stat = await lstat(listPath);
+    if (stat.isFile() && stat.size <= MAX_PREVIOUS_LIST_BYTES) {
+      const previous = JSON.parse(await readFile(listPath, 'utf8')) as { articles?: unknown } | null;
+      if (Array.isArray(previous?.articles) && previous.articles.length > 0) return true;
+    }
   } catch {
-    return false;
+    // ない・読めない・壊れている
   }
+  try {
+    if ((await lstat(dir)).isDirectory()) return (await readdir(dir)).some((name) => ARTICLE_FILE_RE.test(name));
+  } catch {
+    // ない
+  }
+  return false;
 }
 
 /** パスがシンボリックリンクか（存在しなければ false） */
@@ -139,9 +154,21 @@ async function isSymlink(path: string): Promise<boolean> {
   }
 }
 
-/** 記事がなくなったことを表すエラーか（それ以外は一時的な失敗として、前回の本文を残す） */
-function isGone(error: unknown): boolean {
-  return isNoteError(error) && error.code === 'NOTE_NOT_FOUND';
+/**
+ * 一時的な失敗か（前回の本文を残す）：通信の失敗・タイムアウト・5xx・429。
+ * それ以外（404・ほかの 4xx・形の違い・書き込みの失敗）では前回の本文を消す
+ * （有料化した記事の全文や、古いサニタイザーで作った本文を残し続けないため）
+ */
+function isTransient(error: unknown): boolean {
+  if (!isNoteError(error)) return false;
+  if (error.code === 'NOTE_NETWORK_ERROR' || error.code === 'NOTE_TIMEOUT') return true;
+  return error.code === 'NOTE_HTTP_ERROR' && (error.status >= 500 || error.status === 429);
+}
+
+/** ディレクトリの実体（作ったときと同じディレクトリか、シンボリックリンクに差し替えられていないかを確かめる） */
+async function dirIdentity(dir: string): Promise<string | null> {
+  const stat = await lstat(dir);
+  return stat.isDirectory() ? `${stat.dev}:${stat.ino}` : null;
 }
 
 function describeError(error: unknown): string {
@@ -191,14 +218,14 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
   articles = articles.filter((article) => article.author.urlname === user);
 
   // note の一時的な障害で空の一覧が返っても、前回の出力を消さない
-  if (articles.length === 0 && !allowEmpty && (await hadArticles(join(out, 'articles.json')))) {
+  const dir = join(out, 'articles');
+  if (articles.length === 0 && !allowEmpty && (await hadArticles(join(out, 'articles.json'), dir))) {
     stderr(
       '一覧が空でした。前回は記事があったため、何も書き換えていません（空にしてよい場合は --allow-empty を付けてください）',
     );
     return 1;
   }
   // リンク先のファイルを消さないよう、本文の出力先がシンボリックリンクなら何も書き出さずに止める
-  const dir = join(out, 'articles');
   if (body && (await isSymlink(dir))) {
     stderr(`${dir} がシンボリックリンクのため、何も書き出していません`);
     return 1;
@@ -216,17 +243,26 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
   );
   if (!body) return others.length > 0 ? 1 : 0;
 
+  let identity: string | null;
   try {
     await mkdir(dir, { recursive: true });
+    identity = await dirIdentity(dir);
   } catch (error) {
     stderr(`${dir} を作れませんでした: ${describeError(error)}`);
     return 1;
   }
+  if (identity === null) {
+    stderr(`${dir} がディレクトリではないため、本文を書き出していません`);
+    return 1;
+  }
+  /** 取得の間（数分かかる）にシンボリックリンクなどへ差し替えられていないか、書き込み・削除の直前に確かめる */
+  const sameDir = async (): Promise<boolean> => (await dirIdentity(dir).catch(() => null)) === identity;
   stdout(`本文を取得しています（${articles.length} 件、約 ${articles.length} 秒）...`);
   let failures = others.length;
   const written = new Set<string>();
   // 一時的に取得できなかった記事（前回の本文を残す）
   const kept = new Set<string>();
+  let replaced = false;
   for (const summary of articles) {
     const { key } = summary;
     // 一覧の正規化で検証済みだが、ファイル名に使うので書き込む直前にも確かめる
@@ -238,19 +274,27 @@ export async function runSync(argv: string[], deps: CliDeps): Promise<number> {
     try {
       // 著者が --user でない記事は NoteNotFoundError になり、書き出さない（メッセージに著者名が入る）
       const article = await getArticle({ key, user, ...request });
+      if (!(await sameDir())) {
+        replaced = true;
+        break;
+      }
       await writeJson(join(dir, `${key}.json`), article);
       written.add(key);
     } catch (error) {
-      const gone = isGone(error);
-      if (!gone) kept.add(key);
+      const transient = isTransient(error);
+      if (transient) kept.add(key);
       stderr(
-        `${key}: 本文を書き出せませんでした${gone ? '' : '（前回の本文があれば残します）'}: ${describeError(error)}`,
+        `${key}: 本文を書き出せませんでした${transient ? '（一時的な失敗のため、前回の本文があれば残します）' : ''}: ${describeError(error)}`,
       );
       failures += 1;
     }
   }
-  // 一覧にない記事と、なくなった記事（404・著者の違い）の古い本文を消す（削除・非公開にした記事を公開し続けないように）。
-  // 有料化した記事は isPartial の本文で上書きされるので、前回の全文は残らない
+  if (replaced || !(await sameDir())) {
+    stderr(`${dir} が取得の途中で差し替えられたため、書き出し・削除を止めました`);
+    return 1;
+  }
+  // 一覧にない記事と、一時的な失敗以外で取得できなかった記事の古い本文を消す
+  // （削除・非公開・有料化した記事の全文や、古いサニタイザーで作った本文を公開し続けないように）
   let removed: string[];
   try {
     removed = await removeStaleArticles(dir, new Set([...written, ...kept]));
