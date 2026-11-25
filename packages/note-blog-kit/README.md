@@ -359,6 +359,8 @@ import { NoteArticleList, useNoteArticles } from 'note-blog-kit/react';
 export function Blog() {
   const { articles, isLoading, error } = useNoteArticles({ url: '/note/articles.json' }); // または '/api/note?page=1'
   if (isLoading) return <p>読み込み中…</p>;
+  // error.status（HTTP ステータス）と error.code（中継エンドポイントのエラーコード）で分けられる
+  if (error?.code === 'NOTE_NOT_FOUND') return <p>記事が見つかりません</p>;
   if (error) return <p>記事を読み込めませんでした</p>;
   return <NoteArticleList articles={articles} />;
 }
@@ -371,7 +373,16 @@ import { createNoteArticlesHandler } from 'note-blog-kit/next';
 export const GET = createNoteArticlesHandler({ user: 'your_urlname' });
 ```
 
-- **`useNoteArticles`**：`url` から `{ articles, page, isLoading, error }` を返すクライアント用のフックです。中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います。知らない `version` は `error`）のどちらも読めます
+- **`useNoteArticles`**：`url` から `{ articles, data, isLoading, error }` を返すクライアント用のフックです。
+
+  | 戻り値 | 内容 |
+  | --- | --- |
+  | `articles` | 取得した記事（`NoteArticleSummary[]`）。取得前・失敗時は空 |
+  | `data` | 取得したページ（`NoteArticlePage`。ページの番号は `data.page`）。取得前・失敗時は `null` |
+  | `isLoading` | 取得中か |
+  | `error` | 失敗したとき `Error`（`status`：HTTP ステータスか `null`、`code`：中継エンドポイントのエラーコードか `null`）。成功・取得中は `null` |
+
+  中継エンドポイントの `NoteArticlePage` と、`sync` の `articles.json`（1ページとして扱います。知らない `version` は `error`）のどちらも読めます
   - note.com の URL を渡すと取得せずに `error` を返します。`url` が変わると取り直し、古い応答は捨てます
   - 応答の検証は最小限です（主な項目の型が合わない記事は除きます）。`url` には自分のサイトの中継エンドポイントか JSON を指定し、利用者の入力を使わないでください
   - `fetch` を渡す場合は、描画ごとに作り直しても取り直しは起きません（`url` が変わったときだけ取り直します）

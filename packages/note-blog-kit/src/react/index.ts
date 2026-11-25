@@ -10,8 +10,10 @@ export type {
   NoteArticle,
   NoteArticlePage,
   NoteArticleSummary,
+  NoteArticlesHandlerErrorCode,
   NoteAuthor,
   NoteEmbed,
+  NoteErrorCode,
   NoteEyecatch,
   NoteSource,
   NoteTocItem,
@@ -29,4 +31,9 @@ export { NoteArticleCard, type NoteArticleCardProps } from './NoteArticleCard.js
 export { NoteArticleList, type NoteArticleListProps } from './NoteArticleList.js';
 export { NotePagination, type NotePaginationProps } from './NotePagination.js';
 export type { NoteHeadingLevel, NoteLinkComponent } from './types.js';
-export { type UseNoteArticlesOptions, type UseNoteArticlesResult, useNoteArticles } from './useNoteArticles.js';
+export {
+  type UseNoteArticlesError,
+  type UseNoteArticlesOptions,
+  type UseNoteArticlesResult,
+  useNoteArticles,
+} from './useNoteArticles.js';

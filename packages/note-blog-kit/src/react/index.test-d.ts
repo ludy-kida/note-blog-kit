@@ -1,6 +1,13 @@
 import type { ReactElement, ReactNode } from 'react';
 import { describe, expectTypeOf, it } from 'vitest';
-import type { NoteArticle, NoteArticlePage, NoteArticleSummary, NoteEmbed, NoteTocItem } from '../index.js';
+import type {
+  NoteArticle,
+  NoteArticlePage,
+  NoteArticleSummary,
+  NoteArticlesHandlerErrorCode,
+  NoteEmbed,
+  NoteTocItem,
+} from '../index.js';
 import {
   NoteArticleBody,
   type NoteArticleBodyProps,
@@ -17,6 +24,7 @@ import {
   type NoteLinkComponent,
   NotePagination,
   type NotePaginationProps,
+  type UseNoteArticlesError,
   type UseNoteArticlesOptions,
   type UseNoteArticlesResult,
   useNoteArticles,
@@ -30,10 +38,15 @@ describe('note-blog-kit/react の公開型', () => {
     expectTypeOf<UseNoteArticlesOptions['fetch']>().toEqualTypeOf<typeof globalThis.fetch | undefined>();
     expectTypeOf<UseNoteArticlesResult>().toEqualTypeOf<{
       articles: NoteArticleSummary[];
-      page: NoteArticlePage | null;
+      data: NoteArticlePage | null;
       isLoading: boolean;
-      error: Error | null;
+      error: UseNoteArticlesError | null;
     }>();
+    // ページの番号と紛らわしいので、ページ情報は page ではなく data
+    expectTypeOf<UseNoteArticlesResult>().not.toHaveProperty('page');
+    expectTypeOf<UseNoteArticlesError>().toExtend<Error>();
+    expectTypeOf<UseNoteArticlesError['status']>().toEqualTypeOf<number | null>();
+    expectTypeOf<UseNoteArticlesError['code']>().toEqualTypeOf<NoteArticlesHandlerErrorCode | null>();
   });
 
   it('NoteArticleBody は article だけが必須で、components の props が決まっている', () => {
