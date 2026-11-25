@@ -19,12 +19,14 @@ export interface UseNoteArticlesOptions {
 /** {@link useNoteArticles} の取得の失敗。`Error` を継承するので `message` も読める */
 export interface UseNoteArticlesError extends Error {
   /** 応答の HTTP ステータス。応答がない（通信の失敗・取得できない URL）か、2xx で形が違う応答なら null */
-  status: number | null;
+  readonly status: number | null;
   /**
-   * 中継エンドポイントが返したエラーコード（`{ "error": "<コード>" }` の応答のとき）。それ以外は null。
-   * コードはマイナーバージョンで増えることがある（知らないコードもそのまま入る）
+   * 中継エンドポイントが返したエラーコード（`{ "error": "<コード>" }` の応答のとき）。
+   * コードの形（英大文字で始まる英大文字・数字・_ の64文字まで）でない、本文が大きすぎる（16 KB 超）、
+   * または `articles.json` などの静的ファイルの応答なら null。
+   * コードはマイナーバージョンで増えることがある（知らないコードもそのまま入る。`switch` には `default` を書くこと）
    */
-  code: NoteArticlesHandlerErrorCode | null;
+  readonly code: NoteArticlesHandlerErrorCode | null;
 }
 
 /** {@link useNoteArticles} の戻り値 */
@@ -38,7 +40,7 @@ export interface UseNoteArticlesResult {
   data: NoteArticlePage | null;
   /** 取得中か（最初の取得中と、url が変わって取り直している間は true） */
   isLoading: boolean;
-  /** 取得に失敗したときのエラー（HTTP エラー・形の違う応答・取得できない URL）。成功・取得中は null */
+  /** 取得に失敗したときのエラー（HTTP エラー・通信の失敗・形の違う応答・取得できない URL）。成功・取得中は null */
   error: UseNoteArticlesError | null;
 }
 
@@ -46,16 +48,26 @@ const INITIAL: UseNoteArticlesResult = { articles: [], data: null, isLoading: tr
 
 /** 中継エンドポイントのエラーコードの形（英大文字・数字・_） */
 const ERROR_CODE_RE = /^[A-Z][A-Z0-9_]{0,63}$/;
+/** エラーコードを読む本文の最大の大きさ（バイト） */
+const MAX_ERROR_BODY_BYTES = 16 * 1024;
+/** このフックが作ったエラー（利用者の fetch が投げた、status を持つエラーと区別する） */
+const OWN_ERRORS = new WeakSet<Error>();
 
-function toError(error: unknown, status: number | null = null, code: string | null = null): UseNoteArticlesError {
-  return Object.assign(error instanceof Error ? error : new Error(String(error)), {
+/** 新しいエラーを作る（受け取ったエラーは書き換えず cause に入れる。DOMException などは書き換えられないため） */
+function toError(cause: unknown, status: number | null = null, code: string | null = null): UseNoteArticlesError {
+  const message = cause instanceof Error ? cause.message : String(cause);
+  const error = Object.assign(new Error(message, { cause }), {
     status,
     code: code as NoteArticlesHandlerErrorCode | null,
   });
+  OWN_ERRORS.add(error);
+  return error;
 }
 
-/** 失敗した応答の本文から `{ error: <コード> }` のコードを読む（読めなければ null） */
+/** 失敗した応答の本文から `{ error: <コード> }` のコードを読む（読めなければ null。大きすぎる本文は読まない） */
 async function readErrorCode(response: Response): Promise<string | null> {
+  const length = Number(response.headers.get('content-length'));
+  if (length > MAX_ERROR_BODY_BYTES) return null;
   try {
     const body = (await response.json()) as unknown;
     const code =
@@ -162,13 +174,15 @@ export function useNoteArticles(options: UseNoteArticlesOptions): UseNoteArticle
         });
         if (!response.ok) {
           const code = await readErrorCode(response);
-          throw toError(new Error(`Request failed with HTTP ${response.status}`), response.status, code);
+          throw toError(`Request failed with HTTP ${response.status}`, response.status, code);
         }
         const data = toPage((await response.json()) as unknown);
         if (!controller.signal.aborted) setState({ articles: data.articles, data, isLoading: false, error: null });
       } catch (error) {
         if (controller.signal.aborted) return;
-        const known = error instanceof Error && 'status' in error ? (error as UseNoteArticlesError) : toError(error);
+        // このフックが作ったエラーだけをそのまま使う（利用者の fetch が投げたエラーは包み直す）
+        const known =
+          error instanceof Error && OWN_ERRORS.has(error) ? (error as UseNoteArticlesError) : toError(error);
         setState({ articles: [], data: null, isLoading: false, error: known });
       }
     })();

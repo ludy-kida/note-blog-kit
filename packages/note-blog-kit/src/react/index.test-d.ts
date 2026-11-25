@@ -47,6 +47,14 @@ describe('note-blog-kit/react の公開型', () => {
     expectTypeOf<UseNoteArticlesError>().toExtend<Error>();
     expectTypeOf<UseNoteArticlesError['status']>().toEqualTypeOf<number | null>();
     expectTypeOf<UseNoteArticlesError['code']>().toEqualTypeOf<NoteArticlesHandlerErrorCode | null>();
+    // 読み取り専用（/server の NoteError と同じ）
+    const readonlyCheck = (error: UseNoteArticlesError) => {
+      // @ts-expect-error status は読み取り専用
+      error.status = 1;
+      // @ts-expect-error code は読み取り専用
+      error.code = null;
+    };
+    void readonlyCheck;
   });
 
   it('NoteArticleBody は article だけが必須で、components の props が決まっている', () => {

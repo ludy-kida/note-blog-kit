@@ -216,8 +216,8 @@ export function useNoteArticles(options: UseNoteArticlesOptions): UseNoteArticle
 
 // @public
 export interface UseNoteArticlesError extends Error {
-    code: NoteArticlesHandlerErrorCode | null;
-    status: number | null;
+    readonly code: NoteArticlesHandlerErrorCode | null;
+    readonly status: number | null;
 }
 
 // @public

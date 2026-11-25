@@ -80,19 +80,30 @@ describe('useNoteArticles', () => {
   });
 
   it('コードとして読めない失敗の本文は code が null（status は入る）', async () => {
-    for (const fetch of [
-      vi.fn(async () => new Response('<html>oops</html>', { status: 500 })),
-      jsonFetch({ error: 123 }, 502),
-      jsonFetch({ error: '<script>' }, 502),
-      jsonFetch({ error: 'a'.repeat(100).toUpperCase() }, 502),
-      jsonFetch([{ error: 'NOTE_NOT_FOUND' }], 404),
-    ]) {
+    const big = new Response(JSON.stringify({ error: 'NOTE_NOT_FOUND' }), {
+      status: 404,
+      headers: { 'content-length': String(16 * 1024 + 1) },
+    });
+    for (const [status, fetch] of [
+      [500, vi.fn(async () => new Response('<html>oops</html>', { status: 500 }))],
+      [502, jsonFetch({ error: 123 }, 502)],
+      [502, jsonFetch({ error: '<script>' }, 502)],
+      [502, jsonFetch({ error: `A${'B'.repeat(64)}` }, 502)],
+      [502, jsonFetch({ error: 'note_not_found' }, 502)],
+      [404, jsonFetch([{ error: 'NOTE_NOT_FOUND' }], 404)],
+      [404, vi.fn(async () => big)],
+    ] as const) {
       const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
       await waitFor(() => expect(result.current.isLoading).toBe(false));
-      expect(result.current.error?.status).toBeGreaterThanOrEqual(400);
+      expect(result.current.error?.status).toBe(status);
       expect(result.current.error?.code).toBeNull();
       unmount();
     }
+    // ちょうど64文字のコードは入る
+    const fetch = jsonFetch({ error: `A${'B'.repeat(63)}` }, 502);
+    const { result } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.error?.code).toBe(`A${'B'.repeat(63)}`);
   });
 
   it('通信の失敗・取得できない URL・形の違う 200 の応答は status も code も null', async () => {
@@ -114,6 +125,26 @@ describe('useNoteArticles', () => {
       expect(result.current.error?.code).toBeNull();
       unmount();
     }
+  });
+
+  it('利用者の fetch が投げたエラーは書き換えずに包み直す（DOMException・status を持つエラーでも止まらない）', async () => {
+    const timeout = new DOMException('The operation timed out.', 'TimeoutError');
+    const custom = Object.assign(new Error('bad request'), { status: 'x', code: 'ERR_BAD_REQUEST' });
+    for (const thrown of [timeout, custom]) {
+      const fetch = vi.fn(async () => {
+        throw thrown;
+      });
+      const { result, unmount } = renderHook(() => useNoteArticles({ url: '/api/note', fetch }));
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.error).toBeInstanceOf(Error);
+      expect(result.current.error).not.toBe(thrown);
+      expect(result.current.error?.cause).toBe(thrown);
+      expect(result.current.error?.message).toBe(thrown.message);
+      expect(result.current.error?.status).toBeNull();
+      expect(result.current.error?.code).toBeNull();
+      unmount();
+    }
+    expect(custom.status).toBe('x');
   });
 
   it('HTTP エラー・JSON でない応答・形が違う JSON は error', async () => {
