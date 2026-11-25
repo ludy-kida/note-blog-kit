@@ -8,6 +8,7 @@ import type { NoteArticle, NoteEmbed, NoteEyecatch, NoteTocItem } from '../../co
 import { NoteSchemaError } from '../errors.js';
 import { NOTE_KEY_RE, NOTE_USER_RE } from '../patterns.js';
 import { SAFE_VALUE, sanitizeNoteBody } from '../sanitize/sanitize.js';
+import { assertBodyWithinLimits } from './body-limits.js';
 import { emptyToNull, htmlToExcerpt, httpsUrl, isHttpsUrl, optionalHttpsUrl } from './shared.js';
 
 const noteSchema = z.object({
@@ -75,9 +76,23 @@ function toEyecatch(note: RawNote): NoteEyecatch | null {
   return { url, width: note.eyecatch_width, height: note.eyecatch_height, alt: note.eyecatch_alt ?? '' };
 }
 
+const identitySchema = z.object({
+  data: z.object({ key: z.string(), user: z.object({ urlname: z.string() }) }),
+});
+
+/**
+ * 記事キーと著者のユーザー名だけを読む（本文の検証・サニタイズより前に、取得してよい記事か確かめるため）。
+ * 読めない形なら null（その場合は normalizeNote が NoteSchemaError を投げる）
+ */
+export function readNoteIdentity(json: unknown): { key: string; urlname: string } | null {
+  const result = identitySchema.safeParse(json);
+  return result.success ? { key: result.data.data.key, urlname: result.data.data.user.urlname } : null;
+}
+
 /**
  * 記事本文 API のレスポンス（パース済みの JSON）を検証し、`NoteArticle` に変換する。
- * @throws {NoteSchemaError} 使うキーが欠けている・型が違うとき
+ * 本文は大きさの上限を確かめてからサニタイズする。
+ * @throws {NoteSchemaError} 使うキーが欠けている・型が違うとき、本文が大きすぎるとき
  */
 export function normalizeNote(json: unknown): NoteArticle {
   const result = responseSchema.safeParse(json);
@@ -87,6 +102,8 @@ export function normalizeNote(json: unknown): NoteArticle {
     });
   }
   const note = result.data.data;
+  // sanitize-html の処理時間は入れ子の深さで2乗に増えるので、先に上限を確かめる
+  assertBodyWithinLimits(note.body);
   const bodyHtml = sanitizeNoteBody(note.body);
   const eyecatch = toEyecatch(note);
   return {

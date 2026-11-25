@@ -6,6 +6,13 @@
  * allowedTags・allowedAttributes・allowedSchemes でもう一度絞る（二重の関門）。
  */
 import sanitizeHtml from 'sanitize-html';
+import { NoteSchemaError } from '../errors.js';
+
+/**
+ * 本文の入れ子の最大の深さ（内部用）。sanitize-html の処理時間は深さの2乗で増えるため、
+ * これを超えたら中断して NoteSchemaError にする。深さ 256 なら 30万字でも 0.1 秒程度
+ */
+export const MAX_BODY_DEPTH = 256;
 
 /** 許可するタグ（div は目次の目印 `<div data-nbk-toc>` にだけ使う。本文の div はタグを消す） */
 const ALLOWED_TAGS = [
@@ -186,10 +193,12 @@ function transform(tagName: string, attribs: Attributes): { tagName: string; att
 }
 
 /**
- * note の本文 HTML をサニタイズする（内部用。getArticle が使う）。
+ * note の本文 HTML をサニタイズする（内部用。getArticle が使う）。入れ子が MAX_BODY_DEPTH を超えたら NoteSchemaError。
  * 外す・緩めるオプションは作らない。
  */
 export function sanitizeNoteBody(html: string): string {
+  // パーサーが開いているタグの深さ（void 要素や暗黙に閉じるタグも、パーサーの開閉のとおりに増減する）
+  let depth = 0;
   // 目次（table-of-contents）の中身は捨てる。開いている深さを数え（目次そのものが 1）、中のテキストと要素を消す。
   // onCloseTag は exclusiveFilter より先に呼ばれるので、閉じるときに 1 以上なら目次の中の要素
   let tocDepth = 0;
@@ -212,9 +221,16 @@ export function sanitizeNoteBody(html: string): string {
     // 属性値の実体参照を解いた値で URL を判定し、出力時にエスケープする前提（既定値だが明示する）
     parser: { decodeEntities: true },
     onOpenTag: (name) => {
+      // パーサー自身の開閉で深さを数え、深すぎたら中断する（処理時間が深さの2乗で増えるため）
+      if (++depth > MAX_BODY_DEPTH) {
+        throw new NoteSchemaError('The article body is too large', {
+          issues: [{ path: 'data.body', message: `Body is nested deeper than ${MAX_BODY_DEPTH} levels` }],
+        });
+      }
       if (tocDepth > 0 || name === 'table-of-contents') tocDepth++;
     },
     onCloseTag: () => {
+      depth--;
       if (tocDepth > 0) tocDepth--;
     },
     transformTags: { '*': transform },
