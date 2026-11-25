@@ -159,7 +159,9 @@ describe('listArticles', () => {
       Object.defineProperty(response, 'redirected', { value: true });
       return response;
     });
-    await expect(listArticles({ ...base, fetch })).rejects.toBeInstanceOf(NoteNetworkError);
+    const redirected = (await listArticles({ ...base, fetch }).catch((e: unknown) => e)) as NoteNetworkError;
+    expect(redirected).toBeInstanceOf(NoteNetworkError);
+    expect(redirected.url).toContain('/api/v2/creators/kida_lw/contents');
   });
 
   it('timeoutMs・minIntervalMs が範囲外なら TypeError', async () => {
@@ -295,6 +297,8 @@ describe('listArticles の source', () => {
       [null, null],
       ['soon', null],
       ['-5', null],
+      ['0', 0],
+      ['999999999', 86_400],
     ] as const) {
       const init = header === null ? { status: 429 } : { status: 429, headers: { 'retry-after': header } };
       const fetch = routedFetch(() => new Response('', init));
@@ -310,6 +314,15 @@ describe('listArticles の source', () => {
     const error = (await listArticles({ ...base, fetch }).catch((e: unknown) => e)) as NoteRateLimitError;
     expect(error.retryAfterSeconds).toBeGreaterThan(50);
     expect(error.retryAfterSeconds).toBeLessThanOrEqual(60);
+    // 過去の日付は 0、遠い未来の日付は 1日（setTimeout の上限を超えないように）
+    for (const [when, expected] of [
+      [new Date(Date.now() - 60_000).toUTCString(), 0],
+      ['Sat, 13 Sep 275760 00:00:00 GMT', 86_400],
+    ] as const) {
+      const f = routedFetch(() => new Response('', { status: 429, headers: { 'retry-after': when } }));
+      const e = (await listArticles({ ...base, fetch: f }).catch((x: unknown) => x)) as NoteRateLimitError;
+      expect(e.retryAfterSeconds, when).toBe(expected);
+    }
   });
 
   it("'auto' でも 429 では RSS に切り替えない", async () => {

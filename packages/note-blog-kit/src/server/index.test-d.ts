@@ -30,15 +30,18 @@ describe('エラーモデル（#41）', () => {
       if (error.code === 'NOTE_RATE_LIMITED') expectTypeOf(error.retryAfterSeconds).toEqualTypeOf<number | null>();
       if (error.code === 'NOTE_NETWORK_ERROR') expectTypeOf(error.url).toEqualTypeOf<string>();
       if (error.code === 'NOTE_TIMEOUT') expectTypeOf(error.url).toEqualTypeOf<string>();
-      if (error.code === 'NOTE_SCHEMA_ERROR') expectTypeOf(error.url).toEqualTypeOf<string | undefined>();
+      if (error.code === 'NOTE_SCHEMA_ERROR') expectTypeOf(error.url).toEqualTypeOf<string | null>();
     };
     void read;
     expectTypeOf<NoteRateLimitError['code']>().toEqualTypeOf<'NOTE_RATE_LIMITED'>();
   });
 
-  it('isNoteArticleKey は string の型ガード', () => {
+  it('isNoteArticleKey は unknown を string に絞り、string を渡したときは false の分岐でも string のまま', () => {
     const value: unknown = 'n1';
     if (isNoteArticleKey(value)) expectTypeOf(value).toEqualTypeOf<string>();
+    const key: string = 'x';
+    if (!isNoteArticleKey(key)) expectTypeOf(key).toEqualTypeOf<string>();
+    expectTypeOf(isNoteArticleKey(key)).toEqualTypeOf<boolean>();
   });
 
   it('NoteErrorOptions は公開しない', () => {

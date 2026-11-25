@@ -167,7 +167,7 @@ try {
 | `code` | 内容 | 主な項目 |
 | --- | --- | --- |
 | `NOTE_NOT_FOUND` | 404、または `getArticle` の `user` にない著者の記事 | `url` |
-| `NOTE_RATE_LIMITED` | リクエストが多すぎる（429）。時間を空けて再試行する | `url`・`retryAfterSeconds` |
+| `NOTE_RATE_LIMITED` | リクエストが多すぎる（429）。時間を空けて再試行する | `url`・`retryAfterSeconds`（0〜86400 秒か null） |
 | `NOTE_HTTP_ERROR` | その他の HTTP エラー | `url`・`status` |
 | `NOTE_NETWORK_ERROR` | 通信の失敗 | `url` |
 | `NOTE_TIMEOUT` | タイムアウト | `url` |

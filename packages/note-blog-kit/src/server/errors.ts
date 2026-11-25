@@ -1,7 +1,7 @@
 /**
  * エラーの種類を表す安定した識別子。
  *
- * マイナーバージョンでコードが増えることがある（例：v0.4.0 で `NOTE_RATE_LIMITED` を追加）。
+ * マイナーバージョンでコードが増えることがある。
  * `switch (error.code)` で分けるときは、知らないコードのために `default` を書くこと。
  */
 export type NoteErrorCode =
@@ -84,7 +84,10 @@ export class NoteRateLimitError extends NoteError {
   override readonly code = 'NOTE_RATE_LIMITED' as const;
   /** リクエストした URL */
   readonly url: string;
-  /** 応答の `Retry-After` から求めた、再試行まで待つ秒数。なければ・解釈できなければ null */
+  /**
+   * 応答の `Retry-After` から求めた、再試行まで待つ秒数（0〜86400。1日を超える値は 86400 にする）。
+   * なければ・解釈できなければ null
+   */
   readonly retryAfterSeconds: number | null;
 
   /** @internal */
@@ -138,7 +141,7 @@ export class NoteSchemaError extends NoteError {
   /** 想定と違った箇所 */
   readonly issues: readonly NoteSchemaIssue[];
   /** リクエストした URL。取得関数（`listArticles`・`getArticle` など）から投げられるときは必ず入る */
-  readonly url: string | undefined;
+  readonly url: string | null;
 
   /** @internal */
   constructor(message: string, options: { cause?: unknown; issues: readonly NoteSchemaIssue[]; url?: string }) {
@@ -148,7 +151,7 @@ export class NoteSchemaError extends NoteError {
       .join('; ');
     super(detail === '' ? message : `${message} (${detail})`, { ...options, code: 'NOTE_SCHEMA_ERROR' });
     this.issues = options.issues;
-    this.url = options.url;
+    this.url = options.url ?? null;
   }
 }
 
@@ -157,8 +160,8 @@ export class NoteSchemaError extends NoteError {
  * 正規化の関数は URL を知らないため、取得関数がここで付け直す。
  */
 export function withUrl(error: unknown, url: string): unknown {
-  if (error instanceof NoteSchemaError && error.url === undefined) {
-    (error as { url: string | undefined }).url = url;
+  if (error instanceof NoteSchemaError && error.url === null) {
+    (error as { url: string | null }).url = url;
   }
   return error;
 }

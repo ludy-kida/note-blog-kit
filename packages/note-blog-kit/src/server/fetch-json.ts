@@ -100,14 +100,18 @@ export async function fetchNoteText(url: string, options: FetchTextOptions): Pro
   return body;
 }
 
-/** Retry-After（秒数か HTTP の日付）を秒数にする。解釈できなければ null */
+/** 再試行まで待つ秒数の上限（1日）。setTimeout の上限（約24.8日）を超えないようにする */
+const MAX_RETRY_AFTER_SECONDS = 86_400;
+
+/** Retry-After（秒数か HTTP の日付）を 0〜1日の秒数にする。解釈できなければ null */
 function parseRetryAfter(value: string | null): number | null {
   if (value === null) return null;
   const trimmed = value.trim();
-  if (/^\d{1,9}$/.test(trimmed)) return Number(trimmed);
+  if (/^\d{1,9}$/.test(trimmed)) return Math.min(Number(trimmed), MAX_RETRY_AFTER_SECONDS);
   const date = Date.parse(trimmed);
   if (Number.isNaN(date) || !/[A-Za-z]/.test(trimmed)) return null;
-  return Math.max(0, Math.ceil((date - Date.now()) / 1000));
+  // Date.parse は HTTP の日付以外（ISO 形式など）も受け付けるが、秒数にできれば使う
+  return Math.min(Math.max(0, Math.ceil((date - Date.now()) / 1000)), MAX_RETRY_AFTER_SECONDS);
 }
 
 /** note から取得し、2xx の本文を JSON として返す */

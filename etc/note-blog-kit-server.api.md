@@ -17,6 +17,9 @@ export interface GetArticleOptions extends NoteRequestOptions {
 }
 
 // @public
+export function isNoteArticleKey(value: string): boolean;
+
+// @public
 export function isNoteArticleKey(value: unknown): value is string;
 
 // @public
@@ -223,7 +226,7 @@ export class NoteSchemaError extends NoteError {
     readonly issues: readonly NoteSchemaIssue[];
     // (undocumented)
     name: string;
-    readonly url: string | undefined;
+    readonly url: string | null;
 }
 
 // @public

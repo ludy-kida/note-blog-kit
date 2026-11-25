@@ -13,7 +13,10 @@ export const NOTE_KEY_RE = /^n[0-9a-z]{1,32}$/;
  * if (!isNoteArticleKey(key)) notFound();
  * ```
  */
-export function isNoteArticleKey(value: unknown): value is string {
+export function isNoteArticleKey(value: string): boolean;
+/** {@inheritDoc isNoteArticleKey:(1)}。文字列でない値は false（true なら string に絞られる） */
+export function isNoteArticleKey(value: unknown): value is string;
+export function isNoteArticleKey(value: unknown): boolean {
   return typeof value === 'string' && NOTE_KEY_RE.test(value);
 }
 
