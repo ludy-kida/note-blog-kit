@@ -41,9 +41,14 @@ Claude Code は次のことをしません：note.com へのアクセス、公�
 Claude Code が動くのは次のときだけです（[`.github/workflows/claude.yml`](../.github/workflows/claude.yml)）。
 
 - 契約テスト（`github-actions[bot]`）が立てた `contract-failure` の Issue に、`claude-fix` ラベルが付いたとき（ラベルを付けた人に書き込み権限があることは action が確かめる）
-- Issue（PR は除く）のコメントで、オーナー・コラボレーターが `@claude` と書いたとき
+- オーナーか `github-actions[bot]` が立てた Issue（PR は除く）で、オーナーが `@claude` とコメントしたとき
 
-外部の人のコメントで指示を差し込まれないよう、依頼として読むコメントはオーナーと bot のものに限っています（`include_comments_by_actor`）。WebFetch・WebSearch は使わせません。
+外部の人が書いた本文やコメントで指示を差し込まれないよう、次のようにしています。
+
+- Issue の作成者とコメントの作者の両方を確かめる。外部の人が立てた Issue では、オーナーが `@claude` と書いても動かない
+- 依頼として読むコメントは、オーナーと bot のものだけ（`include_comments_by_actor`）
+- 使えるツールは、ファイルの読み書き・検索と、決めたコマンド（`pnpm check`・`test`・`lint` など、`git` の commit・push など）だけ。`--permission-mode acceptEdits` にしているので、許可リストにないコマンドは拒否される（action の既定の auto モードは、審査を通れば許可リストの外のコマンドも実行するため使わない）
+- WebFetch・WebSearch・`curl`・`wget`・`node`・`npx`・`pnpm dlx` は明示的に禁止する
 リポジトリの `.claude/settings.json` の禁止ルールと hook は Actions の中でも読み込まれるはずですが、hook はコマンドの文字列で判定する補助なので、完全な防御ではありません。Claude Code が作った変更は、note へのアクセスが増えていないかも含めて人がレビューしてください（`scripts/contract-check.ts`・`scripts/lib/contract.ts` は CODEOWNERS の対象です）。
 
 ## 人が行う設定
@@ -55,6 +60,7 @@ Claude Code が動くのは次のときだけです（[`.github/workflows/claude
 3. **ラベル**：`contract-failure` と `claude-fix` は、契約テストが初めて Issue を作るときに自動で作られる。先に作っておいてもよい
 4. **ブランチ保護**：main で「Require a pull request before merging」と「Require review from Code Owners」を有効にする（Claude Code が main に直接 push できないように）
 5. **初回の確認**：Actions の「Contract」を手動で実行し（Run workflow）、3つとも成功することを確かめる
+6. **Claude Code の起動条件の確認**：自分で立てた Issue に `@claude` とコメントすると Claude ジョブが動くこと、外部の人が立てた Issue では動かない（ジョブが skipped になる）ことを確かめる
 
 ## 実データへのアクセスについて
 

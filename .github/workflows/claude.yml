@@ -1,9 +1,12 @@
 name: Claude
 
 # 人が依頼したときだけ Claude Code を動かす（docs/contract-test.md）。
-# - Issue に claude-fix ラベルを付けた（契約テストの Issue → fix-api-change スキルで修正 PR を作る）
-# - オーナー・メンバー・コラボレーターが Issue・PR のコメントで @claude と書いた
-# Claude Code は PR を作るまで。マージ・公開は人が行う。
+# - 契約テスト（github-actions[bot]）が立てた contract-failure の Issue に claude-fix ラベルを付けた
+#   （fix-api-change スキルで修正し、ブランチと PR 作成リンクを返す）
+# - オーナーか github-actions[bot] が立てた Issue（PR は除く）で、オーナーが @claude とコメントした
+# 外部の人が書いた本文・コメントを依頼として読ませないため、Issue の作成者とコメントの作者の両方を確かめる。
+# 使えるツールは allowedTools に書いたものだけ（acceptEdits モード。auto モードの審査には任せない）。
+# Claude Code はブランチへの push まで。PR の作成・マージ・公開は人が行う。
 
 on:
   issues:
@@ -21,7 +24,8 @@ concurrency:
 jobs:
   claude:
     # ラベル：契約テスト（github-actions[bot]）が立てた contract-failure の Issue だけ
-    # コメント：Issue（PR を除く）で、オーナー・コラボレーターが @claude と書いたときだけ
+    # コメント：オーナーか github-actions[bot] が立てた Issue（PR を除く）で、オーナーが @claude と書いたときだけ
+    #  （依頼として読むコメントの作者 include_comments_by_actor とそろえる）
     if: >-
       (github.event_name == 'issues' &&
         github.event.label.name == 'claude-fix' &&
@@ -29,8 +33,9 @@ jobs:
         contains(github.event.issue.labels.*.name, 'contract-failure')) ||
       (github.event_name == 'issue_comment' &&
         !github.event.issue.pull_request &&
+        (github.event.issue.author_association == 'OWNER' || github.event.issue.user.login == 'github-actions[bot]') &&
         contains(github.event.comment.body, '@claude') &&
-        contains(fromJSON('["OWNER","COLLABORATOR"]'), github.event.comment.author_association))
+        github.event.comment.author_association == 'OWNER')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -61,8 +66,11 @@ jobs:
           trigger_phrase: "@claude"
           # 依頼として読むコメントを、オーナーと bot のものに限る（外部の人のコメントによるプロンプトインジェクションを防ぐ）
           include_comments_by_actor: ludy-kida,github-actions[bot],claude[bot]
+          # acceptEdits：allowedTools にないコマンドは承認待ちになり、無人の実行では拒否される（auto モードの審査で通さない）
           claude_args: >-
-            --disallowedTools "WebFetch,WebSearch"
+            --permission-mode acceptEdits
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(pnpm check),Bash(pnpm test:*),Bash(pnpm lint),Bash(pnpm format),Bash(pnpm typecheck),Bash(pnpm build),Bash(pnpm api),Bash(pnpm exec vitest:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(git checkout:*),Bash(git branch:*)"
+            --disallowedTools "WebFetch,WebSearch,Bash(curl:*),Bash(wget:*),Bash(node:*),Bash(npx:*),Bash(pnpm dlx:*)"
             --append-system-prompt "CLAUDE.md を守ること。
             契約テストの Issue（contract-failure ラベル）を扱うときは .claude/skills/fix-api-change/SKILL.md の手順に従う。
             note.com にアクセスしない（fixtures/ を使い、足りなければ取得したいものを Issue にコメントして止まる）。
