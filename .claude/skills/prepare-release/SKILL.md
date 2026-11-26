@@ -11,7 +11,8 @@ description: リリース前に changeset を整理し、配布物を検証す�
 
 - `pnpm exec changeset status --verbose` で、次のバージョンと含まれる変更を確認する
 - 重複・利用者に関係のない記述・粒度の揃わない記述があれば、`.changeset/*.md` を直す
-- 0.x の間：破壊的変更と機能追加は minor、修正は patch。1.0 以降はセマンティックバージョニング
+- バージョンの規則は `docs/stability.md`（semver）に従う：破壊的変更は major、機能追加は minor、修正は patch。1.0.0 の公開までは破壊的変更も minor
+- 破壊的変更の changeset があれば、`MIGRATING.md` に移行のしかたが載っているか確かめる
 
 ## 2. 配布物を検証する
 
@@ -26,6 +27,7 @@ description: リリース前に changeset を整理し、配布物を検証す�
 - 次のバージョンと変更の要約（CHANGELOG に載る内容）
 - 公開 API の変更（`etc/*.api.md` の前回リリースからの差分）
 - `/react` の gzip サイズ
+- 破壊的変更と、`MIGRATING.md`・`docs/stability.md`（サポート範囲）が食い違わないか
 - README 冒頭の注意事項が最新か
 
 release PR のマージ（＝公開）は人が判断する。

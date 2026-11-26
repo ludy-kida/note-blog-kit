@@ -19,9 +19,11 @@
 npm install note-blog-kit
 ```
 
-React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 22.12 以上で動きます。
+React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 24 以上で動きます。Next.js は 15 / 16 の App Router に対応しています。
 
-パッケージは ES Modules のみで配布しています。CommonJS からも、Node.js 22.12 以上なら `require('note-blog-kit/server')` のように読み込めます（require(esm)）。TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
+パッケージは ES Modules のみで配布しています。CommonJS からも `require('note-blog-kit/server')` のように読み込めます（require(esm)）。TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
+
+1.0 での互換性の方針は [docs/stability.md](https://github.com/ludy-kida/note-blog-kit/blob/main/docs/stability.md)、0.3 からの移行は [MIGRATING.md](https://github.com/ludy-kida/note-blog-kit/blob/main/MIGRATING.md) を参照してください。
 
 ### 2. デフォルト CSS を読み込む（任意）
 

@@ -15,7 +15,7 @@ export default defineConfig([
       'react/index': 'src/react/index.ts',
       'next/index': 'src/next/index.ts',
     },
-    // ESM のみ（Node.js 22.12 以降は require() でも読める）
+    // ESM のみ（Node.js 24 以降は require() でも読める）
     format: ['esm'],
     dts: true,
     clean: true,
@@ -30,7 +30,7 @@ export default defineConfig([
     entry: { 'cli/index': 'src/cli/index.ts' },
     format: ['esm'],
     platform: 'node',
-    target: 'node22',
+    target: 'node24',
     banner: { js: '#!/usr/bin/env node' },
     clean: false,
   },

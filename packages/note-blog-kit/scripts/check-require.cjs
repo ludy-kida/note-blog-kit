@@ -1,4 +1,4 @@
-// ESM のみの配布物を CommonJS の require() で読めるか確かめる（Node.js 22.12 以降の require(esm)）
+// ESM のみの配布物を CommonJS の require() で読めるか確かめる（Node.js の require(esm)）
 'use strict';
 
 /** subpath ごとに、関数として読めるはずの代表的な export */
