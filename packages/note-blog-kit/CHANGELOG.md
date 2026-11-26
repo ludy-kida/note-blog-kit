@@ -1,5 +1,52 @@
 # note-blog-kit
 
+## 0.4.0
+
+### Minor Changes
+
+- d49ebe2: **破壊的変更**：エラーモデルを v1.0 に向けて整理しました。
+  - HTTP 429 は `NOTE_HTTP_ERROR` ではなく、新しい `NOTE_RATE_LIMITED`（`NoteRateLimitError`。`retryAfterSeconds` で `Retry-After` の秒数を読めます）になりました。
+  - `NoteNetworkError`・`NoteTimeoutError`・`NoteSchemaError` に `url` を追加しました（`NoteSchemaError` の `url` は `string | null` で、取得関数から投げられるときは必ず入ります）。
+  - エラーのコンストラクタを内部用（`@internal`）にし、`NoteErrorOptions` の export をやめました。
+  - `NoteErrorCode` はマイナーバージョンで増えることがあります（`switch` には `default` を書いてください）。
+  - URL から受け取った記事キーを確かめる `isNoteArticleKey` を追加しました。
+- 39fbaa1: **破壊的変更**：
+  
+  - ES Modules のみの配布にしました（CJS のビルドをやめました）。CommonJS からも、Node.js 22.12 以上なら `require()` で読み込めます。TypeScript の CommonJS のプロジェクトでは `moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
+  - `createNoteArticlesHandler` の `maxPageNumber` を `maxPage` に改名しました（`maxPages` と紛らわしいため）。古い名前を渡すと `TypeError` になります。
+  - `NoteArticleList` の `empty` を `labels.empty` に移しました。
+  - `NoteArticlePage` に、実際の取得元 `source`（`'api'` | `'rss'`）を追加しました（`source: 'auto'` で RSS に切り替わったページは `'rss'`）。`NoteArticlePage` を自分で作っている場合（テストのデータなど）は `source` が必要です。
+  
+  移行の例：
+  
+  ```ts
+  // 0.3
+  createNoteArticlesHandler({ user: 'your_urlname', maxPageNumber: 20 });
+  <NoteArticleList articles={articles} empty="まだ記事がありません" />
+  
+  // 0.4
+  createNoteArticlesHandler({ user: 'your_urlname', maxPage: 20 });
+  <NoteArticleList articles={articles} labels={{ empty: 'まだ記事がありません' }} />
+  ```
+  
+  **追加**：
+  
+  - `NoteArticleList` の `labels.paid` で、各カードの「有料」の文言を変えられます。
+  - `source` オプションの型 `NoteSourceOption`（`'api' | 'rss' | 'auto'`）を `note-blog-kit/server`・`note-blog-kit/next` から公開しました。
+- f501936: **破壊的変更**：`getArticle` に必須の `user` を追加しました。`user` に指定した著者（大文字小文字も含めて一致）の記事だけを返し、ほかの著者の記事は `NoteNotFoundError`（`NOTE_NOT_FOUND`）になります。複数の著者で運用するサイトでは `user: ['alice', 'bob']` のように配列で指定できます。空の配列や不正な名前を渡すと、送信する前に `TypeError` になります。移行するには、`getArticle({ key })` を `getArticle({ key, user: 'your_urlname' })` にし、`article.author.urlname` を手で確かめていた処理を消してください。著者が違う場合のエラーは、記事が存在しない場合と同じ文面で、実際の著者名は含みません。CLI `sync` も、著者が `--user` でない記事をこの仕組みで書き出しません（stderr には `NOTE_NOT_FOUND` と出ます）。
+- 6cc8b62: CLI `sync` が書き出す `articles.json` に形式のバージョン（`version: 1`）を入れ、その型 `NoteSyncedArticleList` を `note-blog-kit` から公開しました。`useNoteArticles` はバージョン 1 と、`version` のない v0.3 までの `articles.json` を読み、知らないバージョンはエラーにします。中継エンドポイント（`createNoteArticlesHandler`）のエラーの型 `NoteArticlesHandlerErrorCode`・`NoteArticlesHandlerErrorBody` も公開し、`NoteErrorCode` を `note-blog-kit` からも import できるようにしました（`note-blog-kit/server` からも引き続き import できます）。
+- b268c5f: **破壊的変更**：`useNoteArticles` の戻り値のページ情報を `page` から `data` に改名しました（ページの番号 `data.page` と紛らわしくないように）。移行するには `result.page` を `result.data` にしてください。また `error` は `UseNoteArticlesError`（`Error` を継承）になり、`status`（HTTP ステータス）と `code`（中継エンドポイントが返したエラーコード。`NoteArticlesHandlerErrorCode`）を読めるようになりました。結果オブジェクトを自分で作っている場合（テストのモックなど）は、`error` の型を `UseNoteArticlesError` にしてください。`note-blog-kit/react` から `NoteArticlesHandlerErrorCode`・`NoteErrorCode` の型も import できるようにしました。
+
+### Patch Changes
+
+- d852beb: 記事本文の大きさに上限を設けました。次の記事は `NoteSchemaError`（`NOTE_SCHEMA_ERROR`）になります（細工した本文でサーバーの処理を長時間止められないようにするため）：本文が 30万文字を超える、`<img>`・`<div>` が合計 2,000 個を超える、タグの入れ子が 256 段を超える。また `getArticle` は、記事キーと著者の確認を本文の処理より前に行うようになりました。
+- 3218a7c: 本文のサニタイズと描画を変更しました。
+  
+  - テキストも画像もないリンクを出力しないようにしました。外部記事のリンクカードで、外部画像を除いた後に名前のない空のリンクが残っていました。
+  - `noembed`・`noframes` を中身ごと消すようにしました。
+  - `NoteArticleBody` で、正規化を通らない本文に `<embed>` があると、その後ろの本文が描画されない問題を直しました。
+- c56a233: CLI `sync` を失敗に強くしました。前回の出力に記事があるのに今回の一覧が空なら、何も書き換えずに終了コード 1 で終わります（空にしてよい場合は新しい `--allow-empty` を付けます）。本文を一時的に取得できなかった記事（通信の失敗・タイムアウト・5xx・429）は前回の本文を残し、それ以外の失敗（404・ほかの 4xx・形の違い）と一覧にない記事の本文は消します。出力先の `articles` がシンボリックリンクなら（取得の途中で差し替えられた場合も）、書き出しと削除を止めて終了コード 1 で終わります。
+
 ## 0.3.0
 
 ### Minor Changes
