@@ -13,6 +13,14 @@
 
 # サニタイズの実装とテスト（Phase 3 で追加）
 /packages/note-blog-kit/src/server/sanitize*  @ludy-kida
+# 本文の許可リスト（/server と /react が共有）と、React 側の絞り込み・URL の検証・XSS テスト（#47）
+/packages/note-blog-kit/src/core/body-policy*  @ludy-kida
+/packages/note-blog-kit/src/react/body/  @ludy-kida
+/packages/note-blog-kit/src/react/safe-url.ts  @ludy-kida
+/packages/note-blog-kit/src/react/NoteArticleBody.tsx  @ludy-kida
+/packages/note-blog-kit/src/react/NoteArticleBody.test.tsx  @ludy-kida
+/packages/note-blog-kit/src/react/react.test.tsx  @ludy-kida
+/docs/sanitize-policy.md       @ludy-kida
 
 # note.com へアクセスする唯一の入口と実レスポンス
 /scripts/record-fixtures.ts    @ludy-kida

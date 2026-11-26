@@ -1,11 +1,21 @@
 /**
- * 本文 HTML のサニタイズ（許可リスト方式）。方針は docs/sanitize-policy.md。
+ * 本文 HTML のサニタイズ（許可リスト方式）。方針は docs/sanitize-policy.md、許可するタグは core/body-policy.ts。
  * この許可リストの変更は人の承認が必要（CLAUDE.md・CODEOWNERS）。
  *
  * 属性はまず transform で自前の規則に従って作り直し、そのうえで sanitize-html の
  * allowedTags・allowedAttributes・allowedSchemes でもう一度絞る（二重の関門）。
  */
 import sanitizeHtml from 'sanitize-html';
+import {
+  ALLOWED_TAGS,
+  DIGITS,
+  DISCARD_VOID,
+  DISCARD_WITH_CONTENT,
+  IMAGE_HOST,
+  IMAGE_PREFIX,
+  SAFE_VALUE,
+  VISIBLE_TEXT,
+} from '../../core/body-policy.js';
 import { NoteSchemaError } from '../errors.js';
 
 /**
@@ -13,64 +23,6 @@ import { NoteSchemaError } from '../errors.js';
  * これを超えたら中断して NoteSchemaError にする。深さ 256 なら 30万字でも 0.1 秒程度
  */
 export const MAX_BODY_DEPTH = 256;
-
-/** 許可するタグ（div は目次の目印 `<div data-nbk-toc>` にだけ使う。本文の div はタグを消す） */
-const ALLOWED_TAGS = [
-  'p',
-  'br',
-  'h2',
-  'h3',
-  'h4',
-  'strong',
-  'em',
-  's',
-  'a',
-  'ul',
-  'ol',
-  'li',
-  'blockquote',
-  'figure',
-  'figcaption',
-  'img',
-  'pre',
-  'code',
-  'hr',
-  'table',
-  'thead',
-  'tbody',
-  'tr',
-  'th',
-  'td',
-  'div',
-];
-
-/** 中身ごと消す要素 */
-const DISCARD_WITH_CONTENT = [
-  'script',
-  'style',
-  'iframe',
-  'frame',
-  'frameset',
-  'object',
-  'embed',
-  'applet',
-  'form',
-  'input',
-  'button',
-  'textarea',
-  'select',
-  'option',
-  'svg',
-  'math',
-  'template',
-  'noscript',
-  'meta',
-  'link',
-  'base',
-  'title',
-  'xmp',
-  'plaintext',
-];
 
 const ALLOWED_ATTRIBUTES: Record<string, string[]> = {
   '*': ['id'],
@@ -83,11 +35,8 @@ const ALLOWED_ATTRIBUTES: Record<string, string[]> = {
 };
 
 const LINK_SCHEMES = new Set(['http:', 'https:', 'mailto:']);
-const IMAGE_PREFIX = 'https://assets.st-note.com/';
-const IMAGE_HOST = 'assets.st-note.com';
-/** id・data-nbk-embed-*（URL を除く）に使える文字 */
-export const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
-const DIGITS = /^\d+$/;
+
+export { SAFE_VALUE };
 
 const AMAZON_HOSTS = new Set(['amazon.co.jp', 'www.amazon.co.jp', 'amazon.com', 'www.amazon.com']);
 const AFFILIATE_HOSTS = new Set([
@@ -202,6 +151,11 @@ export function sanitizeNoteBody(html: string): string {
   // 目次（table-of-contents）の中身は捨てる。開いている深さを数え（目次そのものが 1）、中のテキストと要素を消す。
   // onCloseTag は exclusiveFilter より先に呼ばれるので、閉じるときに 1 以上なら目次の中の要素
   let tocDepth = 0;
+  // 開いているリンクごとに、見える文字か残す画像を含むか（子孫まで。sanitize-html の frame.text・mediaChildren は
+  // 消した子のテキストや孫の画像を含まないため、自分で数える）。閉じたリンクの結果を exclusiveFilter で使う
+  const openLinks: boolean[] = [];
+  let closedLinkHasContent = false;
+  const markLinks = () => openLinks.fill(true);
 
   // 注意：transformTags で「許可しないタグ名」に置き換えてはいけない。sanitize-html は置き換えた名前を
   // 深さごとに記録し、許可しないタグを閉じるときにその記録を消さないため、同じ深さで次に閉じる許可タグの
@@ -209,18 +163,18 @@ export function sanitizeNoteBody(html: string): string {
   // 要素を消すときは、許可するタグ名のまま返して exclusiveFilter で消す。
 
   return sanitizeHtml(html, {
-    allowedTags: ALLOWED_TAGS,
+    allowedTags: [...ALLOWED_TAGS],
     allowedAttributes: ALLOWED_ATTRIBUTES,
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: { img: ['https'] },
     allowProtocolRelative: false,
     disallowedTagsMode: 'discard',
-    nonTextTags: DISCARD_WITH_CONTENT,
+    nonTextTags: [...DISCARD_WITH_CONTENT, ...DISCARD_VOID],
     selfClosing: ['img', 'br', 'hr'],
     enforceHtmlBoundary: false,
     // 属性値の実体参照を解いた値で URL を判定し、出力時にエスケープする前提（既定値だが明示する）
     parser: { decodeEntities: true },
-    onOpenTag: (name) => {
+    onOpenTag: (name, attribs) => {
       // パーサー自身の開閉で深さを数え、深すぎたら中断する（処理時間が深さの2乗で増えるため）
       if (++depth > MAX_BODY_DEPTH) {
         throw new NoteSchemaError('The article body is too large', {
@@ -228,10 +182,13 @@ export function sanitizeNoteBody(html: string): string {
         });
       }
       if (tocDepth > 0 || name === 'table-of-contents') tocDepth++;
+      if (name === 'a') openLinks.push(false);
+      else if (name === 'img' && tocDepth === 0 && transformImage(attribs) !== undefined) markLinks();
     },
-    onCloseTag: () => {
+    onCloseTag: (name) => {
       depth--;
       if (tocDepth > 0) tocDepth--;
+      if (name === 'a') closedLinkHasContent = openLinks.pop() ?? false;
     },
     transformTags: { '*': transform },
     exclusiveFilter: (frame) => {
@@ -241,8 +198,14 @@ export function sanitizeNoteBody(html: string): string {
       if (frame.tag === 'div') return 'excludeTag';
       // 許可しない読み込み元の画像（transform で src を付けなかったもの）
       if (frame.tag === 'img' && frame.attribs.src === undefined) return true;
+      // テキストも残る画像もないリンク（外部画像だけのリンクカードなど）はタグを消す（名前のないリンクを残さない）
+      if (frame.tag === 'a' && !closedLinkHasContent) return 'excludeTag';
       return false;
     },
-    textFilter: (text) => (tocDepth > 0 ? '' : text),
+    textFilter: (text) => {
+      if (tocDepth > 0) return '';
+      if (VISIBLE_TEXT.test(text)) markLinks();
+      return text;
+    },
   });
 }

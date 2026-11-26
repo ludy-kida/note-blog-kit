@@ -1,4 +1,5 @@
 import type { ComponentType, ReactElement, ReactNode } from 'react';
+import { DIGITS, IMAGE_PREFIX, SAFE_VALUE, VISIBLE_TEXT } from '../core/body-policy.js';
 import type { NoteArticle, NoteEmbed, NoteTocItem } from '../core/types.js';
 import { type BodyElement, type BodyNode, parseBody } from './body/parse.js';
 import { classNames } from './class-names.js';
@@ -91,11 +92,6 @@ interface RenderContext {
 }
 
 const ID_RE = /^nbk-[A-Za-z0-9\-_.:/]+$/;
-/** 埋め込みの種類など、属性値に使える文字（/server の sanitize と同じ） */
-const SAFE_VALUE = /^[A-Za-z0-9\-_.:/]+$/;
-/** 本文の画像は note の CDN からだけ読み込む（docs/sanitize-policy.md の決定事項 2） */
-const IMAGE_PREFIX = 'https://assets.st-note.com/';
-const DIGITS = /^\d+$/;
 const REL_TOKENS = new Set(['nofollow', 'noopener', 'noreferrer', 'sponsored']);
 
 /** 本文の要素に付けるクラス名（CSS はこのクラスだけに当て、サイトの他の要素に影響させない） */
@@ -141,6 +137,17 @@ function safeHttpsUrl(value: string | undefined): string | null {
 function safeImageUrl(value: string | undefined): string | null {
   const url = safeHttpsUrl(value);
   return url?.toLowerCase().startsWith(IMAGE_PREFIX) ? url : null;
+}
+
+/** テキスト（空白以外）か、描画する画像を含むか（名前のないリンクを出さないため） */
+function hasContent(nodes: BodyNode[]): boolean {
+  return nodes.some((node) =>
+    typeof node === 'string'
+      ? VISIBLE_TEXT.test(node)
+      : node.tag === 'img'
+        ? safeImageUrl(node.attrs.src) !== null
+        : hasContent(node.children),
+  );
 }
 
 function collectIds(nodes: BodyNode[], ids: Set<string>): Set<string> {
@@ -258,6 +265,8 @@ function renderNode(node: BodyNode, ctx: RenderContext, key: number): ReactNode 
     );
   }
 
+  // テキストも画像もないリンクはタグを外す（/server と同じ。正規化を通らない本文のための保険）
+  if (tag === 'a' && !hasContent(node.children)) return renderChildren(node.children, ctx);
   const children = renderChildren(node.children, ctx);
   if (tag === 'h2' || tag === 'h3' || tag === 'h4') {
     const { heading: Heading } = ctx.components;

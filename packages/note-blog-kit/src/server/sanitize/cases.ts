@@ -218,6 +218,25 @@ export const UNSAFE_CASES: SanitizeCase[] = [
     mustNotContain: ['onerror', 'alert(1)', '<noscript'],
   },
   {
+    name: 'noembed は中身ごと消す（#47）',
+    input: '<noembed>隠す文字<img src=x onerror=alert(1)></noembed><p>本文</p>',
+    mustNotContain: ['<noembed', '隠す文字', 'onerror'],
+    mustContain: ['<p>本文</p>'],
+  },
+  {
+    name: 'noframes は中身ごと消す（#47）',
+    input: '<noframes>隠す文字<img src=x onerror=alert(1)></noframes><p>本文</p>',
+    mustNotContain: ['<noframes', '隠す文字', 'onerror'],
+    mustContain: ['<p>本文</p>'],
+  },
+  {
+    name: '外部画像だけのリンクはタグごと消し、空のリンクを残さない（#47）',
+    input:
+      '<figure embedded-service="external-article" embedded-content-key="emb8df5db980187" data-src="https://www.amazon.co.jp/dp/B0GCQWRYBG"><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank"><strong>商品名</strong></a><a href="https://www.amazon.co.jp/dp/B0GCQWRYBG" target="_blank">\n<img src="https://m.media-amazon.com/images/I/x.jpg">\n</a><a href="https://example.com/"> </a><a href="https://example.com/z">&#8203;</a></figure>',
+    mustNotContain: ['media-amazon', '"></a>', '">\n\n</a>', '"> </a>', 'example.com/z'],
+    mustContain: ['<strong>商品名</strong></a>'],
+  },
+  {
     name: 'textarea を使った mutation XSS',
     input: '<textarea><p title="</textarea><img src=x onerror=alert(1)>"></textarea>',
     mustNotContain: ['onerror', 'alert(1)', '<textarea'],
@@ -393,5 +412,22 @@ export const PRESERVE_CASES: SanitizeCase[] = [
     input: '<p><span>文字</span><font color="red">赤</font></p>',
     mustNotContain: ['<span', '<font', 'color='],
     mustContain: ['<p>文字赤</p>'],
+  },
+  {
+    name: '入れ子の中の画像や、消える要素の中の文字があるリンクは残す（#47）',
+    input:
+      '<p><a href="https://a.example/"><strong><img src="https://assets.st-note.com/img/a.png" alt="説明"></strong></a></p><a href="https://b.example/"><div>リンク</div></a><p><a href="https://c.example/"><span>文字</span></a></p>',
+    mustNotContain: ['<div', '<span'],
+    mustContain: [
+      '<a href="https://a.example/"><strong><img src="https://assets.st-note.com/img/a.png"',
+      '<a href="https://b.example/">リンク</a>',
+      '<a href="https://c.example/">文字</a>',
+    ],
+  },
+  {
+    name: '許可する画像だけのリンクは残す（#47）',
+    input: '<p><a href="https://example.com/"><img src="https://assets.st-note.com/img/a.png" alt="説明"></a></p>',
+    mustNotContain: [],
+    mustContain: ['<a href="https://example.com/"><img src="https://assets.st-note.com/img/a.png" alt="説明"'],
   },
 ];

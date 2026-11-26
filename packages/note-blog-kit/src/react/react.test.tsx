@@ -44,7 +44,12 @@ describe('note-blog-kit/react', () => {
         ...code.matchAll(/require\(\s*['"]([^'"]+)['"]\s*\)/g),
       ].map((match) => match[1] ?? '');
       for (const specifier of specifiers) {
-        const allowed = specifier === 'react' || specifier.startsWith('./') || specifier === '../core/types.js';
+        // core は型と、依存のない本文の許可リスト（#47）だけ
+        const allowed =
+          specifier === 'react' ||
+          specifier.startsWith('./') ||
+          specifier === '../core/types.js' ||
+          /^(\.\.\/)+core\/body-policy\.js$/.test(specifier);
         expect(allowed, `${path} が ${specifier} を import している`).toBe(true);
       }
     }
