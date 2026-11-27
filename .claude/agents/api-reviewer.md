@@ -9,14 +9,15 @@ tools: Read, Grep, Glob, Bash
 ## 前提
 
 - 公開型は docs/phase0-findings.md の「5. 公開型の案」で確定済み。変更には人の承認が必要
-- v1.0 までは 0.x で破壊的変更を許すが、変更は必ず PR に明記し changeset を付ける
+- 互換性の方針は `docs/stability.md`（semver）。破壊的変更の定義はそれに従う（出力の型のユニオンを広げる変更、CSS のクラス名・変数、`articles.json` の形式を含む）
+- 破壊的変更は必ず PR に明記し、changeset を付け、`MIGRATING.md` に移行のしかたを追記する
 - note の生 JSON（snake_case・camelCase が混在する元のキー）を公開型に出さない
 - `/react` は zod・sanitize-html に依存しない。取得は `/server` だけ
 
 ## 確認すること
 
 1. `pnpm build && pnpm api` を実行し、`git diff etc/` で公開 API の差分を確認する
-2. 破壊的変更（削除・改名・必須化・型を狭める）がないか。あれば changeset が minor 以上か（0.x では minor）
+2. 破壊的変更（`docs/stability.md` の定義：削除・改名・必須化・入力の型を狭める・出力の型を変える・出力のユニオンを広げる など）がないか。あれば changeset が major か（1.0.0 の公開までは minor）、`MIGRATING.md` に追記があるか。非推奨にする場合は `@deprecated` と移行先があるか
 3. 命名：既存と揃っているか（`Note` 接頭辞、`get`/`list`/`iterate` の使い分け、boolean は `is`/`has`）
 4. 引数：オプションはオブジェクト1つにまとめ、将来の追加で壊れない形か。既定値が README とテストに書かれているか
 5. 公開型に note の生のキーや内部実装の型が漏れていないか（api-extractor の ae-forgotten-export を含む）

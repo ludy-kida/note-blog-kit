@@ -23,7 +23,7 @@ jobs:
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -38,7 +38,7 @@ jobs:
         run: pnpm build:examples
 
   test-node-min:
-    name: ライブラリのテスト（Node.js 22.12）
+    name: ライブラリのテスト（Node.js 24.0）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -47,10 +47,27 @@ jobs:
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22.12
+          node-version: 24.0.0
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vitest run packages
       # ESM のみの配布物を require() で読めるか（require(esm)）を最低バージョンで確かめる
       - run: pnpm --filter note-blog-kit build
       - run: node packages/note-blog-kit/scripts/check-require.cjs
+
+  test-react-18:
+    name: React 18 での /react のテスト
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # 対応範囲（peerDependencies の React 18 / 19）のうち 18 を、このジョブの中だけで入れて確かめる（コミットしない）
+      - run: pnpm --filter note-blog-kit add -D react@18 react-dom@18
+      - run: pnpm exec vitest run packages/note-blog-kit/src/react
