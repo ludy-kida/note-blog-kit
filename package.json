@@ -19,6 +19,7 @@
     "api:check": "pnpm -C packages/note-blog-kit api:check",
     "size": "pnpm -C packages/note-blog-kit size",
     "check:dist": "pnpm -C packages/note-blog-kit check:dist",
+    "check:pack": "node scripts/check-pack.mjs",
     "check": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm size && pnpm api:check && pnpm check:dist",
     "changeset": "changeset",
     "fixtures:plan": "node scripts/record-fixtures.ts --dry-run",

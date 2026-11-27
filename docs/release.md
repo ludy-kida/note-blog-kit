@@ -17,6 +17,7 @@ ES Modules のみで配布する（v0.4.0 から。2026-11-24 に人が決定）
 
 - 理由：CJS のビルドをやめるのは 1.0 以降だと破壊的変更になる。ESM と CJS の両方を出すと、パッケージが二重に読み込まれたときに `instanceof` が一致しない問題がある
 - CommonJS の利用者も、Node.js 24 以上なら `require()` で読める（require(esm)）。`pnpm check:dist` の `scripts/check-require.cjs` で、各 subpath を `require()` できることを確かめている
+- CI では `pnpm check:pack`（`scripts/check-pack.mjs`）で、npm pack した tarball を一時ディレクトリに入れ、各 subpath の import と `require()`、CLI の `--help` が動くことも確かめている（依存は npm から取得する）
 - `attw` は `--profile esm-only` で確かめる
 
 ## 初回だけ行う設定

@@ -37,9 +37,14 @@ jobs:
       - name: examples のビルド（fixture モード。note にはアクセスしない）
         run: pnpm build:examples
 
-  test-node-min:
-    name: ライブラリのテスト（Node.js 24.0）
+  test-node:
+    name: ライブラリのテスト（Node.js ${{ matrix.node }}）
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 対応する最も古い版と最新版（docs/stability.md）
+        node: ["24.0.0", "latest"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -47,13 +52,15 @@ jobs:
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24.0.0
+          node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vitest run packages
-      # ESM のみの配布物を require() で読めるか（require(esm)）を最低バージョンで確かめる
       - run: pnpm --filter note-blog-kit build
+      # ESM のみの配布物を require() で読めるか（require(esm)）
       - run: node packages/note-blog-kit/scripts/check-require.cjs
+      # npm pack した配布物を一時ディレクトリに入れ、import・require・CLI を確かめる（依存は npm から取得。note にはアクセスしない）
+      - run: pnpm check:pack
 
   test-react-18:
     name: React 18 での /react のテスト
@@ -69,5 +76,24 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # 対応範囲（peerDependencies の React 18 / 19）のうち 18 を、このジョブの中だけで入れて確かめる（コミットしない）
-      - run: pnpm --filter note-blog-kit add -D react@18 react-dom@18
+      - run: pnpm --filter note-blog-kit add -D react@18 react-dom@18 @types/react@18 @types/react-dom@18
       - run: pnpm exec vitest run packages/note-blog-kit/src/react
+      - run: pnpm --filter note-blog-kit typecheck
+
+  test-next-15:
+    name: Next.js 15 での Metadata の型テスト
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # 対応する最も古い Next.js（15）を、このジョブの中だけで入れて確かめる（コミットしない。最新は check ジョブの build:examples で確かめる）
+      - run: pnpm --filter note-blog-kit-example-next add next@15
+      - run: pnpm -C examples/next exec tsc -p tsconfig.type-tests.json
