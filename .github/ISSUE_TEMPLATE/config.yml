@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 脆弱性の報告（非公開）
+    url: https://github.com/ludy-kida/note-blog-kit/security/advisories/new
+    about: XSS などの脆弱性は、公開の Issue ではなくこちらから報告してください（SECURITY.md）
+  - name: 互換性の方針
+    url: https://github.com/ludy-kida/note-blog-kit/blob/main/docs/stability.md
+    about: 何を破壊的変更とみなすか、対応する Node.js・React・Next.js の範囲

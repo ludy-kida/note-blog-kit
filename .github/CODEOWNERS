@@ -2,6 +2,8 @@
 
 # エージェントの設定・ルール
 /CLAUDE.md                     @ludy-kida
+/SECURITY.md                   @ludy-kida
+/CONTRIBUTING.md               @ludy-kida
 /.claude/                      @ludy-kida
 
 # CI・リリース

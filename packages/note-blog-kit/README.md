@@ -11,6 +11,8 @@
 - canonical は note の元 URL を推奨します
 - 有料部分は表示しません
 
+脆弱性を見つけた場合は、公開の Issue ではなく [SECURITY.md](https://github.com/ludy-kida/note-blog-kit/blob/main/SECURITY.md) の方法で非公開で報告してください。
+
 ## 導入手順（Next.js App Router）
 
 ### 1. インストール

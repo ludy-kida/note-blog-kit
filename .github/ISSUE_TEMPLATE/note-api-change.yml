@@ -1,0 +1,47 @@
+name: note の形の変化
+description: note の API・RSS の形が変わって、取得や表示ができなくなった
+labels: [note-api-change]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        note の非公式 API を使っているため、note 側の変更で動かなくなることがあります。気づいた内容を教えてください。
+        レスポンスを貼る場合は、自分の公開記事のものだけにし、Cookie・認証情報・有料記事の本文は含めないでください。
+  - type: input
+    id: version
+    attributes:
+      label: note-blog-kit のバージョン
+      placeholder: 例：0.4.0
+    validations:
+      required: true
+  - type: dropdown
+    id: function
+    attributes:
+      label: 失敗した関数
+      multiple: true
+      options:
+        - listArticles・listAllArticles・iterateArticles（一覧 API）
+        - source が 'rss' か 'auto'（RSS）
+        - getArticle（記事本文）
+        - CLI sync
+        - その他
+    validations:
+      required: true
+  - type: input
+    id: code
+    attributes:
+      label: エラーコード
+      placeholder: 例：NOTE_SCHEMA_ERROR
+    validations:
+      required: true
+  - type: textarea
+    id: issues
+    attributes:
+      label: エラーの内容
+      description: NOTE_SCHEMA_ERROR なら `error.issues`（path と message）を貼ってください
+      render: text
+  - type: input
+    id: since
+    attributes:
+      label: いつから起きているか
+      placeholder: 例：2027-02-01 ごろから
