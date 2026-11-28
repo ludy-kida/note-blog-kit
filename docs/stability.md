@@ -60,10 +60,10 @@ note-blog-kit は 1.0.0 から [セマンティックバージョニング](http
 
 | 対象 | 範囲 | 確かめ方 |
 | --- | --- | --- |
-| Node.js | 24 以上 | CI（24 の最初の版と最新版） |
-| React | 18 / 19（`note-blog-kit/react` を使う場合） | CI（`/react` のテストを React 18 と 19 で実行） |
-| Next.js | 15 / 16 の App Router（`note-blog-kit/next` は `next` に依存しない） | examples（Next.js 16） |
-| モジュール | ES Modules のみ。CommonJS からは `require()`（require(esm)）で読める | CI（`scripts/check-require.cjs`） |
+| Node.js | 24 以上 | CI（24.0.0 と最新版でライブラリのテストと配布物の確認） |
+| React | 18 / 19（`note-blog-kit/react` を使う場合） | CI（`/react` のテストと型チェックを React 18（`@types/react` 18）と 19 で実行） |
+| Next.js | 15 / 16 の App Router（`note-blog-kit/next` は `next` に依存しない） | CI（`Metadata` に代入できることの型テストを Next.js 15 と 16 で実行）と examples（Next.js 16） |
+| モジュール | ES Modules のみ。CommonJS からは `require()`（require(esm)）で読める | CI（npm pack した配布物を入れて、import・`require()`・CLI を確かめる `pnpm check:pack`） |
 
 - Node.js のサポートが終わった版は、次のメジャーバージョンで対応から外します
 - note の非公式 API を使っています。note 側の変更で動かなくなった場合は、パッチリリースで追従します（追従できない変更なら、その旨を README と Issue で知らせます）
