@@ -7,6 +7,7 @@
  * - 一覧ページは動的ページのため `next build` では実行されない。ビルド後に `next start` で起動し、
  *   fixture の取得から描画までが動くこと（一覧が出る・範囲外が 404 になる）を HTTP で確かめる
  * - 詳細ページは fixture にある記事本文（無料・有料の2件）で、本文・canonical・「続きは note で」と 404 を確かめる
+ * - README のコード例を型チェックする（scripts/check-readme-examples.mjs）
  * - examples/next/type-tests で、NoteMetadata が Next.js の Metadata に代入できることを型で確かめる
  * - examples/vite は fixture から JSON を作ってビルドし、バンドルにサーバー専用のコードが入っていないことを確かめる
  */
@@ -20,6 +21,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const exampleDir = join(root, 'examples/next');
 const MAX_PAGE_LINES = 30;
 const PORT = 3457;
+
+// README のコード例の型チェック（#51）
+const readmeExamples = spawnSync('node', ['scripts/check-readme-examples.mjs'], { cwd: root, stdio: 'inherit' });
+if (readmeExamples.status !== 0) process.exit(readmeExamples.status ?? 1);
 
 // NoteMetadata が Next.js の Metadata に代入できるか（ビルド済みの型で確かめる。#50）
 const typeTests = spawnSync('pnpm', ['-C', 'examples/next', 'exec', 'tsc', '-p', 'tsconfig.type-tests.json'], {
