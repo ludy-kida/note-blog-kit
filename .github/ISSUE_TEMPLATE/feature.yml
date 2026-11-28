@@ -1,0 +1,28 @@
+name: 要望
+description: 新しい機能や改善の提案
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        次の要望は受け付けていません（CONTRIBUTING.md の「絶対に守ること」）。
+        - ログインが必要な操作（投稿・編集・削除、スキやコメントの書き込み）
+        - 有料部分の表示や、アクセス制限を回避する機能
+        - ブラウザから note へ直接アクセスする機能、他人の記事の転載や他のユーザーの検索
+  - type: textarea
+    id: problem
+    attributes:
+      label: 解決したいこと
+      description: どんな場面で、何に困っているかを書いてください
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 案
+      description: API の形（関数・props・オプション）の案があれば書いてください
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 今の代わりの方法
+      description: 今はどうやって回避しているか

@@ -1,0 +1,49 @@
+name: 不具合
+description: note-blog-kit が期待どおりに動かない
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        脆弱性（XSS など）は、この Issue ではなく SECURITY.md の方法で非公開で報告してください。
+        Cookie・認証情報・有料記事の本文・他人の記事は貼らないでください。
+  - type: input
+    id: version
+    attributes:
+      label: note-blog-kit のバージョン
+      placeholder: 例：0.4.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 環境（Node.js・React・Next.js のバージョン）
+      placeholder: 例：Node.js 24.1.0、React 19.2、Next.js 16.4
+    validations:
+      required: true
+  - type: dropdown
+    id: usage
+    attributes:
+      label: 使い方
+      multiple: true
+      options:
+        - Next.js（App Router）
+        - Vite などの SPA（useNoteArticles）
+        - CLI（sync）
+        - その他
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現する手順
+      description: 最小のコードと手順を書いてください（note のユーザー名は伏せてもかまいません）
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した結果と、実際の結果
+      description: エラーなら `error.code` とメッセージも書いてください
+    validations:
+      required: true

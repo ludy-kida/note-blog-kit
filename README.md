@@ -11,6 +11,8 @@
 - canonical は note の元 URL を推奨します
 - 有料部分は表示しません
 
+脆弱性を見つけた場合は、公開の Issue ではなく [SECURITY.md](SECURITY.md) の方法で非公開で報告してください。
+
 ## 導入手順（Next.js App Router）
 
 ### 1. インストール
@@ -529,7 +531,7 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 
 ## 開発
 
-fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
+貢献のしかた（note にアクセスしない、fixture はメンテナーが取得する、`pnpm check` と changeset）は [CONTRIBUTING.md](CONTRIBUTING.md)、脆弱性の報告は [SECURITY.md](SECURITY.md) を参照してください。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
 
 ### examples/next を動かす
 
