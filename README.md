@@ -1,12 +1,12 @@
 # note-blog-kit
 
-自分の note 記事を、React + TypeScript のサイトに数十行でブログとして載せるためのライブラリ（開発中・仮称）。
+自分の note 記事を、React + TypeScript のサイトに数十行でブログとして載せるためのライブラリです。
 
 ## 注意事項
 
 - note の**非公式 API** を利用しており、予告なく動かなくなる可能性があります
 - note 株式会社とは無関係のライブラリです
-- **自分の記事**を表示する用途を想定しています（他人の記事の転載はしないでください）
+- **自分（またはサイトの運営者が掲載の許可を得た著者）の記事**を表示する用途を想定しています（他人の記事を無断で転載しないでください）
 - キャッシュを有効にし、高頻度なアクセスはしないでください
 - canonical は note の元 URL を推奨します
 - 有料部分は表示しません
@@ -19,9 +19,16 @@
 npm install note-blog-kit
 ```
 
-React のコンポーネント（`note-blog-kit/react`）を使う場合は React 18 / 19 が必要です。取得（`note-blog-kit/server`）は Node.js 24 以上で動きます。Next.js は 15 / 16 の App Router に対応しています。
+対応環境：
 
-パッケージは ES Modules のみで配布しています。CommonJS からも `require('note-blog-kit/server')` のように読み込めます（require(esm)）。TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
+| | 対応 |
+| --- | --- |
+| Node.js | 24 以上 |
+| React | 18 / 19（`note-blog-kit/react` を使う場合） |
+| Next.js | 15 / 16 の App Router（`note-blog-kit/next` を使う場合。`next` には依存しません） |
+| モジュール | ES Modules のみ。CommonJS からも `require('note-blog-kit/server')` のように読み込めます（require(esm)） |
+
+TypeScript の CommonJS のプロジェクトでは、`moduleResolution` を `nodenext`（TypeScript 5.8 以上）か `bundler` にしてください。
 
 1.0 での互換性の方針は [docs/stability.md](https://github.com/ludy-kida/note-blog-kit/blob/main/docs/stability.md)、0.3 からの移行は [MIGRATING.md](https://github.com/ludy-kida/note-blog-kit/blob/main/MIGRATING.md) を参照してください。
 
@@ -37,6 +44,7 @@ import 'note-blog-kit/styles.css';
 ```tsx
 // app/blog/page.tsx
 import { unstable_cache } from 'next/cache';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
 import { listArticles } from 'note-blog-kit/server';
@@ -59,20 +67,21 @@ export default async function BlogPage({ searchParams }: Props) {
   return (
     <main>
       <h1>ブログ</h1>
-      <NoteArticleList articles={articles} />
+      <NoteArticleList articles={articles} linkComponent={Link} getHref={(article) => `/blog/${article.key}`} />
       <NotePagination page={page} isLastPage={isLastPage} totalCount={totalCount} getHref={(p) => `/blog?page=${p}`} />
     </main>
   );
 }
 ```
 
-記事のリンク先は、既定では note の記事ページです。自分のサイトの詳細ページにしたい場合は `getHref` と `linkComponent={Link}` を渡します（下の「4. 詳細ページを作る」）。
+記事のリンク先は、自分のサイトの詳細ページ（`/blog/{記事キー}`。下の「4. 詳細ページを作る」）です。note の記事ページにリンクする場合は、`linkComponent` と `getHref` を外してください（既定のリンク先は note の記事 URL です）。
 
 ### 4. 詳細ページを作る（任意）
 
-`app/articles/[key]/page.tsx` を作ります。`note-blog-kit/next` のヘルパーで、静的生成するキーと metadata を作れます。
+`app/blog/[key]/page.tsx` を作ります（一覧のリンク先 `/blog/{記事キー}` と同じパス）。`note-blog-kit/next` のヘルパーで、静的生成するキーと metadata を作れます。
 
 ```tsx
+// app/blog/[key]/page.tsx
 import { generateNoteMetadata, generateNoteStaticParams } from 'note-blog-kit/next';
 import { NoteArticleBody } from 'note-blog-kit/react';
 import { getArticle, isNoteError } from 'note-blog-kit/server';
@@ -129,6 +138,51 @@ export default async function ArticlePage({ params }: Props) {
 - **`generateNoteStaticParams`**：`listAllArticles` で記事を集めます。`param` で動的セグメントの名前（既定 `'key'`）を変えられます。`source: 'rss'`（または `'auto'` で RSS に切り替わったとき）は、RSS にある最新25件だけになります
 - **`generateNoteMetadata`**：`title`・`description`（抜粋）・`alternates.canonical`・Open Graph・Twitter カードを返します。Next.js の `Metadata` にそのまま代入できます（`note-blog-kit` は `next` に依存しません）。`formatTitle` でタイトルを加工できます
 
+### 5. note が落ちたときに備える（任意）
+
+note の障害やタイムアウトで取得に失敗すると、ページはエラーになります。`error.tsx` で再試行の案内を出し、`loading.tsx` で読み込み中を表示してください（エラーの詳細は利用者に見せないでください）。
+
+```tsx
+// app/blog/error.tsx
+'use client';
+
+export default function BlogError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return (
+    <main>
+      <p>記事を読み込めませんでした。時間をおいて、もう一度お試しください。</p>
+      <button type="button" onClick={() => reset()}>
+        再読み込み
+      </button>
+    </main>
+  );
+}
+```
+
+```tsx
+// app/blog/loading.tsx
+export default function BlogLoading() {
+  return <p>読み込み中…</p>;
+}
+```
+
+一覧の API が使えないとき（404・5xx・レスポンスの形の違い）にも表示を続けたい場合は、`source: 'auto'` を使います。API で取得し、失敗したら RSS（最新25件）に切り替えます。
+
+```ts
+import { unstable_cache } from 'next/cache';
+import { listArticles } from 'note-blog-kit/server';
+
+// 「3. 一覧ページを作る」の getPage を置き換える
+const getPage = unstable_cache(
+  (user: string, page: number) => listArticles({ user, page, source: 'auto' }),
+  ['note-articles'],
+  { revalidate: 3600 },
+);
+```
+
+- 切り替えるのは1ページ目だけです。2ページ目以降と記事本文（`getArticle`）は切り替わらず、エラーになります
+- RSS に切り替わったページは `source` が `'rss'` で、1ページだけです（`isLastPage: true`、`totalCount: null`）。RSS のときはページ送りを出さないなど、`source` で表示を分けられます
+- 詳しくは下の「RSS で取得する」を参照してください
+
 ### キャッシュの推奨
 
 - `listArticles` は呼ぶたびに note へリクエストします。**呼び出しの結果ごとキャッシュしてください**（Next.js なら上の例の `unstable_cache`、ほかの環境ではビルド時に JSON へ書き出すなど）
@@ -138,7 +192,9 @@ export default async function ArticlePage({ params }: Props) {
 
 動く例は [`examples/next`](examples/next) にあります（下の「開発」を参照）。
 
-## 使い方（開発中・API は 0.x の間に変わることがあります）
+## 使い方
+
+公開 API は 1.0 からセマンティックバージョニングに従います。何を互換性の対象にするかは [docs/stability.md](docs/stability.md) を参照してください。
 
 ### 記事一覧を取得する（サーバー側）
 
@@ -211,6 +267,8 @@ for await (const article of iterateArticles({ user: 'your_urlname' })) {
 `listArticles`・`iterateArticles`・`listAllArticles` は `source` で取得元を選べます（既定は `'api'`）。
 
 ```ts
+import { listArticles } from 'note-blog-kit/server';
+
 // RSS から取得する（最新25件・1ページのみ）
 const { articles } = await listArticles({ user: 'your_urlname', source: 'rss' });
 
@@ -282,15 +340,20 @@ npx note-blog-kit sync --user your_urlname --out public/note
 
 ```tsx
 import Link from 'next/link';
+import type { NoteArticlePage } from 'note-blog-kit';
 import { NoteArticleList, NotePagination } from 'note-blog-kit/react';
-import { listArticles } from 'note-blog-kit/server';
 
-export default async function BlogPage() {
-  const { articles, page, isLastPage, totalCount } = await listArticles({ user: 'your_urlname' });
+// 取得したページを受け取って描画する。取得（ページ番号の読み取り・上限・キャッシュ）は「3. 一覧ページを作る」を参照
+export function BlogList({ data }: { data: NoteArticlePage }) {
   return (
     <>
-      <NoteArticleList articles={articles} linkComponent={Link} getHref={(article) => `/blog/${article.key}`} />
-      <NotePagination page={page} isLastPage={isLastPage} totalCount={totalCount} getHref={(p) => `/blog?page=${p}`} />
+      <NoteArticleList articles={data.articles} linkComponent={Link} getHref={(article) => `/blog/${article.key}`} />
+      <NotePagination
+        page={data.page}
+        isLastPage={data.isLastPage}
+        totalCount={data.totalCount}
+        getHref={(p) => `/blog?page=${p}`}
+      />
     </>
   );
 }
@@ -466,7 +529,7 @@ CSS は `:root`（変数の既定値）と `nbk-` から始まるクラスにだ
 
 ## 開発
 
-v0.1.0（一覧表示）に向けて開発中です。fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
+fixture の取得手順は [fixtures/README.md](fixtures/README.md)、エージェント向けのルールは [CLAUDE.md](CLAUDE.md) を参照してください。
 
 ### examples/next を動かす
 
@@ -485,7 +548,7 @@ pnpm -C examples/next dev
 NOTE_BLOG_KIT_LIVE=1 NOTE_USER=your_urlname pnpm -C examples/next dev
 ```
 
-CI は `pnpm build:examples` で、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる・詳細ページに本文と canonical が出る・fixture にない記事が 404 になる）を確認しています。fixture にある記事本文は2件だけなので、自分の全記事が崩れず表示できるかは、実際の note から取得するモードで `/articles/{記事キー}` を開いて目で確かめてください。
+CI は `pnpm build:examples` で、README のコード例（```` ```ts ```` と ```` ```tsx ````）の型チェック、一覧ページが30行以内であること、fixture モードでのビルド、起動したページの表示（一覧が出る・範囲外が 404 になる・詳細ページに本文と canonical が出る・fixture にない記事が 404 になる）を確認しています。examples が使う記事本文の fixture は `fixtures/notes/` の2件（無料記事と有料記事）だけなので、自分の全記事が崩れず表示できるかは、実際の note から取得するモードで `/articles/{記事キー}` を開いて目で確かめてください。
 
 ### examples/vite を動かす
 
@@ -509,6 +572,8 @@ GitHub Actions が毎日1回、自分のアカウントの公開情報を3リク
 ### README を変えたとき
 
 npm に載る `packages/note-blog-kit/README.md` は、このファイルから `pnpm readme:sync` で作ります（「開発」の節を除き、リンクを GitHub の URL にします）。食い違うとテストが失敗します。
+
+コード例は `pnpm build && node scripts/check-readme-examples.mjs` で型チェックできます（CI は `pnpm build:examples` の中で実行します）。断片で単独では型チェックできない例は、```` ```ts nocheck ```` のように `nocheck` を付けて除いてください。
 
 ## ライセンス
 
